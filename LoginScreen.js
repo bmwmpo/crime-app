@@ -10,10 +10,10 @@ const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     //shows or hides the password
-    const onShowPassword = () =>{
-        setShowPassword(!showPassword);
-        console.log(showPassword);
-    }
+    const showPasswordPress = () => setShowPassword(!showPassword);
+
+    //delete email input
+    const deletePress = () => setEmail('');
 
     //login function
     const handleLogin = async () => {
@@ -42,20 +42,22 @@ const LoginScreen = () => {
         <View style={styleSheet.container}> 
             <Text style={styleSheet.headerStyle}>Log in</Text>
             {/* email text input */}
-            <View style={styleSheet.usernameContainer}>
-                <Text>Username</Text>
+            <View style={styleSheet.inputContainer}>
                 <TextInput 
-                placeholder='Email address' 
-                value={email} 
-                onChangeText={setEmail}
-                autoCapitalize='none'
-                autoCorrect={false}
+                    style={styleSheet.inputStyle}
+                    placeholder='Email address' 
+                    value={email} 
+                    onChangeText={setEmail}
+                    autoCapitalize='none'
+                    autoCorrect={false}
                 />
+                <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
+                    <Icon name='close-circle-outline' size={20}/>
+                </Pressable>
             </View>
             {/* password text input */}
-            <View style={styleSheet.passwordContainer}>
-                <View style={styleSheet.passwordInputStyle}>
-                    <Text>Password</Text>
+            <View style={styleSheet.inputContainer}>
+                <View style={styleSheet.inputStyle}>
                     <TextInput 
                     placeholder='Password' 
                     value={password} 
@@ -64,7 +66,7 @@ const LoginScreen = () => {
                     autoCapitalize='none'
                     autoCorrect={false}/>
                 </View>
-            <Pressable style={styleSheet.eyeIconStyle} onPress={onShowPassword}>
+            <Pressable style={styleSheet.iconStyle} onPress={showPasswordPress}>
                 {
                     //shows or hides password eye icon
                     !showPassword ? <Icon name='eye-off-outline' size={20}/> : <Icon name='eye-outline' size={20}/> 
@@ -84,24 +86,16 @@ const LoginScreen = () => {
 const styleSheet = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: '#696969',
       alignItems: 'center',
       paddingHorizontal: 50,
       justifyContent: 'center',
     },
-    usernameContainer:{
-        width:'100%',
-        height:65,
-        borderWidth: 1,
-        borderColor:'#ccc',
-        borderRadius: 5,
-        padding:10,
-        marginBottom: 20,
-    },
-    passwordContainer:{
+    inputContainer:{
         flexDirection:'row',
+        backgroundColor:'#d3d3d3',
         width:'100%',
-        height: 65,
+        height: 50,
         borderWidth: 1,
         borderColor:'#ccc',
         borderRadius: 5,
@@ -112,10 +106,19 @@ const styleSheet = StyleSheet.create({
         marginBottom: 30,
         fontSize: 30
     },
-    passwordInputStyle:{
+    usernameInputStyle:{
+        width:'100%',
+        height:50,
+        borderWidth: 1,
+        borderColor:'#ccc',
+        borderRadius: 5,
+        padding:5,
+        marginBottom: 20,
+    },
+    inputStyle:{
         flex:9
     },
-    eyeIconStyle:{
+    iconStyle:{
         justifyContent:'center',
         alignItems:'center'
     },
