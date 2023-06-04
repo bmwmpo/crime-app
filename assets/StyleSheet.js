@@ -1,6 +1,7 @@
  import { StyleSheet } from "react-native";
  
  const styleSheet = StyleSheet.create({
+    //Login Screen and SignUp Screen
     container: {
       flex: 1,
       backgroundColor: '#696969',
