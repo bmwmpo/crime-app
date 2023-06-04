@@ -10,13 +10,15 @@
       justifyContent: 'center',
     },
     formatContainer:{
-        marginBottom:20
+        marginBottom:25,
+        width:'120%',
+        height:50,
     },
     inputContainer:{
         flexDirection:'row',
         backgroundColor:'#d3d3d3',
-        width:'120%',
-        height: 50,
+        //width:'120%',
+        //height: 50,
         borderWidth: 1,
         borderColor:'#ccc',
         borderRadius: 5,
@@ -25,8 +27,8 @@
     errorInputContainer:{
         flexDirection:'row',
         backgroundColor:'#d3d3d3',
-        width:'120%',
-        height: 50,
+        // width:'120%',
+        // height: 50,
         borderWidth: 2,
         borderColor:'#ff0000',
         borderRadius: 5,
@@ -38,7 +40,12 @@
     },
     errorTextStyle:{
         fontSize: 15,
-        color:'#ff4500'
+        color:'#ff4500',
+    },
+    forgotPasswordTextStyle:{
+        fontSize: 15,
+        color:'#0000cd',
+        textDecorationLine:'underline'
     },
     // errorInputStyle:{
     //     width:'100%',
@@ -62,7 +69,8 @@
         height: 50,
         alignItems:'center',
         justifyContent:'center',
-        borderRadius: 5
+        borderRadius: 5,
+        marginVertical: 30
     },
     disabledButtonStyle:{
         backgroundColor: '#a9a9a9',
@@ -70,7 +78,8 @@
         height: 50,
         alignItems:'center',
         justifyContent:'center',
-        borderRadius:5
+        borderRadius:5,
+        marginVertical: 30
     }  
 });
 

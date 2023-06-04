@@ -74,8 +74,7 @@ const LogInScreen = () => {
             await sendPasswordResetEmail(auth, email);
             
             Alert.alert('Password reset email sent', 
-            `We sent instruction to change your password to ${email}, 
-            please check both your inbox and spam folder.`);
+            `We sent instruction to change your password to ${email}, please check both your inbox and spam folder.`);
         }
         catch(err){
             console.log(`${err.message}`);
@@ -130,10 +129,10 @@ const LogInScreen = () => {
                     }
                 </Pressable>
                 </View>
+                <Pressable onPress={handleForgetPassword}>
+                    <Text style={styleSheet.forgotPasswordTextStyle}>Forgot your password?</Text>
+                </Pressable>
             </View>
-            <Pressable onPress={handleForgetPassword}>
-                <Text>Forgot your password?</Text>
-            </Pressable>
             <TouchableOpacity 
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleLogin} 
