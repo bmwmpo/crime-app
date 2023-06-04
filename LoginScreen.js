@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { auth } from './config/firebase_config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
@@ -50,6 +50,8 @@ const LoginScreen = () => {
         setVaildEmailFormat(result);
 
         console.log('email',result,newText, vaildEmailFormat);
+
+        return result;
     }
 
     //update and verify the email state value
@@ -64,6 +66,24 @@ const LoginScreen = () => {
             setErrorTextInput(true);
         else 
             setErrorTextInput(false);
+    }
+
+    //send a password reset email
+    const forgotPassword = async() => {
+        setErrorTextInput(false);
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            
+            Alert.alert('Password reset email sent', 
+            `We sent a password reset instruction to ${email}, please check both your inbox and spam folder.`)
+            
+            console.log('send');
+        }
+        catch(err){
+            console.log(err.message);
+            setErrorTextInput(true);
+        }
     }
 
     return(
@@ -113,6 +133,9 @@ const LoginScreen = () => {
                 </Pressable>
                 </View>
             </View>
+            <Pressable onPress={forgotPassword}>
+                <Text>Forgot your password?</Text>
+            </Pressable>
             <TouchableOpacity 
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleLogin} 
