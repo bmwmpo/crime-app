@@ -66,8 +66,8 @@ const LogInScreen = () => {
             setErrorTextInput(false);
     }
 
-    //forget password
-    const handleForgetPassword = async() => {
+    //forgot password
+    const handleForgotPassword = async() => {
         setErrorTextInput(false);
         
         try{
@@ -129,7 +129,7 @@ const LogInScreen = () => {
                     }
                 </Pressable>
                 </View>
-                <Pressable onPress={handleForgetPassword}>
+                <Pressable onPress={handleForgotPassword}>
                     <Text style={styleSheet.forgotPasswordTextStyle}>Forgot your password?</Text>
                 </Pressable>
             </View>
