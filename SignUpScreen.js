@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { auth } from './config/firebase_config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity,View, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 
-const LogInScreen = () => {
+const SignUpScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +18,11 @@ const LogInScreen = () => {
     //delete email input
     const deletePress = () => setEmail('');
 
-    //login function
-    const handleLogin = async () => {
+    //sign up function
+    const handleCreateNewAccount= async () => {
         try {
 
-            const userCredentials = await signInWithEmailAndPassword (auth, email, password);
+            const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
             Alert.alert('OK', '');
         }
         catch(err){
@@ -68,7 +68,7 @@ const LogInScreen = () => {
 
     return(
         <View style={styleSheet.container}> 
-            <Text style={styleSheet.headerStyle}>Log in</Text>
+            <Text style={styleSheet.headerStyle}>Welcome</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
                 <View style={errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
@@ -115,12 +115,12 @@ const LogInScreen = () => {
             </View>
             <TouchableOpacity 
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
-            onPress={handleLogin} 
+            onPress={handleCreateNewAccount} 
             disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
-                <Text>Log in</Text>
+                <Text>Create account</Text>
             </TouchableOpacity>
         </View>
     )
 }
 
-export default LogInScreen;
+export default SignUpScreen;
