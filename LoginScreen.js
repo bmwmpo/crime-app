@@ -31,7 +31,7 @@ const LoginScreen = () => {
         }
     }
 
-    //Check if either the email address or password is a empty string
+    //Check if either the email address or password is an empty string
     const isEmailAddressPasswordEmpty = () =>{
         if(email.trim() === '' || password.trim() === '' ){        
             return true;
@@ -41,12 +41,29 @@ const LoginScreen = () => {
         }
     }
 
-    const isVaildEmailAddress = () => {
-        const regex = /^[a-z0-9]+[\.\%\$\#\!\*]?[a-z0-9]+@[a-z0-9]+\.[a-z]{1,}$/i
+    //verify the email address
+    const isVaildEmailAddress = (newText) => {
+        const regex = /^[\w\.\-\_\&\*\&\%\$\#\!]+@[\w]+\.[\w]{2,4}$/
 
-        setVaildEmailFormat(regex.test(email));
+        const result = regex.test(newText)
 
-        console.log(regex.test(email));
+        setVaildEmailFormat(result);
+
+        console.log('email',result,newText, vaildEmailFormat);
+    }
+
+    //update and verify the email state value
+    const onEmailTextChange = (newText) => {
+        setEmail(newText);
+        isVaildEmailAddress(newText);
+    }
+
+    //display the error message
+    const showError = () => {
+        if(!vaildEmailFormat)
+            setErrorTextInput(true);
+        else 
+            setErrorTextInput(false);
     }
 
     return(
@@ -59,16 +76,18 @@ const LoginScreen = () => {
                         style={styleSheet.inputStyle}
                         placeholder='Email address' 
                         value={email} 
-                        onChangeText={setEmail}
-                        onChange={isVaildEmailAddress}
-                        onKeyPress={isVaildEmailAddress}
+                        onChangeText={onEmailTextChange}
                         onFocus={()=>setErrorTextInput(false)}
                         autoCapitalize='none'
                         autoCorrect={false}
+                        keyboardType='email-address'
                     />
-                    <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
-                        <Icon name='close-circle-outline' size={20}/>
-                    </Pressable>
+                    {
+                        !(email === '') && 
+                        <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
+                            <Icon name='close-circle-outline' size={20}/>
+                        </Pressable>
+                    }
                 </View>
                 { errorTextInput && <Text style={styleSheet.errorTextStyle}>Not a vaild email address</Text>}
             </View>
@@ -83,12 +102,7 @@ const LoginScreen = () => {
                         secureTextEntry={showPassword}
                         autoCapitalize='none'
                         autoCorrect={false}
-                        onFocus={()=>{
-                            if(!vaildEmailFormat)
-                                setErrorTextInput(true);
-                            else 
-                                setErrorTextInput(false);
-                        }}
+                        onFocus={showError}
                         />
                     </View>
                 <Pressable style={styleSheet.iconStyle} onPress={showPasswordPress}>
