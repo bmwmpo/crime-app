@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { auth } from './config/firebase_config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
@@ -66,6 +66,23 @@ const LogInScreen = () => {
             setErrorTextInput(false);
     }
 
+    //forgot password
+    const handleForgotPassword = async() => {
+        setErrorTextInput(false);
+        
+        try{
+            await sendPasswordResetEmail(auth, email);
+            
+            Alert.alert('Password reset email sent', 
+            `We sent instruction to change your password to ${email}, please check both your inbox and spam folder.`);
+        }
+        catch(err){
+            console.log(`${err.message}`);
+            setErrorTextInput(true);
+        }
+    }
+    
+
     return(
         <View style={styleSheet.container}> 
             <Text style={styleSheet.headerStyle}>Log in</Text>
@@ -112,6 +129,9 @@ const LogInScreen = () => {
                     }
                 </Pressable>
                 </View>
+                <Pressable onPress={handleForgotPassword}>
+                    <Text style={styleSheet.forgotPasswordTextStyle}>Forgot your password?</Text>
+                </Pressable>
             </View>
             <TouchableOpacity 
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
