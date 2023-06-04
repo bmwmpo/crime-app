@@ -18,7 +18,7 @@ const SignUpScreen = () => {
     //delete email input
     const deletePress = () => setEmail('');
 
-    //login function
+    //sign up function
     const handleCreateNewAccount= async () => {
         try {
 
