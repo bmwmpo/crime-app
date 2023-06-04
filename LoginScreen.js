@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 
-const LoginScreen = () => {
+const LogInScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -123,4 +123,4 @@ const LoginScreen = () => {
     )
 }
 
-export default LoginScreen;
+export default LogInScreen;
