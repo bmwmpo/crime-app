@@ -12,7 +12,9 @@ const SignUpScreen = () => {
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
     const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
-    const [errorTextInput, setErrorTextInput] = useState(false)
+    const [vaildPasswordLength, setVaildPasswordLength] = useState(false);
+    const [errorTextEmail, setErrorTextEmail] = useState(false);
+    const [errorTextPassword, setErrorTextPassword] = useState(false);
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -20,6 +22,7 @@ const SignUpScreen = () => {
     //delete email input
     const deletePress = () => setEmail('');
 
+    //save new user infomation in firestore
     const saveUserInfoInFirestore = async ()=>{
         try{
             const collectionRef = collection(db, 'UserInfo');
@@ -70,18 +73,35 @@ const SignUpScreen = () => {
         console.log('email',result,newText, vaildEmailFormat);
     }
 
+    //verify the password length
+    const isVaildPasswordLength = (newText) => setVaildPasswordLength(newText.length >= 6);
+
     //update and verify the email state value
     const onEmailTextChange = (newText) => {
         setEmail(newText);
         isVaildEmailAddress(newText);
     }
 
-    //display the error message
-    const showError = () => {
+    //update and verify the password state value
+    const onPasswordTextChange = (newText) => {
+        setPassword(newText);
+        isVaildPasswordLength(newText);
+    }
+
+    //display the email error message
+    const showEmailError = () => {
         if(!vaildEmailFormat)
-            setErrorTextInput(true);
+            setErrorTextEmail(true);
         else 
-            setErrorTextInput(false);
+            setErrorTextEmail(false);
+    }
+
+    //display the password error message
+    const showPasswordError = () => {
+        if(!vaildPasswordLength)
+            setErrorTextPassword(true);
+        else 
+            setErrorTextPassword(false);
     }
 
     return(
@@ -89,13 +109,17 @@ const SignUpScreen = () => {
             <Text style={styleSheet.headerStyle}>Welcome</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
+                <View style={errorTextEmail ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
                     <TextInput 
                         style={styleSheet.inputStyle}
                         placeholder='Email address' 
                         value={email} 
                         onChangeText={onEmailTextChange}
-                        onFocus={()=>setErrorTextInput(false)}
+                        onFocus={()=>{
+                            setErrorTextEmail(false);
+                            showPasswordError();
+                            
+                        }}
                         autoCapitalize='none'
                         autoCorrect={false}
                         keyboardType='email-address'
@@ -107,20 +131,24 @@ const SignUpScreen = () => {
                         </Pressable>
                     }
                 </View>
-                { errorTextInput && <Text style={styleSheet.errorTextStyle}>Not a vaild email address</Text>}
+                {/* error message */}
+                { errorTextEmail && <Text style={styleSheet.errorTextStyle}>Not a vaild email address</Text>}
             </View>
             {/* password text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={styleSheet.inputContainer}>
+                <View style={errorTextPassword ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
                     <View style={styleSheet.inputStyle}>
                         <TextInput 
                         placeholder='Password' 
                         value={password} 
-                        onChangeText={setPassword}
+                        onChangeText={onPasswordTextChange}
                         secureTextEntry={hidePassword}
                         autoCapitalize='none'
                         autoCorrect={false}
-                        onFocus={showError}
+                        onFocus={()=>{
+                            setErrorTextPassword(false);
+                            showEmailError();  
+                        }}
                         />
                     </View>
                 <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
@@ -130,12 +158,14 @@ const SignUpScreen = () => {
                     }
                 </Pressable>
                 </View>
+                {/* error message */}
+                { errorTextPassword && <Text style={styleSheet.errorTextStyle}>Password must be at least 6 characters</Text>}
             </View>
             <TouchableOpacity 
-            style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
+            style={isEmailAddressPasswordEmpty() || !vaildEmailFormat || !vaildPasswordLength ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleCreateNewAccount} 
-            disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
-                <Text>Create account</Text>
+            disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat || !vaildPasswordLength}>
+                <Text style={styleSheet.buttonTextStyle}>Create account</Text>
             </TouchableOpacity>
         </View>
     )
