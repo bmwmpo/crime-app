@@ -4,7 +4,7 @@
     //Login Screen and SignUp Screen
     container: {
       flex: 1,
-      backgroundColor: '#696969',
+      backgroundColor: '#808080',
       alignItems: 'center',
       paddingHorizontal: 50,
       justifyContent: 'center',
@@ -40,7 +40,7 @@
     },
     errorTextStyle:{
         fontSize: 15,
-        color:'#ff4500',
+        color:'#ff0000',
     },
     forgotPasswordTextStyle:{
         fontSize: 15,
