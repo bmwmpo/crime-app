@@ -4,6 +4,8 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
+import { db } from './config/firebase_config';
+import { collection, addDoc } from 'firebase/firestore'
 
 const SignUpScreen = () => {
     const [email, setEmail] = useState('');
@@ -18,11 +20,27 @@ const SignUpScreen = () => {
     //delete email input
     const deletePress = () => setEmail('');
 
+    const saveUserInfoInFirestore = async ()=>{
+        try{
+            const collectionRef = collection(db, 'UserInfo');
+
+            const data = {
+                email
+            }
+
+            const docAdded = await addDoc(collectionRef, data);
+        }
+        catch(err){
+            Alert.alert("Error", err.message);
+        }
+    }
+
     //sign up function
     const handleCreateNewAccount= async () => {
         try {
 
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
+            saveUserInfoInFirestore();
             Alert.alert('OK', '');
         }
         catch(err){
