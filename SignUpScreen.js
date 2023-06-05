@@ -11,8 +11,8 @@ const SignUpScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
-    const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
-    const [vaildPasswordLength, setVaildPasswordLength] = useState(false);
+    const [validEmailFormat, setValidEmailFormat] = useState(false);
+    const [validPasswordLength, setValidPasswordLength] = useState(false);
     const [errorTextEmail, setErrorTextEmail] = useState(false);
     const [errorTextPassword, setErrorTextPassword] = useState(false);
 
@@ -63,34 +63,34 @@ const SignUpScreen = () => {
     }
 
     //verify the email address
-    const isVaildEmailAddress = (newText) => {
+    const isValidEmailAddress = (newText) => {
         const regex = /^[\w\.\-\_\&\*\&\%\$\#\!]+@[\w]+\.[\w]{2,4}$/
 
         const result = regex.test(newText)
 
-        setVaildEmailFormat(result);
+        setValidEmailFormat(result);
 
-        console.log('email',result,newText, vaildEmailFormat);
+        console.log('email',result,newText, validEmailFormat);
     }
 
     //verify the password length
-    const isVaildPasswordLength = (newText) => setVaildPasswordLength(newText.length >= 6);
+    const isValidPasswordLength = (newText) => setValidPasswordLength(newText.length >= 6);
 
     //update and verify the email state value
     const onEmailTextChange = (newText) => {
         setEmail(newText);
-        isVaildEmailAddress(newText);
+        isValidEmailAddress(newText);
     }
 
     //update and verify the password state value
     const onPasswordTextChange = (newText) => {
         setPassword(newText);
-        isVaildPasswordLength(newText);
+        isValidPasswordLength(newText);
     }
 
     //display the email error message
     const showEmailError = () => {
-        if(!vaildEmailFormat)
+        if(!validEmailFormat)
             setErrorTextEmail(true);
         else 
             setErrorTextEmail(false);
@@ -98,7 +98,7 @@ const SignUpScreen = () => {
 
     //display the password error message
     const showPasswordError = () => {
-        if(!vaildPasswordLength)
+        if(!validPasswordLength)
             setErrorTextPassword(true);
         else 
             setErrorTextPassword(false);
@@ -132,7 +132,7 @@ const SignUpScreen = () => {
                     }
                 </View>
                 {/* error message */}
-                { errorTextEmail && <Text style={styleSheet.errorTextStyle}>Not a vaild email address</Text>}
+                { errorTextEmail && <Text style={styleSheet.errorTextStyle}>Not a valid email address</Text>}
             </View>
             {/* password text input */}
             <View style={styleSheet.formatContainer}>
@@ -162,9 +162,9 @@ const SignUpScreen = () => {
                 { errorTextPassword && <Text style={styleSheet.errorTextStyle}>Password must be at least 6 characters</Text>}
             </View>
             <TouchableOpacity 
-            style={isEmailAddressPasswordEmpty() || !vaildEmailFormat || !vaildPasswordLength ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
+            style={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleCreateNewAccount} 
-            disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat || !vaildPasswordLength}>
+            disabled={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength}>
                 <Text style={styleSheet.buttonTextStyle}>Create account</Text>
             </TouchableOpacity>
         </View>
