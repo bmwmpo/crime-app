@@ -11,8 +11,10 @@ const SignUpScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
-    const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
-    const [errorTextInput, setErrorTextInput] = useState(false)
+    const [validEmailFormat, setValidEmailFormat] = useState(false);
+    const [validPasswordLength, setValidPasswordLength] = useState(false);
+    const [errorTextEmail, setErrorTextEmail] = useState(false);
+    const [errorTextPassword, setErrorTextPassword] = useState(false);
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -20,6 +22,7 @@ const SignUpScreen = () => {
     //delete email input
     const deletePress = () => setEmail('');
 
+    //save new user infomation in firestore
     const saveUserInfoInFirestore = async ()=>{
         try{
             const collectionRef = collection(db, 'UserInfo');
@@ -60,28 +63,45 @@ const SignUpScreen = () => {
     }
 
     //verify the email address
-    const isVaildEmailAddress = (newText) => {
+    const isValidEmailAddress = (newText) => {
         const regex = /^[\w\.\-\_\&\*\&\%\$\#\!]+@[\w]+\.[\w]{2,4}$/
 
         const result = regex.test(newText)
 
-        setVaildEmailFormat(result);
+        setValidEmailFormat(result);
 
-        console.log('email',result,newText, vaildEmailFormat);
+        console.log('email',result,newText, validEmailFormat);
     }
+
+    //verify the password length
+    const isValidPasswordLength = (newText) => setValidPasswordLength(newText.length >= 6);
 
     //update and verify the email state value
     const onEmailTextChange = (newText) => {
         setEmail(newText);
-        isVaildEmailAddress(newText);
+        isValidEmailAddress(newText);
     }
 
-    //display the error message
-    const showError = () => {
-        if(!vaildEmailFormat)
-            setErrorTextInput(true);
+    //update and verify the password state value
+    const onPasswordTextChange = (newText) => {
+        setPassword(newText);
+        isValidPasswordLength(newText);
+    }
+
+    //display the email error message
+    const showEmailError = () => {
+        if(!validEmailFormat)
+            setErrorTextEmail(true);
         else 
-            setErrorTextInput(false);
+            setErrorTextEmail(false);
+    }
+
+    //display the password error message
+    const showPasswordError = () => {
+        if(!validPasswordLength)
+            setErrorTextPassword(true);
+        else 
+            setErrorTextPassword(false);
     }
 
     return(
@@ -89,13 +109,17 @@ const SignUpScreen = () => {
             <Text style={styleSheet.headerStyle}>Welcome</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
+                <View style={errorTextEmail ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
                     <TextInput 
                         style={styleSheet.inputStyle}
                         placeholder='Email address' 
                         value={email} 
                         onChangeText={onEmailTextChange}
-                        onFocus={()=>setErrorTextInput(false)}
+                        onFocus={()=>{
+                            setErrorTextEmail(false);
+                            showPasswordError();
+                            
+                        }}
                         autoCapitalize='none'
                         autoCorrect={false}
                         keyboardType='email-address'
@@ -107,20 +131,24 @@ const SignUpScreen = () => {
                         </Pressable>
                     }
                 </View>
-                { errorTextInput && <Text style={styleSheet.errorTextStyle}>Not a vaild email address</Text>}
+                {/* error message */}
+                { errorTextEmail && <Text style={styleSheet.errorTextStyle}>Not a valid email address</Text>}
             </View>
             {/* password text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={styleSheet.inputContainer}>
+                <View style={errorTextPassword ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
                     <View style={styleSheet.inputStyle}>
                         <TextInput 
                         placeholder='Password' 
                         value={password} 
-                        onChangeText={setPassword}
+                        onChangeText={onPasswordTextChange}
                         secureTextEntry={hidePassword}
                         autoCapitalize='none'
                         autoCorrect={false}
-                        onFocus={showError}
+                        onFocus={()=>{
+                            setErrorTextPassword(false);
+                            showEmailError();  
+                        }}
                         />
                     </View>
                 <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
@@ -130,12 +158,14 @@ const SignUpScreen = () => {
                     }
                 </Pressable>
                 </View>
+                {/* error message */}
+                { errorTextPassword && <Text style={styleSheet.errorTextStyle}>Password must be at least 6 characters</Text>}
             </View>
             <TouchableOpacity 
-            style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
+            style={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleCreateNewAccount} 
-            disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
-                <Text>Create account</Text>
+            disabled={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength}>
+                <Text style={styleSheet.buttonTextStyle}>Create account</Text>
             </TouchableOpacity>
         </View>
     )

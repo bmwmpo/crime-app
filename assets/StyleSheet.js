@@ -80,6 +80,10 @@
         justifyContent:'center',
         borderRadius:5,
         marginVertical: 30
+    },
+    buttonTextStyle:{
+        fontWeight:'bold',
+        fontSize:16
     }  
 });
 
