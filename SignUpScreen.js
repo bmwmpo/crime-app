@@ -4,29 +4,47 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, Pressable } from 'react-native';
 import styleSheet from './assets/StyleSheet';
+import { db } from './config/firebase_config';
+import { collection, addDoc } from 'firebase/firestore'
 
 const SignUpScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const [hidePassword, setHidePassword] = useState(true);
     const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
     const [errorTextInput, setErrorTextInput] = useState(false)
 
     //shows or hides the password
-    const showPasswordPress = () => setShowPassword(!showPassword);
+    const showHidePasswordPress = () => setHidePassword(!hidePassword);
 
     //delete email input
     const deletePress = () => setEmail('');
+
+    const saveUserInfoInFirestore = async ()=>{
+        try{
+            const collectionRef = collection(db, 'UserInfo');
+
+            const data = {
+                email
+            }
+
+            const docAdded = await addDoc(collectionRef, data);
+        }
+        catch(err){
+            Alert.alert("Error", err.message);
+        }
+    }
 
     //sign up function
     const handleCreateNewAccount= async () => {
         try {
 
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
+            saveUserInfoInFirestore();
             Alert.alert('OK', '');
         }
         catch(err){
-            Alert.alert('Error', 'Invalid email address or password');
+            Alert.alert('Error', `${err.message}`);
             console.log(err);
         }
     }
@@ -99,16 +117,16 @@ const SignUpScreen = () => {
                         placeholder='Password' 
                         value={password} 
                         onChangeText={setPassword}
-                        secureTextEntry={showPassword}
+                        secureTextEntry={hidePassword}
                         autoCapitalize='none'
                         autoCorrect={false}
                         onFocus={showError}
                         />
                     </View>
-                <Pressable style={styleSheet.iconStyle} onPress={showPasswordPress}>
+                <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
                     {
                         //shows or hides password eye icon
-                        !showPassword ? <Icon name='eye-off-outline' size={20}/> : <Icon name='eye-outline' size={20}/> 
+                        hidePassword ? <Icon name='eye-outline' size={20}/> : <Icon name='eye-off-outline' size={20}/> 
                     }
                 </Pressable>
                 </View>
