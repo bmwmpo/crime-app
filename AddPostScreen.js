@@ -1,4 +1,4 @@
-import { View,Text, TextInput } from "react-native";
+import { View,Text, TextInput, StatusBar } from "react-native";
 import styleSheet from "./assets/StyleSheet";
 import { useState } from "react";
 
@@ -8,6 +8,7 @@ const AddPostScreen = () =>{
 
     return(
         <View style={styleSheet.postingContainer}>
+            <StatusBar/>
             <TextInput 
             style={styleSheet.titleTextInputStyle} 
             placeholder="Title" 
