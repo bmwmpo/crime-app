@@ -47,7 +47,7 @@ const SignUpScreen = () => {
             Alert.alert('OK', '');
         }
         catch(err){
-            Alert.alert('Error', `${err.message}`);
+            Alert.alert('Error', 'Email is already registered');
             console.log(err);
         }
     }
