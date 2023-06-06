@@ -23,12 +23,13 @@ const SignUpScreen = () => {
     const deletePress = () => setEmail('');
 
     //save new user infomation in firestore
-    const saveUserInfoInFirestore = async ()=>{
+    const saveUserInfoInFirestore = async ({email, uid})=>{
         try{
             const collectionRef = collection(db, 'UserInfo');
 
             const data = {
-                email
+                email,
+                userId:uid
             }
 
             const docAdded = await addDoc(collectionRef, data);
@@ -43,7 +44,7 @@ const SignUpScreen = () => {
         try {
 
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
-            saveUserInfoInFirestore();
+            saveUserInfoInFirestore(userCredentials.user);
             Alert.alert('OK', '');
         }
         catch(err){
