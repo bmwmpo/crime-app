@@ -137,7 +137,7 @@ const LogInScreen = () => {
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleLogin} 
             disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
-                <Text>Log in</Text>
+                <Text style={styleSheet.buttonTextStyle}>Log in</Text>
             </TouchableOpacity>
         </View>
     )
