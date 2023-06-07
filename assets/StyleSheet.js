@@ -88,26 +88,34 @@
     ,
     //AddPostScreen
     postingContainer:{
-        flex:1,
         backgroundColor: '#808080',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent:'center',
+        flex:1
+    },
+    titleBodyContainer:{
+        flex:9, 
+        width:'100%',
     },
     titleTextInputStyle:{
-        flex:1, 
-        height:'20%',
         width:'100%', 
         textAlignVertical:'top', 
         fontSize:30, 
         fontWeight:'bold', 
-        borderBottomWidth:1, 
-        borderColor:'black'
+        borderBottomWidth:2, 
+        borderColor:'#696969',
     },
-    bodyTextInputStyle:{
-        flex:9, 
-        width:'100%', 
+    bodyTextInputStyle:{ 
+        width:'100%',
         textAlignVertical:'top', 
         fontSize: 20
+    },
+    optionBarStyle:{
+        flex:1,
+        flexDirection:"row",
+        alignItems:'center',
+        justifyContent:'center',
+        width:'100%'
     }
 });
 
