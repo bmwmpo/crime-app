@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { auth } from './config/firebase_config';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 
 const LogInScreen = () => {
@@ -84,7 +84,7 @@ const LogInScreen = () => {
     
 
     return(
-        <View style={styleSheet.container}> 
+        <KeyboardAvoidingView style={styleSheet.container} behavior={Platform.OS === 'ios' && 'padding'}> 
             <Text style={styleSheet.headerStyle}>Log in</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
@@ -139,7 +139,8 @@ const LogInScreen = () => {
             disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
                 <Text style={styleSheet.buttonTextStyle}>Log in</Text>
             </TouchableOpacity>
-        </View>
+            
+        </KeyboardAvoidingView>
     )
 }
 
