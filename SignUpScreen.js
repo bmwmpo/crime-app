@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { auth } from './config/firebase_config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { Alert, Text, TextInput, TouchableOpacity,View, Pressable } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity,View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 import { db } from './config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore'
@@ -106,7 +106,7 @@ const SignUpScreen = () => {
     }
 
     return(
-        <View style={styleSheet.container}> 
+        <KeyboardAvoidingView style={styleSheet.container} behavior={Platform.OS === 'ios' && 'padding'}> 
             <Text style={styleSheet.headerStyle}>Welcome</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
@@ -168,7 +168,7 @@ const SignUpScreen = () => {
             disabled={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength}>
                 <Text style={styleSheet.buttonTextStyle}>Create account</Text>
             </TouchableOpacity>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
