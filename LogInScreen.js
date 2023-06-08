@@ -98,6 +98,7 @@ const LogInScreen = () => {
                         autoCapitalize='none'
                         autoCorrect={false}
                         keyboardType='email-address'
+                        autoFocus={true}
                     />
                     {
                         !(email === '') && 
