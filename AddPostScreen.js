@@ -72,6 +72,7 @@ const AddPostScreen = () =>{
             value={title} 
             onChangeText={handleTitleTextChange}
             multiline={true}
+            autoFocus={true}
             />
             {/* body text input */}
             <TextInput 

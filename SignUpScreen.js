@@ -124,6 +124,7 @@ const SignUpScreen = () => {
                         autoCapitalize='none'
                         autoCorrect={false}
                         keyboardType='email-address'
+                        autoFocus={true}
                     />
                     {
                         !(email === '') && 
