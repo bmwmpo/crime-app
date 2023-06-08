@@ -15,7 +15,7 @@ const MapScreen =()=>{
 
     const [polyCoord, setPoly] = React.useState()
     
-getApi=()=>{
+getApi=async()=>{
 
     // return fetch(`https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/datastore_search?resource_id=34e4206d-549e-4957-a0da-093d703a1c62&q=${2022}&limit=1`)
     return fetch(`https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/datastore_search?resource_id=58b33705-45f0-4796-a1a7-5762cc152772&limit=1`)

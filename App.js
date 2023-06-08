@@ -6,19 +6,21 @@ import 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import AddPostScreen from './AddPostScreen';
+import MapScreen from './MapScreen';
 import UserLogInSignUpStack from './UserLogInSignUpStack';
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
         
-  const [DrawerOpened,setDrawerOpened] = React.useState(false)
+  //const [DrawerOpened,setDrawerOpened] = useState(false)
 
   return (
     <NavigationContainer>
       <Drawer.Navigator>
         <Drawer.Screen name="Posting" component={AddPostScreen}/>
         <Drawer.Screen name="LogInSignUp" component={UserLogInSignUpStack}/>
+        <Drawer.Screen name="Map" component={MapScreen}/>
       </Drawer.Navigator>
     </NavigationContainer>
     // <View style={styles.container}>

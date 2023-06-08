@@ -166,8 +166,10 @@ const AddPostScreen = () =>{
                 <TouchableOpacity onPress={onShare} >
                     <Icon name='share-social-outline' size={40} color='#000000'/>
                 </TouchableOpacity>
-                <Button title="Photo" onPress={selectPhoto}/>
-                <Button title="Upload" onPress={uploadPhoto}/>
+                <TouchableOpacity onPress={selectPhoto} >
+                    <Icon name='image-outline' size={40} color='#000000'/>
+                </TouchableOpacity>
+                {/* <Button title="Upload" onPress={uploadPhoto}/> */}
             </View>
            
         </KeyboardAvoidingView>
