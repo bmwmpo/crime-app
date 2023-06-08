@@ -78,7 +78,6 @@
         height: 50,
         alignItems:'center',
         justifyContent:'center',
-<<<<<<< Updated upstream
         borderRadius:5,
         marginVertical: 30
     },
@@ -118,29 +117,6 @@
         justifyContent:'center',
         width:'100%'
     }
-=======
-        borderRadius:5
-    },
-
-    //HomeScreen
-    
-    NaviButton:{
-        margin:5,
-        paddingHorizontal:20,
-        paddingVertical: 5,
-        color:'#000000',
-        backgroundColor:'#ded9d9',
-        alignSelf:'center'
-    },
-
-    //MapScreen
-    MapContainer:{
-        borderColor:'red',
-        borderWidth: 5,
-        borderStyle:'solid'
-    },
-
->>>>>>> Stashed changes
 });
 
 export default styleSheet;
