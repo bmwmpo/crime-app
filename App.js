@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AddPostScreen from './AddPostScreen';
 import MapScreen from './MapScreen';
 import UserLogInSignUpStack from './UserLogInSignUpStack';
-import RouteScreen from './RouteScreen';
+//import RouteScreen from './RouteScreen';
 import BottomTabNavigation from './BottomTabNavigation';
 import { auth } from './config/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
