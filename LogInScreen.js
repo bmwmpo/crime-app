@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/aut
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import styleSheet from './assets/StyleSheet';
+import EnumString from './assets/EnumString';
 
 const LogInScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ const LogInScreen = ({navigation}) => {
             navigation.navigate("BottomTabNavigation")
         }
         catch(err){
-            Alert.alert('Error', 'Invalid email address or password');
+            Alert.alert('Error', EnumString.invaildEmaillPassword);
             setIsLoading(false);
             console.log(err);
         }
@@ -49,9 +50,9 @@ const LogInScreen = ({navigation}) => {
 
     //verify the email address
     const isVaildEmailAddress = (newText) => {
-        const regex = /^[\w\.\-\_\&\*\&\%\$\#\!]+@[\w]+\.[\w]{2,4}$/
+        const regex = EnumString.emailRegex;
 
-        const result = regex.test(newText)
+        const result = regex.test(newText);
 
         setVaildEmailFormat(result);
 
@@ -79,8 +80,7 @@ const LogInScreen = ({navigation}) => {
         try{
             await sendPasswordResetEmail(auth, email);
             
-            Alert.alert('Password reset email sent', 
-            `We sent instruction to change your password to ${email}, please check both your inbox and spam folder.`);
+            Alert.alert(EnumString.resetPasswordAlertTitle, EnumString.resetPasswordMsg(email));
         }
         catch(err){
             console.log(`${err.message}`);
@@ -94,7 +94,7 @@ const LogInScreen = ({navigation}) => {
     
     return(
         <KeyboardAvoidingView style={styleSheet.container} behavior={Platform.OS === 'ios' && 'padding'}> 
-            <Text style={styleSheet.headerStyle}>Log in</Text>
+            <Text style={styleSheet.headerStyle}>Log in to Toronto Crime Tracker</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
                 <View style={errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
@@ -139,19 +139,25 @@ const LogInScreen = ({navigation}) => {
                     }
                 </Pressable>
                 </View>
+                {/* forgot password button */}
                 <Pressable onPress={handleForgotPassword}>
-                    <Text style={styleSheet.forgotPasswordTextStyle}>Forgot your password?</Text>
+                    <Text style={styleSheet.underLineTextStyle}>Forgot your password?</Text>
                 </Pressable>
             </View>
+            {/* Log in button */}
             <TouchableOpacity 
             style={isEmailAddressPasswordEmpty() || !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
             onPress={handleLogin} 
             disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
                 <Text style={styleSheet.buttonTextStyle}>Log in</Text>
             </TouchableOpacity>
-            <Pressable onPress={toSignUpScreen}>
-                <Text style={styleSheet.forgotPasswordTextStyle}>Don't have an account? Sign Up here</Text>
-            </Pressable>
+            {/* Go to Sign Up Screen*/}
+            <View style={styleSheet.flexRowContainer}>
+                <Text style={styleSheet.textStyle}>Don't have an account? </Text>
+                <Pressable onPress={toSignUpScreen}>
+                    <Text style={styleSheet.underLineTextStyle}>Sign Up here</Text>
+                </Pressable>
+            </View>
         </KeyboardAvoidingView>
     )
 }
