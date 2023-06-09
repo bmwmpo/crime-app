@@ -7,7 +7,7 @@ import styleSheet from './assets/StyleSheet';
 import { db } from './config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore'
 
-const SignUpScreen = () => {
+const SignUpScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
@@ -33,6 +33,8 @@ const SignUpScreen = () => {
             }
 
             const docAdded = await addDoc(collectionRef, data);
+
+            navigation.navigate('BottomTabNavigation', {screen:'Map'});
         }
         catch(err){
             Alert.alert("Error", err.message);
@@ -45,7 +47,6 @@ const SignUpScreen = () => {
 
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
             saveUserInfoInFirestore(userCredentials.user);
-            Alert.alert('OK', '');
         }
         catch(err){
             Alert.alert('Error', 'Email is already registered');
