@@ -1,56 +1,60 @@
  import { StyleSheet } from "react-native";
  
  const styleSheet = StyleSheet.create({
-    //Login Screen and SignUp Screen
+     //Login Screen and SignUp Screen
     container: {
-      flex: 1,
-      backgroundColor: '#808080',
-      alignItems: 'center',
-      paddingHorizontal: 50,
-      justifyContent: 'center',
+         flex: 1,
+         backgroundColor: '#34282C',
+         alignItems: 'center',
+         justifyContent: 'center',
     },
     formatContainer:{
-        marginBottom:25,
-        width:'120%',
+        marginBottom:35,
         height:50,
     },
     inputContainer:{
         flexDirection:'row',
-        backgroundColor:'#d3d3d3',
-        //width:'120%',
+        backgroundColor:'#3D3C3A',
+        width:'90%',
         //height: 50,
         borderWidth: 1,
         borderColor:'#ccc',
         borderRadius: 5,
         padding:10,
+     },
+    flexRowContainer: {
+        flexDirection:'row'    
     },
     errorInputContainer:{
         flexDirection:'row',
-        backgroundColor:'#d3d3d3',
-        // width:'120%',
+        backgroundColor:'#3D3C3A',
+        width:'90%',
         // height: 50,
         borderWidth: 2,
-        borderColor:'#ff0000',
+        borderColor:'#F70D1A',
         borderRadius: 5,
         padding:10,
     },
     headerStyle:{
         marginBottom: 30,
-        fontSize: 30
+        fontSize: 25,
+        fontWeight: 'bold',
+        color:'#E5E4E2'
     },
     errorTextStyle:{
         fontSize: 15,
-        color:'#ff0000',
+        color:'#F70D1A',
     },
-    forgotPasswordTextStyle:{
+    underLineTextStyle:{
         fontSize: 15,
-        color:'#0000cd',
+        color:'#ff4500',
         textDecorationLine:'underline'
+     },
+    textStyle: {
+        fontSize: 15,
+        fontWeight:'bold'
     },
-    // errorInputStyle:{
-    //     width:'100%',
-    //     height:50,
-    //     borderWidth: 1,
+    // e,
     //     borderColor:'##ff4500',
     //     borderRadius: 5,
     //     padding:5,
@@ -65,7 +69,7 @@
     },
     buttonStyle:{
         backgroundColor: '#ff4500',
-        width: '120%',
+        width: '90%',
         height: 50,
         alignItems:'center',
         justifyContent:'center',
@@ -73,8 +77,8 @@
         marginVertical: 30
     },
     disabledButtonStyle:{
-        backgroundColor: '#a9a9a9',
-        width: '120%',
+        backgroundColor: '#686A6C',
+        width: '90%',
         height: 50,
         alignItems:'center',
         justifyContent:'center',
