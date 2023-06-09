@@ -9,7 +9,7 @@ import {
   StackedBarChart,
 } from "react-native-chart-kit";
 
-export default function App() {
+export default function ChartScreen() {
   return (
     <View style={styles.container}>
       <Text>Stats</Text>

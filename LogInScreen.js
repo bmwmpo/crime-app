@@ -5,12 +5,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, StyleSheet, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 
-const LogInScreen = () => {
+const LogInScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
     const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
-    const [errorTextInput, setErrorTextInput] = useState(false)
+    const [errorTextInput, setErrorTextInput] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -22,12 +23,17 @@ const LogInScreen = () => {
     const handleLogin = async () => {
         try {
 
+            setIsLoading(true);
             const userCredentials = await signInWithEmailAndPassword (auth, email, password);
-            Alert.alert('OK', '');
+            navigation.navigate("BottomTabNavigation")
         }
         catch(err){
             Alert.alert('Error', 'Invalid email address or password');
+            setIsLoading(false);
             console.log(err);
+        }
+        finally{
+            setIsLoading(false)
         }
     }
 
@@ -81,8 +87,11 @@ const LogInScreen = () => {
             setErrorTextInput(true);
         }
     }
-    
 
+    const toSignUpScreen = () =>{
+        navigation.navigate('SignUp');
+    }
+    
     return(
         <KeyboardAvoidingView style={styleSheet.container} behavior={Platform.OS === 'ios' && 'padding'}> 
             <Text style={styleSheet.headerStyle}>Log in</Text>
@@ -140,7 +149,9 @@ const LogInScreen = () => {
             disabled={isEmailAddressPasswordEmpty() || !vaildEmailFormat}>
                 <Text style={styleSheet.buttonTextStyle}>Log in</Text>
             </TouchableOpacity>
-            
+            <Pressable onPress={toSignUpScreen}>
+                <Text style={styleSheet.forgotPasswordTextStyle}>Don't have an account? Sign Up here</Text>
+            </Pressable>
         </KeyboardAvoidingView>
     )
 }
