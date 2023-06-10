@@ -5,7 +5,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { Alert, Text, TextInput, TouchableOpacity,View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 import { db } from './config/firebase_config';
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc } from 'firebase/firestore';
+import EnumString from './assets/EnumString';
 
 const SignUpScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -19,10 +20,10 @@ const SignUpScreen = ({navigation}) => {
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
 
-    //delete email input
+    //delete the email text input
     const deletePress = () => setEmail('');
 
-    //save new user infomation in firestore
+    //save the new user infomation in firestore
     const saveUserInfoInFirestore = async ({email, uid})=>{
         try{
             const collectionRef = collection(db, 'UserInfo');
@@ -33,8 +34,6 @@ const SignUpScreen = ({navigation}) => {
             }
 
             const docAdded = await addDoc(collectionRef, data);
-
-            navigation.navigate('BottomTabNavigation', {screen:'Map'});
         }
         catch(err){
             Alert.alert("Error", err.message);
@@ -46,10 +45,13 @@ const SignUpScreen = ({navigation}) => {
         try {
 
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
-            saveUserInfoInFirestore(userCredentials.user);
+            await saveUserInfoInFirestore(userCredentials.user);
+
+            Alert.alert('Welcome');
+            navigation.navigate('BottomTabNavigation', {screen:'Map'});
         }
         catch(err){
-            Alert.alert('Error', 'Email is already registered');
+            Alert.alert(EnumString.signUpFailed, EnumString.emailAlreadyInUse);
             console.log(err);
         }
     }
@@ -66,13 +68,10 @@ const SignUpScreen = ({navigation}) => {
 
     //verify the email address
     const isValidEmailAddress = (newText) => {
-        const regex = /^[\w\.\-\_\&\*\&\%\$\#\!]+@[\w]+\.[\w]{2,4}$/
-
+        const regex = EnumString.emailRegex;
         const result = regex.test(newText)
 
         setValidEmailFormat(result);
-
-        console.log('email',result,newText, validEmailFormat);
     }
 
     //verify the password length
@@ -107,14 +106,15 @@ const SignUpScreen = ({navigation}) => {
     }
 
     return(
-        <KeyboardAvoidingView style={styleSheet.container} behavior={Platform.OS === 'ios' && 'padding'}> 
-            <Text style={styleSheet.headerStyle}>Welcome</Text>
+        <KeyboardAvoidingView style={[styleSheet.container, styleSheet.screenBackGroundColor]} behavior={Platform.OS === 'ios' && 'padding'}> 
+            <Text style={[styleSheet.headerStyle, styleSheet.textColor]}>Welcome to Toronro Crime Tracker</Text>
             {/* email text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={errorTextEmail ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
+                <View style={[errorTextEmail ? styleSheet.errorInputContainer : styleSheet.inputContainer, styleSheet.textInputBackGroundColor]}>
                     <TextInput 
-                        style={styleSheet.inputStyle}
+                        style={ [styleSheet.inputStyle, styleSheet.textColor] }
                         placeholder='Email address' 
+                        placeholderTextColor={ styleSheet.textColor.color }
                         value={email} 
                         onChangeText={onEmailTextChange}
                         onFocus={()=>{
@@ -130,7 +130,7 @@ const SignUpScreen = ({navigation}) => {
                     {
                         !(email === '') && 
                         <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
-                            <Icon name='close-circle-outline' size={20}/>
+                            <Icon name='close-circle-outline' size={25}/>
                         </Pressable>
                     }
                 </View>
@@ -139,10 +139,11 @@ const SignUpScreen = ({navigation}) => {
             </View>
             {/* password text input */}
             <View style={styleSheet.formatContainer}>
-                <View style={errorTextPassword ? styleSheet.errorInputContainer : styleSheet.inputContainer}>
-                    <View style={styleSheet.inputStyle}>
-                        <TextInput 
+                <View style={[errorTextPassword ? styleSheet.errorInputContainer : styleSheet.inputContainer, styleSheet.textInputBackGroundColor]}>
+                    <TextInput 
+                        style={ [styleSheet.inputStyle, styleSheet.textColor] }
                         placeholder='Password' 
+                        placeholderTextColor={ styleSheet.textColor.color }
                         value={password} 
                         onChangeText={onPasswordTextChange}
                         secureTextEntry={hidePassword}
@@ -153,11 +154,10 @@ const SignUpScreen = ({navigation}) => {
                             showEmailError();  
                         }}
                         />
-                    </View>
                 <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
                     {
                         //shows or hides password eye icon
-                        hidePassword ? <Icon name='eye-outline' size={20}/> : <Icon name='eye-off-outline' size={20}/> 
+                        hidePassword ? <Icon name='eye-outline' size={25}/> : <Icon name='eye-off-outline' size={25}/> 
                     }
                 </Pressable>
                 </View>

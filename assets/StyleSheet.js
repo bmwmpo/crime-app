@@ -47,6 +47,7 @@
         marginBottom: 30,
         fontSize: 25,
         fontWeight: 'bold',
+        textAlign:'center'
     },
     errorTextStyle:{
         fontSize: 15,
