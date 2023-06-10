@@ -2,9 +2,20 @@
  
  const styleSheet = StyleSheet.create({
      //Login Screen and SignUp Screen
+     screenBackGroundColor: {
+        backgroundColor: '#0C090A',
+     },
+     textInputBackGroundColor: {
+         backgroundColor:'#3D3C3A',
+     },
+    errorTextInputBorderColor: {
+         backgroundColor:'#3D3C3A',
+     },
+     textColor: {
+        color:'#E5E4E2'
+     },
     container: {
          flex: 1,
-         backgroundColor: '#34282C',
          alignItems: 'center',
          justifyContent: 'center',
     },
@@ -14,20 +25,17 @@
     },
     inputContainer:{
         flexDirection:'row',
-        backgroundColor:'#3D3C3A',
         width:'90%',
         //height: 50,
         borderWidth: 1,
-        borderColor:'#ccc',
         borderRadius: 5,
-        padding:10,
+        padding: 10,
      },
     flexRowContainer: {
         flexDirection:'row'    
     },
     errorInputContainer:{
         flexDirection:'row',
-        backgroundColor:'#3D3C3A',
         width:'90%',
         // height: 50,
         borderWidth: 2,
@@ -39,7 +47,6 @@
         marginBottom: 30,
         fontSize: 25,
         fontWeight: 'bold',
-        color:'#E5E4E2'
     },
     errorTextStyle:{
         fontSize: 15,
@@ -54,14 +61,9 @@
         fontSize: 15,
         fontWeight:'bold'
     },
-    // e,
-    //     borderColor:'##ff4500',
-    //     borderRadius: 5,
-    //     padding:5,
-    //     marginBottom: 20,
-    // },
     inputStyle:{
-        flex:9
+        flex: 9,
+        fontSize:18
     },
     iconStyle:{
         justifyContent:'center',
