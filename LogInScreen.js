@@ -28,13 +28,15 @@ const LogInScreen = ({navigation}) => {
         try {
 
             setIsLoading(true);
-            const userCredentials = await signInWithEmailAndPassword (auth, email, password);
-            navigation.navigate("BottomTabNavigation")
+            const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+            
+            Alert.alert('Welcome');
+            navigation.navigate("BottomTabNavigation");
         }
         catch(err){
             Alert.alert('Error', EnumString.invaildEmaillPassword);
             setIsLoading(false);
-            console.error(err);
+            console.log(err);
         }
         finally{
             setIsLoading(false)
@@ -83,7 +85,7 @@ const LogInScreen = ({navigation}) => {
             Alert.alert(EnumString.resetPasswordAlertTitle, EnumString.resetPasswordMsg(email));
         }
         catch(err){
-            console.error(err.message);
+            console.log(err.message);
             setErrorTextInput(true);
         }
     }
