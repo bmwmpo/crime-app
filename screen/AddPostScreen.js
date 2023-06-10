@@ -1,10 +1,10 @@
 import { View,Text, TextInput, StatusBar, Button, Pressable, 
     TouchableOpacity, KeyboardAvoidingView, Platform, Share, Alert,Image } from "react-native";
-import styleSheet from "./assets/StyleSheet";
+import styleSheet from "../assets/StyleSheet";
 import { useState,useEffect } from "react";
-import { db } from './config/firebase_config';
+import { db } from '../config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore';
-import { storage } from './config/firebase_config';
+import { storage } from '../config/firebase_config';
 import { ref,uploadBytes,getDownloadURL } from 'firebase/storage'
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';

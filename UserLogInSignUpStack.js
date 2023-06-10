@@ -1,6 +1,6 @@
 import {createNativeStackNavigator } from '@react-navigation/native-stack';
-import LogInScreen from './LogInScreen';
-import SignUpScreen from './SignUpScreen';
+import LogInScreen from './screen/LogInScreen';
+import SignUpScreen from './screen/SignUpScreen';
 import { Button, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 

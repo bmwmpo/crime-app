@@ -2,7 +2,7 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 
 import React from 'react';
-import styleSheet from './assets/StyleSheet';
+import styleSheet from '../assets/StyleSheet';
 
 
 const HomeScreen = ({navigation, route}) => {

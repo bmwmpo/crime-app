@@ -3,8 +3,8 @@ import 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import AddPostScreen from './AddPostScreen';
-import MapScreen from './MapScreen';
+import AddPostScreen from './screen/AddPostScreen';
+import MapScreen from './screen/MapScreen';
 import UserLogInSignUpStack from './UserLogInSignUpStack';
 //import RouteScreen from './RouteScreen';
 import BottomTabNavigation from './BottomTabNavigation';
