@@ -14,6 +14,9 @@ const styleSheet = StyleSheet.create({
     textColor: {
        color:'#E5E4E2'
     },
+    highLightTextColor:{
+        color:'#ff4500',
+    },
    container: {
         flex: 1,
         alignItems: 'center',
@@ -55,7 +58,6 @@ const styleSheet = StyleSheet.create({
    },
    underLineTextStyle:{
        fontSize: 15,
-       color:'#ff4500',
        textDecorationLine:'underline'
     },
    textStyle: {
@@ -123,7 +125,12 @@ const styleSheet = StyleSheet.create({
        alignItems:'center',
        justifyContent:'center',
        width:'100%'
-   }
+   },
+   drawerContainer:{
+        flexDirection:'row', 
+        justifyContent:'space-between'
+    },
+
 });
 
 export default styleSheet;

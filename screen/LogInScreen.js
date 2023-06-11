@@ -8,6 +8,7 @@ import
     } from 'react-native';
 import styleSheet from '../assets/StyleSheet';
 import EnumString from '../assets/EnumString';
+import {HelperText} from 'react-native-paper'
 
 const LogInScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -59,6 +60,8 @@ const LogInScreen = ({navigation}) => {
         const result = regex.test(newText);
 
         setVaildEmailFormat(result);
+
+        return result;
     }
 
     //update and verify the email state value
@@ -114,7 +117,7 @@ const LogInScreen = ({navigation}) => {
                     {
                         !(email === '') &&
                         <Pressable style={ styleSheet.iconStyle } onPress={ deletePress }>
-                            <Icon name='close-circle-outline' size={ 25 } />
+                            <Icon name='close-circle-outline' size={ 25 } color={styleSheet.textColor.color}/>
                         </Pressable>
                     }
                 </View>
@@ -137,13 +140,14 @@ const LogInScreen = ({navigation}) => {
                     <Pressable style={ styleSheet.iconStyle } onPress={ showHidePasswordPress }>
                         {
                             //shows or hides password eye icon
-                            hidePassword ? <Icon name='eye-outline' size={ 25 } /> : <Icon name='eye-off-outline' size={ 25 } />
+                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={styleSheet.textColor.color}/> 
+                            : <Icon name='eye-off-outline' size={ 25 } color={styleSheet.textColor.color}/>
                         }
                     </Pressable>
                 </View>
                 {/* forgot password button */ }
                 <Pressable onPress={ handleForgotPassword }>
-                    <Text style={ styleSheet.underLineTextStyle }>Forgot your password?</Text>
+                    <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor] }>Forgot your password?</Text>
                 </Pressable>
             </View>
             {/* Log in button */ }
@@ -159,7 +163,7 @@ const LogInScreen = ({navigation}) => {
             <View style={ styleSheet.flexRowContainer }>
                 <Text style={ [styleSheet.textStyle, styleSheet.textColor] }>Don't have an account? </Text>
                 <Pressable onPress={ toSignUpScreen }>
-                    <Text style={ styleSheet.underLineTextStyle }>Sign Up here</Text>
+                    <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor]}>Sign Up here</Text>
                 </Pressable>
             </View>
         </KeyboardAvoidingView>
