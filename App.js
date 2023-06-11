@@ -9,16 +9,16 @@ import BottomTabNavigation from './BottomTabNavigation';
 import { auth } from './config/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
-import customDrawer from './CustomDrawer';
+import CustomDrawer from './CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Text} from 'react-native';
+import { Pressable, Text } from 'react-native';
+import styleSheet from './assets/StyleSheet';
+import { PaperProvider } from 'react-native-paper';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-export default function App() {
-        
-  //const [DrawerOpened,setDrawerOpened] = useState(false)
+export default function App() {   
   const [currentUser, setCurrentuser] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -32,48 +32,33 @@ export default function App() {
   },[]);
 
   return (
+    <PaperProvider>
     <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
       {/* <Stack.Navigator>
         <Stack.Screen name="RouteScreen" component={RouteScreen}/>
       </Stack.Navigator> */}
-      <Drawer.Navigator 
-      initialRouteName='BottomTabNavigation' 
-      screenOptions={
-        {
-          headerTitle:'', 
-          drawerStyle:{width:'60%'}
-        }
-      }
-      drawerContent={(props) => customDrawer(props, currentUser, isDarkMode, setIsDarkMode)}
-      >
-        <Drawer.Screen name="BottomTabNavigation" 
-        component={BottomTabNavigation} 
-        options={
+      <Drawer.Navigator initialRouteName='BottomTabNavigation'
+        screenOptions={ ({ navigation}) =>(
           {
-            drawerItemStyle:{display:'none'}
-          }
-        }/>
-        {!currentUser && 
-          <Drawer.Screen name="SignInSignUp" component={UserLogInSignUpStack}
-          options={
-            {
-              headerShown:false, 
-              //drawerIcon:({focused, size, color}) => (<Icon name='person-circle-outline' size={size} color={color}/>)
-            }
-          }
-          />}
-    </Drawer.Navigator>
-      {/* <Drawer.Navigator>
-        <Drawer.Screen name="Posting" component={AddPostScreen}/>
-        <Drawer.Screen name="LogInSignUp" component={UserLogInSignUpStack}/>
-        <Drawer.Screen name="Map" component={MapScreen}/>
-      </Drawer.Navigator> */}
-    </NavigationContainer>
-    // <View style={styles.container}>
-    //   <Text>Open up App.js to start working on your app!</Text>
-    //   <StatusBar style="auto" />
-    // </View>
-    //<AddPostScreen/>
+            headerTitle: '',
+            drawerStyle: { width: '60%' },
+            headerLeft: () => (<Pressable>
+              <Icon name='list-outline'
+                color={ isDarkMode ? styleSheet.textColor.color : styleSheet.lightModeColor.color }
+                size={ 30 }
+                style={ { marginHorizontal: '10%' } }
+                onPress={()=>navigation.toggleDrawer()}
+              />
+            </Pressable>)
+          })
+        }
+        drawerContent={ props => <CustomDrawer { ...props } isDarkMode={ isDarkMode } setIsDarkMode={ setIsDarkMode } currentUser={ currentUser} /> }
+      >
+        <Drawer.Screen name="BottomTabNavigation" component={ BottomTabNavigation } />
+        <Drawer.Screen name="SignInSignUp" component={ UserLogInSignUpStack } options={ { headerShown: false } } />
+      </Drawer.Navigator>
+      </NavigationContainer>
+      </PaperProvider>
   );
 }
 

@@ -2,6 +2,12 @@ import { StyleSheet } from "react-native";
  
 const styleSheet = StyleSheet.create({
     //Login Screen and SignUp Screen
+    flex_9: {
+        flex:9
+    },
+    flex_1: {
+        flex:1
+    },
     screenBackGroundColor: {
        backgroundColor: '#0C090A',
     },
@@ -14,8 +20,14 @@ const styleSheet = StyleSheet.create({
     textColor: {
        color:'#E5E4E2'
     },
+    lightModeColor: {
+        color:'#0C090A'
+    },
     highLightTextColor:{
         color:'#ff4500',
+    },
+    logoutColor: {
+        color:'#E41B17'
     },
    container: {
         flex: 1,
@@ -126,11 +138,17 @@ const styleSheet = StyleSheet.create({
        justifyContent:'center',
        width:'100%'
    },
-   drawerContainer:{
-        flexDirection:'row', 
-        justifyContent:'space-between'
+    drawerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center'
     },
-
+    drawerTextStyle: {
+        textAlign: 'left',
+        marginHorizontal: '10%',
+        fontWeight: 'bold',
+        width:'80%'
+    },
 });
 
 export default styleSheet;

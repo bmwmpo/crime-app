@@ -7,6 +7,7 @@ import styleSheet from '../assets/StyleSheet';
 import { db } from '../config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore';
 import EnumString from '../assets/EnumString';
+import { StatusBar } from 'expo-status-bar';
 
 const SignUpScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -130,7 +131,7 @@ const SignUpScreen = ({navigation}) => {
                     {
                         !(email === '') && 
                         <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
-                            <Icon name='close-circle-outline' size={25}/>
+                                <Icon name='close-circle-outline' size={ 25 } color={ styleSheet.textColor.color } />
                         </Pressable>
                     }
                 </View>
@@ -157,7 +158,8 @@ const SignUpScreen = ({navigation}) => {
                 <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
                     {
                         //shows or hides password eye icon
-                        hidePassword ? <Icon name='eye-outline' size={25}/> : <Icon name='eye-off-outline' size={25}/> 
+                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={ styleSheet.textColor.color } />
+                                : <Icon name='eye-off-outline' size={ 25 } color={ styleSheet.textColor.color }/> 
                     }
                 </Pressable>
                 </View>

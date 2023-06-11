@@ -3,6 +3,7 @@ import LogInScreen from './screen/LogInScreen';
 import SignUpScreen from './screen/SignUpScreen';
 import { Button, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import styleSheet from './assets/StyleSheet';
 
 const Stack =  createNativeStackNavigator();
 
@@ -21,11 +22,11 @@ const UserLogInSignUpStack = ({navigation})=>{
     >
         <Stack.Screen name="LogIn" component={LogInScreen} options={({route}) => ({
             headerLeft:() => <Pressable onPress={cancelPress}>
-                <Icon name='close-circle-outline' size={30}/>
+                <Icon name='close-circle-outline' size={ 30 }/>
             </Pressable>,
             headerTitle:''
         })}/>
-        <Stack.Screen name="SignUp" component={SignUpScreen}/>
+            <Stack.Screen name="SignUp" component={ SignUpScreen } options={ {headerTitle:''} }/>
     </Stack.Navigator>);
 };
 
