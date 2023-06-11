@@ -1,5 +1,7 @@
-import { View,Text, TextInput, StatusBar, Button, Pressable, 
-    TouchableOpacity, KeyboardAvoidingView, Platform, Share, Alert,Image } from "react-native";
+import
+    {
+        View, Text, TextInput, Button, Pressable, 
+    TouchableOpacity, KeyboardAvoidingView, Platform, Share, Alert,Image, SafeAreaView } from "react-native";
 import styleSheet from "../assets/StyleSheet";
 import { useState,useEffect } from "react";
 import { db } from '../config/firebase_config';
@@ -133,9 +135,9 @@ const AddPostScreen = () =>{
         setTitle(newText);
     }
 
-    return(
-        <KeyboardAvoidingView style={styleSheet.postingContainer} keyboardVerticalOffset={200} behavior={Platform.OS === 'ios' && 'height'}>
-            <StatusBar style='auto'/>
+    return (
+        <KeyboardAvoidingView style={ styleSheet.postingContainer }
+            keyboardVerticalOffset={ 200 } behavior={ Platform.OS === 'ios' && 'height' }> 
             {/* title text input */}
             <View style={styleSheet.titleBodyContainer}>
             <TextInput 
@@ -171,7 +173,6 @@ const AddPostScreen = () =>{
                 </TouchableOpacity>
                 {/* <Button title="Upload" onPress={uploadPhoto}/> */}
             </View>
-           
         </KeyboardAvoidingView>
     );
 }

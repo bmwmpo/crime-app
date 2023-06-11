@@ -13,7 +13,6 @@ export default function ChartScreen() {
   return (
     <View style={styles.container}>
       <Text>Stats</Text>
-      <StatusBar style="auto" />
       <Text>Bezier Line Chart</Text>
       <LineChart
         //sample data
