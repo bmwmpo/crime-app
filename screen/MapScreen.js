@@ -36,9 +36,9 @@ getApi=async()=>{
     .then((response)=>response.json())
     .then((json)=>{
         setdata(json.result.records);
-        console.log((json.result.records[0].AREA_NAME))
+        //console.log((json.result.records[0].AREA_NAME))
         setflag(true)
-        console.log(apiFlag)
+        //console.log(apiFlag)
         setPoly(JSON.parse(json.result.records[0].geometry).coordinates[0])
 
     })
@@ -49,8 +49,8 @@ getApi=async()=>{
 }
 
 const apiGot=()=>{
-    console.log("api got")
-    console.log(polyCoord)
+   // console.log("api got")
+   // console.log(polyCoord)
 
     if(polyCoord!=default_poly){
         var temp_obj = new Region("published_region",0,0,0,0,0,0,0,0,0,polyCoord)
@@ -60,8 +60,8 @@ const apiGot=()=>{
 }
  
 useEffect(()=>{
-    console.log("data to class Obj")
-    console.log(Region_Obj.region_geo)
+   // console.log("data to class Obj")
+    //console.log(Region_Obj.region_geo)
 },[Region_Obj])
 
 useEffect(()=>{getApi()},[]) 

@@ -1,10 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import AddPostScreen from './screen/AddPostScreen';
-import MapScreen from './screen/MapScreen';
 import UserLogInSignUpStack from './UserLogInSignUpStack';
 //import RouteScreen from './RouteScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -13,11 +11,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import customDrawer from './CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from '@react-navigation/drawer';
+import {Text} from 'react-native';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -26,6 +20,7 @@ export default function App() {
         
   //const [DrawerOpened,setDrawerOpened] = useState(false)
   const [currentUser, setCurrentuser] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(()=>{
     return onAuthStateChanged(auth, (user) => {
@@ -37,7 +32,7 @@ export default function App() {
   },[]);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
       {/* <Stack.Navigator>
         <Stack.Screen name="RouteScreen" component={RouteScreen}/>
       </Stack.Navigator> */}
@@ -49,7 +44,7 @@ export default function App() {
           drawerStyle:{width:'60%'}
         }
       }
-      drawerContent={(props) => customDrawer(props, currentUser)}
+      drawerContent={(props) => customDrawer(props, currentUser, isDarkMode, setIsDarkMode)}
       >
         <Drawer.Screen name="BottomTabNavigation" 
         component={BottomTabNavigation} 
@@ -63,9 +58,10 @@ export default function App() {
           options={
             {
               headerShown:false, 
-              drawerIcon:({focused, size, color}) => (<Icon name='person-circle-outline' size={size} color={color}/>)
+              //drawerIcon:({focused, size, color}) => (<Icon name='person-circle-outline' size={size} color={color}/>)
             }
-          }/>}
+          }
+          />}
     </Drawer.Navigator>
       {/* <Drawer.Navigator>
         <Drawer.Screen name="Posting" component={AddPostScreen}/>
