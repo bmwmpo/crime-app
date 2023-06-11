@@ -2,13 +2,13 @@ import 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import UserLogInSignUpStack from './UserLogInSignUpStack';
+import UserLogInSignUpStack from './navigation/UserLogInSignUpStack';
 //import RouteScreen from './RouteScreen';
-import BottomTabNavigation from './BottomTabNavigation';
+import BottomTabNavigation from './navigation/BottomTabNavigation';
 import { auth } from './config/firebase_config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
-import CustomDrawer from './CustomDrawer';
+import CustomDrawer from './navigation/CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Pressable, Text } from 'react-native';
 import styleSheet from './assets/StyleSheet';
