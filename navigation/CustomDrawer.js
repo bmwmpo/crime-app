@@ -1,10 +1,10 @@
 import { DrawerContentScrollView, DrawerItemList, DrawerItem} from '@react-navigation/drawer';
-import { auth } from './config/firebase_config';
+import { auth } from '../config/firebase_config';
 import { signOut } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Alert, Button, Text, View, SafeAreaView } from 'react-native';
 import { Drawer,Paragraph,Switch } from 'react-native-paper'
-import styleSheet from './assets/StyleSheet';
+import styleSheet from '../assets/StyleSheet';
 
 //custom drawer content
 const CustomDrawer = ({ navigation, currentUser, isDarkMode, setIsDarkMode }) =>
