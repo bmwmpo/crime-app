@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import 'react-native-gesture-handler';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
@@ -14,6 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Pressable, Text } from 'react-native';
 import styleSheet from './assets/StyleSheet';
 import { PaperProvider } from 'react-native-paper';
+import { StatusBar } from "expo-status-bar";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -33,6 +33,7 @@ export default function App() {
 
   return (
     <PaperProvider>
+      <StatusBar style={ isDarkMode ? 'light' : 'dark'} />
     <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
       {/* <Stack.Navigator>
         <Stack.Screen name="RouteScreen" component={RouteScreen}/>
