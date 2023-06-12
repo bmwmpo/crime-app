@@ -10,7 +10,6 @@ import { useTheme } from '@react-navigation/native';
 const Stack =  createNativeStackNavigator();
 
 const UserLogInSignUpStack = ({navigation, route})=>{
-
     const cancelPress = () => {
         navigation.navigate('BottomTabNavigation');
     }
@@ -31,7 +30,7 @@ const UserLogInSignUpStack = ({navigation, route})=>{
                     isDarkMode ? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color
                 }/>
             </Pressable>,
-            headerTitle:''
+                headerTitle: '',
         })}/>
             <Stack.Screen name="SignUp" component={ SignUpScreen } options={ {headerTitle:''} }/>
     </Stack.Navigator>);

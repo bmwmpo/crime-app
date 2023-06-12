@@ -8,6 +8,7 @@ import { db } from '../config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore';
 import EnumString from '../assets/EnumString';
 import { useTheme } from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
 
 const SignUpScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ const SignUpScreen = ({navigation}) => {
     const [validPasswordLength, setValidPasswordLength] = useState(false);
     const [errorTextEmail, setErrorTextEmail] = useState(false);
     const [errorTextPassword, setErrorTextPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const isDarkMode = useTheme().dark;
 
     //shows or hides the password
@@ -44,17 +46,31 @@ const SignUpScreen = ({navigation}) => {
 
     //sign up function
     const handleCreateNewAccount= async () => {
-        try {
+        try
+        {
+            //set is loading to ture
+            setIsLoading(true);
+            //hide the navigation header
+            navigation.setOptions({ headerShown: false });
 
+            //create new user in firebase
             const userCredentials = await createUserWithEmailAndPassword (auth, email, password);
             await saveUserInfoInFirestore(userCredentials.user);
 
             Alert.alert('Welcome');
+             //redirect to the Main Screen upon successful create new account
             navigation.navigate('BottomTabNavigation', {screen:'Map'});
         }
-        catch(err){
+        catch (err)
+        {
+            setIsLoading(false);
             Alert.alert(EnumString.signUpFailed, EnumString.emailAlreadyInUse);
             console.log(err);
+        }
+        finally
+        {
+            setIsLoading(false);
+            navigation.setOptions({ headerShown: true });
         }
     }
 
@@ -107,7 +123,9 @@ const SignUpScreen = ({navigation}) => {
             setErrorTextPassword(false);
     }
 
-    return(
+    return (
+        //display loading screen when isLoading is true, otherwise display sign up form
+        isLoading ? (<LoadingScreen />) : (
         <KeyboardAvoidingView style={ [styleSheet.container, isDarkMode? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] } behavior={Platform.OS === 'ios' && 'padding'}> 
             <Text style={[styleSheet.headerStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor]}>Welcome to Toronro Crime Tracker</Text>
             {/* email text input */}
@@ -175,7 +193,7 @@ const SignUpScreen = ({navigation}) => {
             disabled={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength}>
                 <Text style={styleSheet.buttonTextStyle}>Create account</Text>
             </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView>)
     )
 }
 

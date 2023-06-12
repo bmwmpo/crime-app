@@ -9,7 +9,7 @@ import
 import styleSheet from '../assets/StyleSheet';
 import EnumString from '../assets/EnumString';
 import { useTheme } from '@react-navigation/native';
-import {HelperText} from 'react-native-paper'
+import LoadingScreen from './LoadingScreen';
 
 const LogInScreen = ({navigation, route}) => {
     const [email, setEmail] = useState('');
@@ -28,12 +28,19 @@ const LogInScreen = ({navigation, route}) => {
 
     //login function
     const handleLogin = async () => {
-        try {
-
+        try
+        {
+            //set to is loading
             setIsLoading(true);
+            //hide the navigation header
+            navigation.setOptions({ headerShown: false });
+
+            //sign to firebase
             const userCredentials = await signInWithEmailAndPassword(auth, email, password);
             
             Alert.alert('Welcome');
+
+            //redirect to the Main Screen upon successful sign-in
             navigation.navigate("BottomTabNavigation");
         }
         catch(err){
@@ -43,6 +50,7 @@ const LogInScreen = ({navigation, route}) => {
         }
         finally{
             setIsLoading(false)
+            navigation.setOptions({ headerShown: true });
         }
     }
 
@@ -99,6 +107,8 @@ const LogInScreen = ({navigation, route}) => {
     const toSignUpScreen = () => navigation.navigate('SignUp');
     
     return (
+        //display loading screen when isLoading is true, otherwise display login form
+        isLoading ? (<LoadingScreen />) : (
         <KeyboardAvoidingView style={ [styleSheet.container, isDarkMode? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] } behavior={ Platform.OS === 'ios' && 'padding' }>
             <Text style={ [styleSheet.headerStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Log in to Toronto Crime Tracker</Text>
             {/* email text input */ }
@@ -141,18 +151,16 @@ const LogInScreen = ({navigation, route}) => {
                         autoCorrect={ false }
                         onFocus={ showError }
                     />
+                    {/* shows or hides password eye icon */ }
                     <Pressable style={ styleSheet.iconStyle } onPress={ showHidePasswordPress }>
-                        {
-                            //shows or hides password eye icon
-                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/> 
-                            : <Icon name='eye-off-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/>
-                        }
+                        <Icon name={ hidePassword ? 'eye-outline' : 'eye-off-outline' } size={ 25 }
+                            color={ isDarkMode ? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color } /> 
                     </Pressable>
                 </View>
                 {/* forgot password button */ }
-                <Pressable onPress={ handleForgotPassword }>
+                <TouchableOpacity onPress={ handleForgotPassword }>
                     <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor] }>Forgot your password?</Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
             {/* Log in button */ }
             <TouchableOpacity
@@ -166,11 +174,11 @@ const LogInScreen = ({navigation, route}) => {
             {/* Go to Sign Up Screen*/ }
             <View style={ styleSheet.flexRowContainer }>
                 <Text style={ [styleSheet.textStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Don't have an account? </Text>
-                <Pressable onPress={ toSignUpScreen }>
+                <TouchableOpacity onPress={ toSignUpScreen }>
                     <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor]}>Sign Up here</Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView>)
     );
 }
 
