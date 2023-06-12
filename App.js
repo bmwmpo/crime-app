@@ -43,20 +43,22 @@ export default function App() {
           {
             headerTitle: '',
             drawerStyle: { width: '60%' },
-            headerLeft: () => (<Pressable>
-              <Icon name='list-outline'
-                color={ isDarkMode ? styleSheet.textColor.color : styleSheet.lightModeColor.color }
-                size={ 30 }
-                style={ { marginHorizontal: '10%' } }
-                onPress={()=>navigation.toggleDrawer()}
-              />
+            headerStyle: {borderBottomWidth:1},
+            headerLeft: () => (
+              <Pressable>
+                <Icon name='list-outline'
+                  color={ isDarkMode ? styleSheet.textColor.color : styleSheet.lightModeColor.color }
+                  size={ 30 }
+                  style={ { marginHorizontal: '10%' } }
+                  onPress={()=>navigation.toggleDrawer()}
+                />
             </Pressable>)
           })
         }
         drawerContent={ props => <CustomDrawer { ...props } isDarkMode={ isDarkMode } setIsDarkMode={ setIsDarkMode } currentUser={ currentUser} /> }
       >
         <Drawer.Screen name="BottomTabNavigation" component={ BottomTabNavigation } />
-        <Drawer.Screen name="SignInSignUp" component={ UserLogInSignUpStack } options={ { headerShown: false } } />
+        <Drawer.Screen name="SignInSignUp" initialParams={ {isDarkMode} } component={ UserLogInSignUpStack } options={ { headerShown: false } } />
       </Drawer.Navigator>
       </NavigationContainer>
       </PaperProvider>

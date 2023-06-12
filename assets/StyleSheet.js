@@ -8,11 +8,17 @@ const styleSheet = StyleSheet.create({
     flex_1: {
         flex:1
     },
-    screenBackGroundColor: {
+    darkModeBackGroundColor: {
        backgroundColor: '#0C090A',
     },
-    textInputBackGroundColor: {
+    lightModeBackGroundColor: {
+       backgroundColor: '#FFFFFF',
+    },
+    darkModeTextInputBackGroundColor: {
         backgroundColor:'#3D3C3A',
+    },
+    lightModeTextInputBackGroundColor: {
+        backgroundColor:'#DCDCDC'
     },
    errorTextInputBorderColor: {
         backgroundColor:'#3D3C3A',
@@ -22,6 +28,9 @@ const styleSheet = StyleSheet.create({
     },
     lightModeColor: {
         color:'#0C090A'
+    },
+    darkModeColor: {
+        color:'#E5E4E2'
     },
     highLightTextColor:{
         color:'#ff4500',
@@ -42,7 +51,6 @@ const styleSheet = StyleSheet.create({
        flexDirection:'row',
        width:'90%',
        //height: 50,
-       borderWidth: 1,
        borderRadius: 5,
        padding: 10,
     },
