@@ -8,15 +8,17 @@ import
     } from 'react-native';
 import styleSheet from '../assets/StyleSheet';
 import EnumString from '../assets/EnumString';
+import { useTheme } from '@react-navigation/native';
 import {HelperText} from 'react-native-paper'
 
-const LogInScreen = ({navigation}) => {
+const LogInScreen = ({navigation, route}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
     const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
     const [errorTextInput, setErrorTextInput] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const isDarkMode = useTheme().dark;
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -97,15 +99,16 @@ const LogInScreen = ({navigation}) => {
     const toSignUpScreen = () => navigation.navigate('SignUp');
     
     return (
-        <KeyboardAvoidingView style={ [styleSheet.container, styleSheet.screenBackGroundColor] } behavior={ Platform.OS === 'ios' && 'padding' }>
-            <Text style={ [styleSheet.headerStyle, styleSheet.textColor] }>Log in to Toronto Crime Tracker</Text>
+        <KeyboardAvoidingView style={ [styleSheet.container, isDarkMode? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] } behavior={ Platform.OS === 'ios' && 'padding' }>
+            <Text style={ [styleSheet.headerStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Log in to Toronto Crime Tracker</Text>
             {/* email text input */ }
             <View style={ styleSheet.formatContainer }>
-                <View style={ [errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer, styleSheet.textInputBackGroundColor] }>
+                <View style={ [errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer,
+                isDarkMode? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
                     <TextInput
-                        style={ [styleSheet.inputStyle, styleSheet.textColor] }
+                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
                         placeholder='Email'
-                        placeholderTextColor={ styleSheet.textColor.color }
+                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
                         value={ email }
                         onChangeText={ onEmailTextChange }
                         onFocus={ () => setErrorTextInput(false) }
@@ -117,7 +120,7 @@ const LogInScreen = ({navigation}) => {
                     {
                         !(email === '') &&
                         <Pressable style={ styleSheet.iconStyle } onPress={ deletePress }>
-                            <Icon name='close-circle-outline' size={ 25 } color={styleSheet.textColor.color}/>
+                            <Icon name='close-circle-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/>
                         </Pressable>
                     }
                 </View>
@@ -125,11 +128,12 @@ const LogInScreen = ({navigation}) => {
             </View>
             {/* password text input */ }
             <View style={ styleSheet.formatContainer }>
-                <View style={ [styleSheet.inputContainer, styleSheet.textInputBackGroundColor] }>
+                <View style={ [styleSheet.inputContainer,
+                isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
                     <TextInput
-                        style={ [styleSheet.inputStyle, styleSheet.textColor] }
+                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
                         placeholder='Password'
-                        placeholderTextColor={ styleSheet.textColor.color }
+                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
                         value={ password }
                         onChangeText={ setPassword }
                         secureTextEntry={ hidePassword }
@@ -140,8 +144,8 @@ const LogInScreen = ({navigation}) => {
                     <Pressable style={ styleSheet.iconStyle } onPress={ showHidePasswordPress }>
                         {
                             //shows or hides password eye icon
-                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={styleSheet.textColor.color}/> 
-                            : <Icon name='eye-off-outline' size={ 25 } color={styleSheet.textColor.color}/>
+                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/> 
+                            : <Icon name='eye-off-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/>
                         }
                     </Pressable>
                 </View>
@@ -161,7 +165,7 @@ const LogInScreen = ({navigation}) => {
             </TouchableOpacity>
             {/* Go to Sign Up Screen*/ }
             <View style={ styleSheet.flexRowContainer }>
-                <Text style={ [styleSheet.textStyle, styleSheet.textColor] }>Don't have an account? </Text>
+                <Text style={ [styleSheet.textStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Don't have an account? </Text>
                 <Pressable onPress={ toSignUpScreen }>
                     <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor]}>Sign Up here</Text>
                 </Pressable>
