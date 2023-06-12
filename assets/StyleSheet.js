@@ -65,7 +65,12 @@ const styleSheet = StyleSheet.create({
        borderColor:'#F70D1A',
        borderRadius: 5,
        padding:10,
-   },
+    },
+    loadingViewStyle: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
    headerStyle:{
        marginBottom: 30,
        fontSize: 25,
