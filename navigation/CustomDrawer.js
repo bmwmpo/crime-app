@@ -6,14 +6,13 @@ import { Alert, Button, View, SafeAreaView } from 'react-native';
 import { Drawer,Paragraph,Switch,Text } from 'react-native-paper'
 import styleSheet from '../assets/StyleSheet';
 import { useEffect } from 'react';
+import { useTheme } from '@react-navigation/native';
 
 //custom drawer content
-const CustomDrawer = ({ navigation, currentUser, isDarkMode, setIsDarkMode }) =>
+const CustomDrawer = ({ navigation, currentUser, setIsDarkMode }) =>
 {
-    useEffect(() =>
-    {
-        console.log(navigation);
-    })
+    const isDarkMode = useTheme().dark;
+    
     //sign out function
     const handleSignOut = async() => {
         try

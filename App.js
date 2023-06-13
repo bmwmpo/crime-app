@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { Pressable, Text } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { StatusBar } from "expo-status-bar";
+import NotLogInScreen from './screen/NotLogInScreen';
 
 const Drawer = createDrawerNavigator();
 //const Stack = createNativeStackNavigator();
@@ -55,11 +56,12 @@ export default function App() {
               </Pressable>)
           })
         }
-        drawerContent={ props => <CustomDrawer { ...props } isDarkMode={ isDarkMode } setIsDarkMode={ setIsDarkMode } currentUser={ currentUser }/> }
+        drawerContent={ props => <CustomDrawer { ...props } setIsDarkMode={ setIsDarkMode } currentUser={ currentUser }/> }
         >
           <Drawer.Screen name="BottomTabNavigation" component={ BottomTabNavigation } />
           <Drawer.Screen name="SignInSignUp" initialParams={ { isDarkMode } } component={ UserLogInSignUpStack } options={ { headerShown: false } } />
           <Drawer.Screen name="Loading" component={LoadingScreen}/>
+          <Drawer.Screen name="NotLogIn" component={NotLogInScreen}/>
       </Drawer.Navigator>
     </NavigationContainer>
   </PaperProvider>
