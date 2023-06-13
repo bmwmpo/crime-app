@@ -1,25 +1,26 @@
 import { useState } from 'react';
 import { auth } from '../config/firebase_config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import Icon from 'react-native-vector-icons/Ionicons'
-import { Alert, Text, TextInput, TouchableOpacity,View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
-import styleSheet from '../assets/StyleSheet';
+import { Alert, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, Text, HelperText } from 'react-native-paper';
+import { useTheme } from '@react-navigation/native';
 import { db } from '../config/firebase_config';
 import { collection, addDoc } from 'firebase/firestore';
 import EnumString from '../assets/EnumString';
-import { useTheme } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
+import styleSheet from '../assets/StyleSheet';
 
+//user sign up screen
 const SignUpScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
-    const [validEmailFormat, setValidEmailFormat] = useState(false);
+    const [validEmailFormat, setValidEmailFormat] = useState(true);
     const [validPasswordLength, setValidPasswordLength] = useState(false);
-    const [errorTextEmail, setErrorTextEmail] = useState(false);
-    const [errorTextPassword, setErrorTextPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const isDarkMode = useTheme().dark;
+    const textColor = isDarkMode ? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color;
+    const outlinedColor = isDarkMode ? styleSheet.darkModeOutlinedColor.color : styleSheet.lightModeOutlinedColor.color
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -28,8 +29,8 @@ const SignUpScreen = ({navigation}) => {
     const deletePress = () => setEmail('');
 
     //save the new user infomation in firestore
-    const saveUserInfoInFirestore = async ({email, uid})=>{
-        try{
+    const saveUserInfoInFirestore = async ({email, uid})=> {
+        try {
             const collectionRef = collection(db, 'UserInfo');
 
             const data = {
@@ -39,15 +40,14 @@ const SignUpScreen = ({navigation}) => {
 
             const docAdded = await addDoc(collectionRef, data);
         }
-        catch(err){
+        catch(err) {
             Alert.alert("Error", err.message);
         }
     }
 
     //sign up function
     const handleCreateNewAccount= async () => {
-        try
-        {
+        try {
             //set is loading to ture
             setIsLoading(true);
             //hide the navigation header
@@ -61,14 +61,12 @@ const SignUpScreen = ({navigation}) => {
              //redirect to the Main Screen upon successful create new account
             navigation.navigate('BottomTabNavigation', {screen:'Map'});
         }
-        catch (err)
-        {
+        catch (err) {
             setIsLoading(false);
             Alert.alert(EnumString.signUpFailed, EnumString.emailAlreadyInUse);
             console.log(err);
         }
-        finally
-        {
+        finally {
             setIsLoading(false);
             navigation.setOptions({ headerShown: true });
         }
@@ -76,7 +74,7 @@ const SignUpScreen = ({navigation}) => {
 
     //Check if either the email address or password is an empty string
     const isEmailAddressPasswordEmpty = () =>{
-        if(email.trim() === '' || password.trim() === '' ){        
+        if(email.trim() === '' || password.trim() === '' ) {        
             return true;
         }
         else {
@@ -87,9 +85,9 @@ const SignUpScreen = ({navigation}) => {
     //verify the email address
     const isValidEmailAddress = (newText) => {
         const regex = EnumString.emailRegex;
-        const result = regex.test(newText)
+        // const result = regex.test(newText)
 
-        setValidEmailFormat(result);
+        setValidEmailFormat(regex.test(newText));
     }
 
     //verify the password length
@@ -107,94 +105,94 @@ const SignUpScreen = ({navigation}) => {
         isValidPasswordLength(newText);
     }
 
-    //display the email error message
-    const showEmailError = () => {
-        if(!validEmailFormat)
-            setErrorTextEmail(true);
-        else 
-            setErrorTextEmail(false);
-    }
-
-    //display the password error message
-    const showPasswordError = () => {
-        if(!validPasswordLength)
-            setErrorTextPassword(true);
-        else 
-            setErrorTextPassword(false);
-    }
-
     return (
         //display loading screen when isLoading is true, otherwise display sign up form
-        isLoading ? (<LoadingScreen />) : (
-        <KeyboardAvoidingView style={ [styleSheet.container, isDarkMode? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] } behavior={Platform.OS === 'ios' && 'padding'}> 
-            <Text style={[styleSheet.headerStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor]}>Welcome to Toronro Crime Tracker</Text>
-            {/* email text input */}
-            <View style={styleSheet.formatContainer}>
-                <View style={ [errorTextEmail ? styleSheet.errorInputContainer : styleSheet.inputContainer,
-                isDarkMode? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
-                    <TextInput 
-                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
-                        placeholder='Email address' 
-                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
-                        value={email} 
-                        onChangeText={onEmailTextChange}
-                        onFocus={()=>{
-                            setErrorTextEmail(false);
-                            showPasswordError();
-                            
-                        }}
-                        autoCapitalize='none'
-                        autoCorrect={false}
-                        keyboardType='email-address'
-                        autoFocus={true}
-                    />
-                    {
-                        !(email === '') && 
-                        <Pressable style={styleSheet.iconStyle} onPress={deletePress}> 
-                                <Icon name='close-circle-outline' size={ 25 } color={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color } />
-                        </Pressable>
-                    }
-                </View>
-                {/* error message */}
-                { errorTextEmail && <Text style={styleSheet.errorTextStyle}>Not a valid email address</Text>}
-            </View>
-            {/* password text input */}
-            <View style={styleSheet.formatContainer}>
-                <View style={ [errorTextPassword ? styleSheet.errorInputContainer : styleSheet.inputContainer,
-                isDarkMode? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
-                    <TextInput 
-                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
-                        placeholder='Password' 
-                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
-                        value={password} 
-                        onChangeText={onPasswordTextChange}
-                        secureTextEntry={hidePassword}
-                        autoCapitalize='none'
-                        autoCorrect={false}
-                        onFocus={()=>{
-                            setErrorTextPassword(false);
-                            showEmailError();  
-                        }}
+        isLoading ? (<LoadingScreen />) :
+            (
+                <KeyboardAvoidingView style={ [styleSheet.container,
+                isDarkMode ? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] }
+                    behavior={ Platform.OS === 'ios' && 'padding' }
+                >
+                    <Text variant='headlineSmall' style={ [styleSheet.headerStyle,
+                    isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }
+                    >
+                        Welcome to Toronro Crime Tracker
+                    </Text>
+                    {/* email text input */ }
+                    <View style={ styleSheet.formatContainer }>
+                        <TextInput
+                            style={ [styleSheet.inputStyle, isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }
+                            label='Email'
+                            textColor={ textColor }
+                            mode='outlined'
+                            activeOutlineColor={ outlinedColor }
+                            value={ email }
+                            onChangeText={ onEmailTextChange }
+                            outlineColor={ !validEmailFormat ? styleSheet.errorTextStyle.color : 'transparent' }
+                            autoCapitalize='none'
+                            autoCorrect={ false }
+                            keyboardType='email-address'
+                            autoFocus={ true }
+                            right={ !(email === '') &&
+                                <TextInput.Icon
+                                    icon='close-circle'
+                                    onPress={ deletePress }
+                                    iconColor={ textColor }
+                                />
+                            }
                         />
-                <Pressable style={styleSheet.iconStyle} onPress={showHidePasswordPress}>
-                    {
-                        //shows or hides password eye icon
-                            hidePassword ? <Icon name='eye-outline' size={ 25 } color={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color } />
-                                : <Icon name='eye-off-outline' size={ 25 } color={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.colorr }/> 
-                    }
-                </Pressable>
-                </View>
-                {/* error message */}
-                { errorTextPassword && <Text style={styleSheet.errorTextStyle}>Password must be at least 6 characters</Text>}
-            </View>
-            <TouchableOpacity 
-            style={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle} 
-            onPress={handleCreateNewAccount} 
-            disabled={isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength}>
-                <Text style={styleSheet.buttonTextStyle}>Create account</Text>
-            </TouchableOpacity>
-        </KeyboardAvoidingView>)
-    )
+                        <HelperText
+                            type='error'
+                            padding='none'
+                            style={ styleSheet.errorTextStyle }
+                            visible={ !validEmailFormat }
+                        >
+                            Not a valid email address
+                        </HelperText>
+                    </View>
+                    {/* password text input */ }
+                    <View style={ styleSheet.formatContainer }>
+                        <TextInput
+                            style={ [styleSheet.inputStyle, isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }
+                            label='Password'
+                            mode='outlined'
+                            textColor={ textColor }
+                            activeOutlineColor={ outlinedColor }
+                            outlineColor='transparent'
+                            value={ password }
+                            onChangeText={ onPasswordTextChange }
+                            autoCapitalize='none'
+                            autoCorrect={ false }
+                            secureTextEntry={ hidePassword }
+                            right={
+                                <TextInput.Icon
+                                    icon={ hidePassword ? 'eye' : 'eye-off' }
+                                    onPress={ showHidePasswordPress }
+                                    iconColor={ textColor }
+                                />
+                            }
+                        />
+                        <HelperText
+                            type='error'
+                            padding='none'
+                            style={ styleSheet.errorTextStyle }
+                            visible={ !validPasswordLength }
+                        >
+                            Password must be at least 6 characters
+                        </HelperText>
+                    </View>
+                    <TouchableOpacity
+                        style={ isEmailAddressPasswordEmpty()
+                            || !validEmailFormat || !validPasswordLength
+                            ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle }
+                        onPress={ handleCreateNewAccount }
+                        disabled={ isEmailAddressPasswordEmpty() || !validEmailFormat || !validPasswordLength }
+                    >
+                        <Text variant="labelLarge" style={ styleSheet.buttonTextStyle }>Create account</Text>
+                    </TouchableOpacity>
+                </KeyboardAvoidingView>
+            )
+    );
 }
 
 export default SignUpScreen;

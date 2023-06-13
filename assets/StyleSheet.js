@@ -15,13 +15,16 @@ const styleSheet = StyleSheet.create({
        backgroundColor: '#FFFFFF',
     },
     darkModeTextInputBackGroundColor: {
-        backgroundColor:'#3D3C3A',
+        backgroundColor:'#838996',
     },
     lightModeTextInputBackGroundColor: {
-        backgroundColor:'#DCDCDC'
+        backgroundColor:'#E5E4E2'
     },
-   errorTextInputBorderColor: {
-        backgroundColor:'#3D3C3A',
+    darkModeOutlinedColor: {
+        color:'#E5E4E2'
+    },
+    lightModeOutlinedColor: {
+        color: '#616D7E'
     },
     textColor: {
        color:'#E5E4E2'
@@ -33,7 +36,7 @@ const styleSheet = StyleSheet.create({
         color:'#E5E4E2'
     },
     highLightTextColor:{
-        color:'#ff4500',
+        color:'#9400D3',
     },
     logoutColor: {
         color:'#E41B17'
@@ -44,28 +47,14 @@ const styleSheet = StyleSheet.create({
         justifyContent: 'center',
    },
    formatContainer:{
-       marginBottom:35,
-       height:50,
-   },
-   inputContainer:{
-       flexDirection:'row',
-       width:'90%',
-       //height: 50,
-       borderRadius: 5,
-       padding: 10,
+       width:'90%'
     },
+    touchableRippleWidth: {
+       width:'50%'
+   },
    flexRowContainer: {
        flexDirection:'row'    
    },
-   errorInputContainer:{
-       flexDirection:'row',
-       width:'90%',
-       // height: 50,
-       borderWidth: 2,
-       borderColor:'#F70D1A',
-       borderRadius: 5,
-       padding:10,
-    },
     loadingViewStyle: {
         flex: 1,
         justifyContent: 'center',
@@ -73,32 +62,30 @@ const styleSheet = StyleSheet.create({
     },
    headerStyle:{
        marginBottom: 30,
-       fontSize: 25,
        fontWeight: 'bold',
        textAlign:'center'
    },
    errorTextStyle:{
        fontSize: 15,
-       color:'#F70D1A',
+       color:'#FF0000',
    },
    underLineTextStyle:{
-       fontSize: 15,
        textDecorationLine:'underline'
     },
    textStyle: {
-       fontSize: 15,
        fontWeight:'bold'
    },
    inputStyle:{
-       flex: 9,
-       fontSize:18
+       fontSize: 15,
+       paddingTop: 10,
+       paddingBottom:10
    },
    iconStyle:{
        justifyContent:'center',
        alignItems:'center'
    },
    buttonStyle:{
-       backgroundColor: '#ff4500',
+       backgroundColor: '#9400D3',
        width: '90%',
        height: 50,
        alignItems:'center',
@@ -142,7 +129,6 @@ const styleSheet = StyleSheet.create({
    bodyTextInputStyle:{ 
        width:'100%',
        textAlignVertical:'top', 
-       fontSize: 20
    },
    optionBarStyle:{
        flex:1,

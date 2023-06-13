@@ -1,24 +1,23 @@
 import { useState } from 'react';
 import { auth } from '../config/firebase_config';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import Icon from 'react-native-vector-icons/Ionicons'
-import
-    {
-        Alert, Text, TextInput, TouchableOpacity, View, Pressable, KeyboardAvoidingView, Platform
-    } from 'react-native';
+import { Alert, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, Text, HelperText, TouchableRipple } from 'react-native-paper';
+import { useTheme } from '@react-navigation/native';
 import styleSheet from '../assets/StyleSheet';
 import EnumString from '../assets/EnumString';
-import { useTheme } from '@react-navigation/native';
 import LoadingScreen from './LoadingScreen';
 
-const LogInScreen = ({navigation, route}) => {
+//user log in screen
+const LogInScreen = ({ navigation, route }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
-    const [vaildEmailFormat, setVaildEmailFormat] = useState(false);
-    const [errorTextInput, setErrorTextInput] = useState(false);
+    const [validEmailFormat, setValidEmailFormat] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const isDarkMode = useTheme().dark;
+    const textColor = isDarkMode ? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color;
+    const outlinedColor = isDarkMode ? styleSheet.darkModeOutlinedColor.color : styleSheet.lightModeOutlinedColor.color
 
     //shows or hides the password
     const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -28,8 +27,7 @@ const LogInScreen = ({navigation, route}) => {
 
     //login function
     const handleLogin = async () => {
-        try
-        {
+        try {
             //set to is loading
             setIsLoading(true);
             //hide the navigation header
@@ -41,14 +39,14 @@ const LogInScreen = ({navigation, route}) => {
             Alert.alert('Welcome');
 
             //redirect to the Main Screen upon successful sign-in
-            navigation.navigate("BottomTabNavigation");
+            navigation.navigate("BottomTabNavigation", { screen:'Map' });
         }
-        catch(err){
+        catch(err) {
             Alert.alert('Error', EnumString.invaildEmaillPassword);
             setIsLoading(false);
             console.log(err);
         }
-        finally{
+        finally {
             setIsLoading(false)
             navigation.setOptions({ headerShown: true });
         }
@@ -65,41 +63,40 @@ const LogInScreen = ({navigation, route}) => {
     }
 
     //verify the email address format
-    const isVaildEmailAddress = (newText) => {
+    const isValidEmailAddress = (newText) => {
         const regex = EnumString.emailRegex;
-        const result = regex.test(newText);
 
-        setVaildEmailFormat(result);
-
-        return result;
+        setValidEmailFormat(regex.test(newText));
     }
 
     //update and verify the email state value
     const onEmailTextChange = (newText) => {
         setEmail(newText);
-        isVaildEmailAddress(newText);
-    }
-
-    //display the error message
-    const showError = () => {
-        if(!vaildEmailFormat)
-            setErrorTextInput(true);
-        else 
-            setErrorTextInput(false);
+        isValidEmailAddress(newText);
     }
 
     //send forgot password email
-    const handleForgotPassword = async() => {
-        setErrorTextInput(false);
+    const handleForgotPassword = async () => {  
+        //Not a valid email address
+        if (!validEmailFormat) {
+            Alert.alert("Not a valid email address");
+            return;
+        }
+
+        //the email address is missing
+        if (isEmailAddressPasswordEmpty()) {
+            Alert.alert("Email address is missing");
+            return;
+        }
         
-        try{
+        //send a rest password email
+        try {
             await sendPasswordResetEmail(auth, email);
             
             Alert.alert(EnumString.resetPasswordAlertTitle, EnumString.resetPasswordMsg(email));
         }
-        catch(err){
+        catch(err) {
             console.log(err.message);
-            setErrorTextInput(true);
         }
     }
 
@@ -108,77 +105,107 @@ const LogInScreen = ({navigation, route}) => {
     
     return (
         //display loading screen when isLoading is true, otherwise display login form
-        isLoading ? (<LoadingScreen />) : (
-        <KeyboardAvoidingView style={ [styleSheet.container, isDarkMode? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] } behavior={ Platform.OS === 'ios' && 'padding' }>
-            <Text style={ [styleSheet.headerStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Log in to Toronto Crime Tracker</Text>
-            {/* email text input */ }
-            <View style={ styleSheet.formatContainer }>
-                <View style={ [errorTextInput ? styleSheet.errorInputContainer : styleSheet.inputContainer,
-                isDarkMode? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
-                    <TextInput
-                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
-                        placeholder='Email'
-                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
-                        value={ email }
-                        onChangeText={ onEmailTextChange }
-                        onFocus={ () => setErrorTextInput(false) }
-                        autoCapitalize='none'
-                        autoCorrect={ false }
-                        keyboardType='email-address'
-                        autoFocus={ true }
-                    />
-                    {
-                        !(email === '') &&
-                        <Pressable style={ styleSheet.iconStyle } onPress={ deletePress }>
-                            <Icon name='close-circle-outline' size={ 25 } color={isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color}/>
-                        </Pressable>
-                    }
-                </View>
-                { errorTextInput && <Text style={ styleSheet.errorTextStyle }>Not a vaild email address</Text> }
-            </View>
-            {/* password text input */ }
-            <View style={ styleSheet.formatContainer }>
-                <View style={ [styleSheet.inputContainer,
-                isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }>
-                    <TextInput
-                        style={ [styleSheet.inputStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }
-                        placeholder='Password'
-                        placeholderTextColor={ isDarkMode? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color }
-                        value={ password }
-                        onChangeText={ setPassword }
-                        secureTextEntry={ hidePassword }
-                        autoCapitalize='none'
-                        autoCorrect={ false }
-                        onFocus={ showError }
-                    />
-                    {/* shows or hides password eye icon */ }
-                    <Pressable style={ styleSheet.iconStyle } onPress={ showHidePasswordPress }>
-                        <Icon name={ hidePassword ? 'eye-outline' : 'eye-off-outline' } size={ 25 }
-                            color={ isDarkMode ? styleSheet.darkModeColor.color : styleSheet.lightModeColor.color } /> 
-                    </Pressable>
-                </View>
-                {/* forgot password button */ }
-                <TouchableOpacity onPress={ handleForgotPassword }>
-                    <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor] }>Forgot your password?</Text>
-                </TouchableOpacity>
-            </View>
-            {/* Log in button */ }
-            <TouchableOpacity
-                style={ isEmailAddressPasswordEmpty() ||
-                    !vaildEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle }
-                onPress={ handleLogin }
-                disabled={ isEmailAddressPasswordEmpty() || !vaildEmailFormat }
-            >
-                <Text style={ styleSheet.buttonTextStyle }>Log in</Text>
-            </TouchableOpacity>
-            {/* Go to Sign Up Screen*/ }
-            <View style={ styleSheet.flexRowContainer }>
-                <Text style={ [styleSheet.textStyle, isDarkMode? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Don't have an account? </Text>
-                <TouchableOpacity onPress={ toSignUpScreen }>
-                    <Text style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor]}>Sign Up here</Text>
-                </TouchableOpacity>
-            </View>
-        </KeyboardAvoidingView>)
+        isLoading ? (<LoadingScreen />) :
+            (
+                <KeyboardAvoidingView style={ [styleSheet.container,
+                    isDarkMode ? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] }
+                    behavior={ Platform.OS === 'ios' && 'padding' }
+                >
+                    <Text
+                        variant='headlineSmall'
+                        style={ [styleSheet.headerStyle,
+                        isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }
+                    >
+                        Log in to Toronto Crime Tracker
+                    </Text>
+                    {/* email text input */ }
+                    <View style={ styleSheet.formatContainer }>
+                        <TextInput
+                            style={ [styleSheet.inputStyle, isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }
+                            label='Email'
+                            textColor={ textColor } 
+                            mode='outlined'
+                            activeOutlineColor={ outlinedColor }
+                            value={ email }
+                            onChangeText={ onEmailTextChange }
+                            outlineColor={ !validEmailFormat ? styleSheet.errorTextStyle.color: 'transparent' }
+                            autoCapitalize='none'
+                            autoCorrect={ false }
+                            keyboardType='email-address'
+                            autoFocus={ true }
+                            right={ !(email === '') &&
+                                <TextInput.Icon
+                                    icon='close-circle'
+                                    onPress={ deletePress }
+                                    iconColor={ textColor }
+                                />
+                            }
+                        />
+                        <HelperText
+                            type='error'
+                            padding='none'
+                            style={ styleSheet.errorTextStyle }
+                            visible={ !validEmailFormat }
+                        >
+                            Not a valid email address
+                        </HelperText>
+                    </View>
+                    {/* password text input */ }
+                    <View style={ styleSheet.formatContainer }>
+                        <TextInput
+                            style={ [styleSheet.inputStyle, isDarkMode ? styleSheet.darkModeTextInputBackGroundColor : styleSheet.lightModeTextInputBackGroundColor] }
+                            label='Password'
+                            mode='outlined'
+                            textColor={ textColor }
+                            activeOutlineColor={ outlinedColor }
+                            outlineColor='transparent' 
+                            value={ password }
+                            onChangeText={ setPassword }
+                            autoCapitalize='none'
+                            autoCorrect={ false }
+                            secureTextEntry={ hidePassword }
+                            right={
+                                <TextInput.Icon
+                                    icon={ hidePassword ? 'eye' : 'eye-off' }
+                                    onPress={ showHidePasswordPress }
+                                    iconColor={ textColor }
+                                />
+                            }
+                        />
+                        {/* forgot password button */ }
+                        <TouchableRipple
+                            style={ styleSheet.touchableRippleWidth }
+                            onPress={ handleForgotPassword }
+                            rippleColor={ styleSheet.highLightTextColor.color }
+                        >
+                            <Text variant='titleMedium' style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor] }>Forgot your password?</Text>
+                        </TouchableRipple>
+                    </View>
+                    {/* Log in button */ }
+                    <TouchableOpacity
+                        style={ isEmailAddressPasswordEmpty()
+                            || !validEmailFormat ? styleSheet.disabledButtonStyle : styleSheet.buttonStyle }
+                        onPress={ handleLogin }
+                        disabled={ isEmailAddressPasswordEmpty() || !validEmailFormat }
+                    >
+                        <Text variant="labelLarge" style={ [styleSheet.buttonTextStyle, isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }>Log in</Text>
+                    </TouchableOpacity>
+                    {/* Go to Sign Up Screen*/ }
+                    <View style={ styleSheet.flexRowContainer }>
+                        <Text
+                             variant='titleMedium'    
+                            style={ [styleSheet.textStyle, isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }
+                        >
+                            Don't have an account? </Text>
+                        <TouchableRipple
+                            onPress={ toSignUpScreen }
+                            rippleColor={ styleSheet.highLightTextColor.color }
+                        >
+                            <Text variant='titleMedium' style={ [styleSheet.underLineTextStyle, styleSheet.highLightTextColor] }>Sign Up here</Text>
+                        </TouchableRipple>
+                    </View>
+                </KeyboardAvoidingView>
+            )
     );
 }
 
