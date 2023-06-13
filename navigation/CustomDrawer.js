@@ -2,8 +2,8 @@ import { DrawerContentScrollView, DrawerItemList, DrawerItem} from '@react-navig
 import { auth } from '../config/firebase_config';
 import { signOut } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Alert, Button, Text, View, SafeAreaView } from 'react-native';
-import { Drawer,Paragraph,Switch } from 'react-native-paper'
+import { Alert, Button, View, SafeAreaView } from 'react-native';
+import { Drawer,Paragraph,Switch,Text } from 'react-native-paper'
 import styleSheet from '../assets/StyleSheet';
 import { useEffect } from 'react';
 
@@ -59,7 +59,7 @@ const CustomDrawer = ({ navigation, currentUser, isDarkMode, setIsDarkMode }) =>
             { !currentUser ?
                 //log in section
                 (<Drawer.Section>
-                    <Paragraph
+                    <Paragraph 
                         style={ [styleSheet.drawerTextStyle, isDarkMode && styleSheet.textColor]}>
                         Stay informed about neighborhood crime by joining the Toronto Crime Tracker
                     </Paragraph>
@@ -70,10 +70,10 @@ const CustomDrawer = ({ navigation, currentUser, isDarkMode, setIsDarkMode }) =>
                 (<View style={ {flex:1} }>
                     <Drawer.Section style={ styleSheet.flex_9 }>
                         {/* Dark mode section */}
-                        <Text style={ [styleSheet.drawerTextStyle, isDarkMode && styleSheet.textColor] }>Perference</Text>
+                        <Text variant="titleSmall" style={ [styleSheet.drawerTextStyle, isDarkMode && styleSheet.textColor] }>Perference</Text>
                         <View style={ styleSheet.drawerContainer }>
                             <Icon name='moon-outline' size={ 20 } color={ isDarkMode ? styleSheet.textColor.color : styleSheet.lightModeColor.color} />
-                            <Text style={ isDarkMode && styleSheet.textColor }>Dark mode</Text>
+                            <Text variant='labelLarge' style={ isDarkMode && styleSheet.textColor }>Dark mode</Text>
                             <Switch value={ isDarkMode }
                                 onValueChange={ () => setIsDarkMode(pre => !pre) }
                                 color={ styleSheet.highLightTextColor.color }
@@ -82,7 +82,7 @@ const CustomDrawer = ({ navigation, currentUser, isDarkMode, setIsDarkMode }) =>
                     </Drawer.Section>
                     {/* log out section */}
                     <Drawer.Section style={ styleSheet.flex_1 }>
-                        <Drawer.Item label={ <Text style={isDarkMode && styleSheet.textColor }>Log out</Text>} onPress={ signOutAlert }
+                        <Drawer.Item label={ <Text variant='labelLarge' style={isDarkMode && styleSheet.textColor }>Log out</Text>} onPress={ signOutAlert }
                             icon={ ({ focused, color, size }) =>
                                 <Icon name='log-out-outline' color={ styleSheet.logoutColor.color } size={ size } /> }
                             rippleColor={styleSheet.highLightTextColor.color}
