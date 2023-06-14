@@ -11,10 +11,8 @@ const HomeScreen = () => {
   //get the currently signed-in user
   useEffect(() => {
     return onAuthStateChanged(auth, (user) => {
-        if (user)
-            setCurrentuser(true);
-        else
-            setCurrentuser(false);
+      if (user) setCurrentuser(true);
+      else setCurrentuser(false);
     });
   }, []);
 
