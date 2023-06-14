@@ -1,49 +1,28 @@
+import { useState, useEffect } from "react";
+import { auth } from "../config/firebase_config";
+import { onAuthStateChanged } from "firebase/auth";
+import DrawerNavigation from "../navigation/DrawerNavigation";
+import UserContext from "../UserContext.js";
 
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+//main screen
+const HomeScreen = () => {
+  const [currentUser, setCurrentuser] = useState(false);
 
-import React from 'react';
-import styleSheet from '../assets/StyleSheet';
-
-
-const HomeScreen = ({navigation, route}) => {
-        
-  const [DrawerOpened,setDrawerOpened] = React.useState(false)
-
-    const gotoMap =()=>{
-        navigation.navigate("Map")
-    }
-
-    const gotoLogin =()=>{
-        navigation.navigate("Login")
-    }
-
-    const gotoChart =()=>{
-        navigation.navigate("Chart")
-    }
+  //get the currently signed-in user
+  useEffect(() => {
+    return onAuthStateChanged(auth, (user) => {
+        if (user)
+            setCurrentuser(true);
+        else
+            setCurrentuser(false);
+    });
+  }, []);
 
   return (
-    <View>
-            <Pressable
-            style={styleSheet.NaviButton}
-            onPress={(gotoMap)}>
-              <Text style={styleSheet.NaviButton}>Map</Text>
-            </Pressable>  
-
-            <Pressable
-            style={styleSheet.NaviButton}
-            onPress={(gotoLogin)}>
-              <Text style={styleSheet.NaviButton}>Login</Text>
-            </Pressable>  
-
-            {/* <Pressable
-            style={styleSheet.NaviButton}
-            onPress={(gotoChart)}>
-              <Text style={styleHome.NaviButton}>Chart</Text>
-            </Pressable>   */}
-
-    </View>
-
+    <UserContext.Provider value={{ currentUser }}>
+      <DrawerNavigation />
+    </UserContext.Provider>
   );
-}
+};
 
-export default HomeScreen
+export default HomeScreen;

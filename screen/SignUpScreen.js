@@ -113,8 +113,10 @@ const SignUpScreen = ({navigation}) => {
                 isDarkMode ? styleSheet.darkModeBackGroundColor : styleSheet.lightModeBackGroundColor] }
                     behavior={ Platform.OS === 'ios' && 'padding' }
                 >
-                    <Text variant='headlineSmall' style={ [styleSheet.headerStyle,
-                    isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }
+                    <Text
+                        variant='headlineSmall'
+                        style={ [styleSheet.headerStyle,
+                        isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor] }
                     >
                         Welcome to Toronro Crime Tracker
                     </Text>
