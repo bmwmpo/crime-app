@@ -66,7 +66,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                 Log in / Sign up
               </Text>
             }
-            onPress={() => navigation.navigate("SignInSignUp")}
+            onPress={ () => navigation.navigate("SignInSignUp", {screen:
+            'LogIn'})}
             icon={({ focused, color, size }) => (
               <Icon
                 name="person-circle-outline"
