@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { auth } from "../config/firebase_config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   Alert,
   TouchableOpacity,
@@ -11,7 +11,7 @@ import {
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { db } from "../config/firebase_config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
 import styleSheet from "../assets/StyleSheet";
@@ -20,9 +20,11 @@ import styleSheet from "../assets/StyleSheet";
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUserName] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [validPasswordLength, setValidPasswordLength] = useState(false);
+  const [validUsername, setValidUsername] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
@@ -31,6 +33,7 @@ const SignUpScreen = ({ navigation }) => {
   const outlinedColor = isDarkMode
     ? styleSheet.darkModeOutlinedColor.color
     : styleSheet.lightModeOutlinedColor.color;
+  const collectionRef = collection(db, "UserInfo");
 
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -38,14 +41,40 @@ const SignUpScreen = ({ navigation }) => {
   //delete the email text input
   const deletePress = () => setEmail("");
 
+  //delete the username text input
+  const deleteUserNamePress = () => setUserName("");
+
+  //Verify if the username is already in use within Firestore
+  const duplicatedUsername = async () => {
+    const lowcaseUsername = username.toLowerCase().trim();
+
+    try {
+      const filter = where("username", "==", lowcaseUsername);
+      const q = query(collectionRef, filter);
+
+      const querySnapshot = await getDocs(q);
+      const documents = querySnapshot.docs;
+
+      if (documents.length > 0) {
+        setValidUsername(false);
+        return true;
+      } else {
+        setValidUsername(true);
+        return false;
+      }
+    } catch (err) {
+      console.log("username error:", err);
+      return true;
+    }
+  };
+
   //save the new user infomation in firestore
   const saveUserInfoInFirestore = async ({ email, uid }) => {
     try {
-      const collectionRef = collection(db, "UserInfo");
-
       const data = {
         email,
         userId: uid,
+        username: username.toLowerCase().trim(),
       };
 
       const docAdded = await addDoc(collectionRef, data);
@@ -53,6 +82,19 @@ const SignUpScreen = ({ navigation }) => {
       Alert.alert("Error", err.message);
     }
   };
+
+  //Update new user profile in firebase
+  const setNewUserProfile = async () =>
+  {
+    try
+    {
+      await updateProfile(auth.currentUser, { displayName: username.trim().toLowerCase() });
+    }
+    catch (error)
+    {
+      console.log(err);
+    }
+  }
 
   //sign up function
   const handleCreateNewAccount = async () => {
@@ -62,13 +104,20 @@ const SignUpScreen = ({ navigation }) => {
       //hide the navigation header
       navigation.setOptions({ headerShown: false });
 
+      //If the username is already registered, then return
+      const duplicate = await duplicatedUsername();
+
+      if (duplicate) return;
+
       //create new user in firebase
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       await saveUserInfoInFirestore(userCredentials.user);
+      await setNewUserProfile();
 
       Alert.alert("Welcome");
       //redirect to the Main Screen upon successful create new account
@@ -84,8 +133,12 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   //Check if either the email address or password is an empty string
-  const isEmailAddressPasswordEmpty = () => {
-    if (email.trim() === "" || password.trim() === "") {
+  const isEmailusernamePasswordEmpty = () => {
+    if (
+      email.trim() === "" ||
+      password.trim() === "" ||
+      username.trim() === ""
+    ) {
       return true;
     } else {
       return false;
@@ -182,6 +235,45 @@ const SignUpScreen = ({ navigation }) => {
             Not a valid email address
           </HelperText>
         </View>
+        {/* username text input */}
+        <View style={styleSheet.formatContainer}>
+          <TextInput
+            style={[
+              styleSheet.inputStyle,
+              isDarkMode
+                ? styleSheet.darkModeTextInputBackGroundColor
+                : styleSheet.lightModeTextInputBackGroundColor,
+            ]}
+            label="Username"
+            textColor={textColor}
+            mode="outlined"
+            activeOutlineColor={outlinedColor}
+            value={username}
+            onChangeText={setUserName}
+            outlineColor={
+              !validUsername ? styleSheet.errorTextStyle.color : "transparent"
+            }
+            autoCapitalize="none"
+            autoCorrect={false}
+            right={
+              !(username === "") && (
+                <TextInput.Icon
+                  icon="close-circle"
+                  onPress={deleteUserNamePress}
+                  iconColor={textColor}
+                />
+              )
+            }
+          />
+          <HelperText
+            type="error"
+            padding="none"
+            style={styleSheet.errorTextStyle}
+            visible={!validUsername}
+          >
+            Username is already in resigtered
+          </HelperText>
+        </View>
         {/* password text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
@@ -220,7 +312,7 @@ const SignUpScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={
-            isEmailAddressPasswordEmpty() ||
+            isEmailusernamePasswordEmpty() ||
             !validEmailFormat ||
             !validPasswordLength
               ? styleSheet.disabledButtonStyle
@@ -228,7 +320,7 @@ const SignUpScreen = ({ navigation }) => {
           }
           onPress={handleCreateNewAccount}
           disabled={
-            isEmailAddressPasswordEmpty() ||
+            isEmailusernamePasswordEmpty() ||
             !validEmailFormat ||
             !validPasswordLength
           }
