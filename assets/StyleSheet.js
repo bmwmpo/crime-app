@@ -74,9 +74,11 @@ const styleSheet = StyleSheet.create({
   },
   textStyle: {
     fontWeight: "bold",
-    },
-    displayTextStyle: {
-      margin: 40, width: "100%", textAlign: "center"
+  },
+  displayTextStyle: {
+    margin: 40,
+    width: "100%",
+    textAlign: "center",
   },
   inputStyle: {
     fontSize: 15,
