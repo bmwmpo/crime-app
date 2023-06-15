@@ -98,7 +98,7 @@ const LogInScreen = ({ navigation }) => {
     }
 
     //the email address is missing
-    if (isEmailAddressPasswordEmpty()) {
+    if (email.trim() === '') {
       Alert.alert("Email address is missing");
       return;
     }
