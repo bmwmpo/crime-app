@@ -16,6 +16,7 @@ import { useState, useContext } from "react";
 import { Pressable } from "react-native";
 import { PaperProvider, Avatar } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import MyProfile from "../screen/MyProfile";
 
 const Drawer = createDrawerNavigator();
 
@@ -74,6 +75,7 @@ const DrawerNavigation = () => {
             options={{ headerShown: false }}
           />
           <Drawer.Screen name="Loading" component={LoadingScreen} />
+          <Drawer.Screen name="MyProfile" component={MyProfile} />
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>
