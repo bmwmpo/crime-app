@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { auth } from "../config/firebase_config";
-import { createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  onAuthStateChanged,
+} from "firebase/auth";
 import {
   Alert,
   TouchableOpacity,
@@ -12,6 +16,7 @@ import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { db } from "../config/firebase_config";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
 import styleSheet from "../assets/StyleSheet";
@@ -26,6 +31,10 @@ const SignUpScreen = ({ navigation }) => {
   const [validPasswordLength, setValidPasswordLength] = useState(false);
   const [validUsername, setValidUsername] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showWelcomeDialog, setShowWelocmeDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [dialogTitleMsg, setDialogTitleMsg] = useState({});
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor.color
@@ -33,8 +42,8 @@ const SignUpScreen = ({ navigation }) => {
   const outlinedColor = isDarkMode
     ? styleSheet.darkModeOutlinedColor.color
     : styleSheet.lightModeOutlinedColor.color;
-    const collectionRef = collection(db, "UserInfo");
-    
+  const collectionRef = collection(db, "UserInfo");
+
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
 
@@ -42,7 +51,14 @@ const SignUpScreen = ({ navigation }) => {
   const deletePress = () => setEmail("");
 
   //delete the username text input
-  const deleteUserNamePress = () => setUserName("");
+    const deleteUserNamePress = () => setUserName("");
+    
+      //hide the error dialog
+  const hideDialog = () => setShowDialog(false);
+
+  //hide the send reset password dialog
+  const hideWelcomeDialog = () =>
+    setShowWelocmeDialog(false);
 
   //Verify if the username is already in use within Firestore
   const duplicatedUsername = async () => {
@@ -79,7 +95,7 @@ const SignUpScreen = ({ navigation }) => {
 
       const docAdded = await addDoc(collectionRef, data);
     } catch (err) {
-      Alert.alert("Error", err.message);
+      console.log(err);
     }
   };
 
@@ -113,17 +129,22 @@ const SignUpScreen = ({ navigation }) => {
         email,
         password
       );
-      
+
       await setNewUserProfile();
       await saveUserInfoInFirestore(userCredentials.user);
-      
 
-      Alert.alert("Welcome");
+        //show welcome dialog
+      setShowWelocmeDialog(true);
+      setDialogTitleMsg({title:'', message:EnumString.welcomeMsg(userCredentials.user.displayName)})
+
       //redirect to the Main Screen upon successful create new account
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
       setIsLoading(false);
-      Alert.alert(EnumString.signUpFailed, EnumString.emailAlreadyInUse);
+
+      //show error dialog if sign up fail
+      setShowDialog(true);
+      setErrorMessage(EnumString.emailAlreadyInUse);
       console.log(err);
     } finally {
       setIsLoading(false);
@@ -179,9 +200,21 @@ const SignUpScreen = ({ navigation }) => {
           isDarkMode
             ? styleSheet.darkModeBackGroundColor
             : styleSheet.lightModeBackGroundColor,
-                  ] }
+        ]}
         behavior={Platform.OS === "ios" && "padding"}
       >
+        {/* display the dialog if the login fails or if sending the reset password fails*/}
+        <LogInFailedDialog
+          hideDialog={hideDialog}
+          showDialog={showDialog}
+          errorMessage={errorMessage}
+        />
+        {/* display the dialog upon successful send reset password email */}
+        <SendResetPasswordDialog
+          hideDialog={hideWelcomeDialog}
+          showDialog={showWelcomeDialog}
+          {...dialogTitleMsg}
+        />
         <Text
           variant="headlineSmall"
           style={[

@@ -5,7 +5,6 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import {
-  Alert,
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
