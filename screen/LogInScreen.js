@@ -21,6 +21,7 @@ import { useTheme } from "@react-navigation/native";
 import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
+import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
 
 //user log in screen
 const LogInScreen = ({ navigation }) => {
@@ -29,6 +30,11 @@ const LogInScreen = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showSendResetPasswordDialog, setShowSendResetPasswordDialog] =
+    useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [dialogTitleMsg, setDialogTitleMsg] = useState({});
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor.color
@@ -42,6 +48,13 @@ const LogInScreen = ({ navigation }) => {
 
   //delete email text input
   const deletePress = () => setEmail("");
+
+  //hide the error dialog
+  const hideDialog = () => setShowDialog(false);
+
+  //hide the send reset password dialog
+  const hideSendResetPasswordDialog = () =>
+    setShowSendResetPasswordDialog(false);
 
   //login function
   const handleLogin = async () => {
@@ -58,12 +71,18 @@ const LogInScreen = ({ navigation }) => {
         password
       );
 
-      Alert.alert("Welcome");
+      //display welcome message
+      setShowSendResetPasswordDialog(true);
+      setDialogTitleMsg({
+        title: "",
+        message: EnumString.welcomeMsg(userCredentials.user.displayName),
+      });
 
       //redirect to the Main Screen upon successful sign-in
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
-      Alert.alert("Error", EnumString.invaildEmaillPassword);
+      setShowDialog(true);
+      setErrorMessage(EnumString.invalidEmaillPassword);
       setIsLoading(false);
       console.log(err);
     } finally {
@@ -93,24 +112,26 @@ const LogInScreen = ({ navigation }) => {
   const handleForgotPassword = async () => {
     //Not a valid email address
     if (!validEmailFormat) {
-      Alert.alert("Not a valid email address");
+      setShowDialog(true);
+      setErrorMessage(EnumString.invalidEmail);
       return;
     }
 
     //the email address is missing
-    if (email.trim() === '') {
-      Alert.alert("Email address is missing");
+    if (email.trim() === "") {
+      setShowDialog(true);
+      setErrorMessage(EnumString.emailIsMissing);
       return;
     }
 
     //send a rest password email
     try {
       await sendPasswordResetEmail(auth, email);
-
-      Alert.alert(
-        EnumString.resetPasswordAlertTitle,
-        EnumString.resetPasswordMsg(email)
-      );
+      setShowSendResetPasswordDialog(true);
+      setDialogTitleMsg({
+        title: EnumString.resetPasswordAlertTitle,
+        message: EnumString.resetPasswordMsg(email),
+      });
     } catch (err) {
       console.log(err.message);
     }
@@ -133,6 +154,18 @@ const LogInScreen = ({ navigation }) => {
         ]}
         behavior={Platform.OS === "ios" && "padding"}
       >
+        {/* display the dialog if the login fails or if sending the reset password fails*/}
+        <LogInFailedDialog
+          hideDialog={hideDialog}
+          showDialog={showDialog}
+          errorMessage={errorMessage}
+        />
+        {/* display the dialog upon successful send reset password email */}
+        <SendResetPasswordDialog
+          hideDialog={hideSendResetPasswordDialog}
+          showDialog={showSendResetPasswordDialog}
+          {...dialogTitleMsg}
+        />
         <Text
           variant="headlineSmall"
           style={[

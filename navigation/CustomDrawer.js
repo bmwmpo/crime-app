@@ -13,9 +13,11 @@ import UserContext from "../UserContext";
 const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   const isDarkMode = useTheme().dark;
   const currentUser = useContext(UserContext);
-  const username = currentUser.userProfile.username
+  const avatarLabel = currentUser.userProfile.username
     .toUpperCase()
-    .substring(0, 2);
+    .substring(0, 1);
+
+  const username = currentUser.userProfile.username;
 
   //sign out function
   const handleSignOut = async () => {
@@ -87,9 +89,12 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           />
         </Drawer.Section>
       ) : (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styleSheet.flex_1}>
           <View style={styleSheet.container}>
-            <Avatar.Text size={100} label={username} />
+            <Avatar.Text size={90} label={avatarLabel} />
+            <Text variant="titleSmall" style={styleSheet.usernameStyle}>
+              {username}
+            </Text>
           </View>
           <View style={{ flex: 3, justifyContent: "space-between" }}>
             <Drawer.Section>

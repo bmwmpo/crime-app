@@ -9,7 +9,8 @@ const NotLogInScreen = () => {
   const navigation = useNavigation();
   const isDarkMode = useTheme().dark;
 
-  const toLogInScreen = () => navigation.navigate("SignInSignUp");
+    const toLogInScreen = () => navigation.navigate("SignInSignUp", {screen:'LogIn'
+    });
 
   return (
     <SafeAreaView style={styleSheet.container}>
