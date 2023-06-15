@@ -3,7 +3,7 @@ import { auth } from "../config/firebase_config";
 import { signOut } from "firebase/auth";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Alert, View, SafeAreaView } from "react-native";
-import { Drawer, Paragraph, Switch, Text } from "react-native-paper";
+import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
 import styleSheet from "../assets/StyleSheet";
 import { useContext } from "react";
 import { useTheme } from "@react-navigation/native";
@@ -12,7 +12,10 @@ import UserContext from "../UserContext";
 //custom drawer content
 const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   const isDarkMode = useTheme().dark;
-  const { currentUser } = useContext(UserContext);
+  const currentUser = useContext(UserContext);
+  const username = currentUser.userProfile.username
+    .toUpperCase()
+    .substring(0, 2);
 
   //sign out function
   const handleSignOut = async () => {
@@ -48,7 +51,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
 
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
-      {!currentUser ? (
+      {!currentUser.signIn ? (
         //log in section
         <Drawer.Section>
           <Paragraph
@@ -66,8 +69,9 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                 Log in / Sign up
               </Text>
             }
-            onPress={ () => navigation.navigate("SignInSignUp", {screen:
-            'LogIn'})}
+            onPress={() =>
+              navigation.navigate("SignInSignUp", { screen: "LogIn" })
+            }
             icon={({ focused, color, size }) => (
               <Icon
                 name="person-circle-outline"
@@ -83,64 +87,72 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           />
         </Drawer.Section>
       ) : (
-        <View style={{ flex: 1 }}>
-          <Drawer.Section style={styleSheet.flex_9}>
-            {/* Dark mode section */}
-            <Text
-              variant="titleSmall"
-              style={[
-                styleSheet.drawerTextStyle,
-                isDarkMode && styleSheet.textColor,
-              ]}
-            >
-              Perference
-            </Text>
-            <View style={styleSheet.drawerContainer}>
-              <Icon
-                name="moon-outline"
-                size={20}
-                color={
-                  isDarkMode
-                    ? styleSheet.textColor.color
-                    : styleSheet.lightModeColor.color
-                }
-              />
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={styleSheet.container}>
+            <Avatar.Text size={100} label={username} />
+          </View>
+          <View style={{ flex: 3, justifyContent: "space-between" }}>
+            <Drawer.Section>
+              {/* Dark mode section */}
               <Text
-                variant="labelLarge"
-                style={isDarkMode && styleSheet.textColor}
+                variant="titleSmall"
+                style={[
+                  styleSheet.drawerTextStyle,
+                  isDarkMode && styleSheet.textColor,
+                ]}
               >
-                Dark mode
+                Perference
               </Text>
-              <Switch
-                value={isDarkMode}
-                onValueChange={() => setIsDarkMode((pre) => !pre)}
-                color={styleSheet.highLightTextColor.color}
-              />
-            </View>
-          </Drawer.Section>
-          {/* log out section */}
-          <Drawer.Section style={styleSheet.flex_1}>
-            <Drawer.Item
-              label={
+              <View style={styleSheet.drawerContainer}>
+                <Icon
+                  name="moon-outline"
+                  size={20}
+                  color={
+                    isDarkMode
+                      ? styleSheet.textColor.color
+                      : styleSheet.lightModeColor.color
+                  }
+                />
                 <Text
                   variant="labelLarge"
                   style={isDarkMode && styleSheet.textColor}
                 >
-                  Log out
+                  Dark mode
                 </Text>
-              }
-              onPress={signOutAlert}
-              icon={({ focused, color, size }) => (
-                <Icon
-                  name="log-out-outline"
-                  color={styleSheet.logoutColor.color}
-                  size={size}
+                <Switch
+                  value={isDarkMode}
+                  onValueChange={() => setIsDarkMode((pre) => !pre)}
+                  color={styleSheet.highLightTextColor.color}
                 />
-              )}
-              rippleColor={styleSheet.highLightTextColor.color}
-            />
-          </Drawer.Section>
-        </View>
+              </View>
+            </Drawer.Section>
+          </View>
+
+          {/* log out section */}
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+            <Drawer.Section>
+              <Drawer.Item
+                label={
+                  <Text
+                    variant="labelLarge"
+                    style={isDarkMode && styleSheet.textColor}
+                  >
+                    Log out
+                  </Text>
+                }
+                onPress={signOutAlert}
+                icon={({ focused, color, size }) => (
+                  <Icon
+                    name="log-out-outline"
+                    color={styleSheet.logoutColor.color}
+                    size={size}
+                  />
+                )}
+                rippleColor={styleSheet.highLightTextColor.color}
+              />
+            </Drawer.Section>
+          </View>
+        </SafeAreaView>
       )}
     </DrawerContentScrollView>
   );

@@ -25,7 +25,7 @@ import UserContext from "../UserContext";
 import NotLogInScreen from "./NotLogInScreen";
 
 const AddPostScreen = ({ navigation }) => {
-  const { currentUser } = useContext(UserContext);
+  const currentUser  = useContext(UserContext);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [isTitleEmpty, setIsTitleEmpty] = useState(true);
@@ -140,7 +140,7 @@ const AddPostScreen = ({ navigation }) => {
     setTitle(newText);
   };
 
-  return !currentUser ? (
+  return !currentUser.signIn ? (
     <NotLogInScreen />
   ) : (
     <KeyboardAvoidingView

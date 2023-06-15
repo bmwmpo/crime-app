@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "../config/firebase_config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "firebase/auth";
 import {
   Alert,
   TouchableOpacity,
@@ -33,8 +33,8 @@ const SignUpScreen = ({ navigation }) => {
   const outlinedColor = isDarkMode
     ? styleSheet.darkModeOutlinedColor.color
     : styleSheet.lightModeOutlinedColor.color;
-  const collectionRef = collection(db, "UserInfo");
-
+    const collectionRef = collection(db, "UserInfo");
+    
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
 
@@ -84,17 +84,15 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   //Update new user profile in firebase
-  const setNewUserProfile = async () =>
-  {
-    try
-    {
-      await updateProfile(auth.currentUser, { displayName: username.trim().toLowerCase() });
-    }
-    catch (error)
-    {
+  const setNewUserProfile = async () => {
+    try {
+      await updateProfile(auth.currentUser, {
+        displayName: username.trim().toLowerCase(),
+      });
+    } catch (error) {
       console.log(err);
     }
-  }
+  };
 
   //sign up function
   const handleCreateNewAccount = async () => {
@@ -115,9 +113,10 @@ const SignUpScreen = ({ navigation }) => {
         email,
         password
       );
-
-      await saveUserInfoInFirestore(userCredentials.user);
+      
       await setNewUserProfile();
+      await saveUserInfoInFirestore(userCredentials.user);
+      
 
       Alert.alert("Welcome");
       //redirect to the Main Screen upon successful create new account
@@ -180,7 +179,7 @@ const SignUpScreen = ({ navigation }) => {
           isDarkMode
             ? styleSheet.darkModeBackGroundColor
             : styleSheet.lightModeBackGroundColor,
-        ]}
+                  ] }
         behavior={Platform.OS === "ios" && "padding"}
       >
         <Text
