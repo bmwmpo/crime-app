@@ -2,15 +2,17 @@ import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { auth } from "../config/firebase_config";
 import { signOut } from "firebase/auth";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Alert, View, SafeAreaView } from "react-native";
+import { View, SafeAreaView } from "react-native";
 import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
 import styleSheet from "../assets/StyleSheet";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import UserContext from "../UserContext";
+import { LogOutConfirmDialog } from "../screen/AlertDialog";
 
 //custom drawer content
 const CustomDrawer = ({ navigation, setIsDarkMode }) => {
+  const [showDialog, setShowDialog] = useState(false);
   const isDarkMode = useTheme().dark;
   const currentUser = useContext(UserContext);
   const avatarLabel = currentUser.userProfile.username
@@ -19,37 +21,29 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
 
   const username = currentUser.userProfile.username;
 
+  const hideDialog = () => setShowDialog(false);
+
   //sign out function
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+
+      hideDialog();
+
       //show loading screen while signing out
-      //navigation.setOptions({ headerShown: false });
       navigation.navigate("Loading");
     } catch (err) {
-      Alert.alert(err.message);
+      console.log(err);
     } finally {
       //redirect to main screen upon successgul sign out
       setTimeout(() => {
-        //navigation.setOptions({ headerShown: true });
         navigation.navigate("BottomTabNavigation", { screen: "Map" });
       }, 500);
     }
   };
 
   //sign out alert dialog
-  const signOutAlert = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out", [
-      {
-        text: "Log Out",
-        onPress: () => handleSignOut(),
-        style: "destructive",
-      },
-      {
-        text: "Cancel",
-      },
-    ]);
-  };
+  const signOutAlert = () => setShowDialog(true);
 
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
@@ -90,6 +84,12 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
         </Drawer.Section>
       ) : (
         <SafeAreaView style={styleSheet.flex_1}>
+          {/* log out confirm dialog */}
+          <LogOutConfirmDialog
+            hideDialog={hideDialog}
+            showDialog={showDialog}
+            logOut={handleSignOut}
+          />
           <View style={styleSheet.container}>
             <Avatar.Text size={90} label={avatarLabel} />
             <Text variant="titleSmall" style={styleSheet.usernameStyle}>
