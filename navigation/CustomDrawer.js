@@ -92,12 +92,26 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           />
           <View style={styleSheet.container}>
             <Avatar.Text size={90} label={avatarLabel} />
-            <Text variant="titleSmall" style={[styleSheet.usernameStyle, isDarkMode && styleSheet.textColor]}>
+            <Text
+              variant="titleSmall"
+              style={[
+                styleSheet.usernameStyle,
+                isDarkMode && styleSheet.textColor,
+              ]}
+            >
               {username}
             </Text>
           </View>
           <View style={{ flex: 3, justifyContent: "space-between" }}>
             <Drawer.Section>
+              <Drawer.Item
+                label={
+                  <Text style={isDarkMode && styleSheet.textColor}>
+                    My Profile
+                  </Text>
+                }
+                onPress={() => navigation.navigate("MyProfile")}
+              />
               {/* Dark mode section */}
               <Text
                 variant="titleSmall"

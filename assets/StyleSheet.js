@@ -113,22 +113,22 @@ const styleSheet = StyleSheet.create({
   },
   //AddPostScreen
   postingContainer: {
-    backgroundColor: "#808080",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
+    //backgroundColor: "#808080",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    //flex: 1,
   },
   titleBodyContainer: {
-    flex: 9,
+    flex: 1,
     width: "100%",
   },
   titleTextInputStyle: {
     width: "100%",
     textAlignVertical: "top",
-    fontSize: 30,
-    fontWeight: "bold",
-    borderBottomWidth: 2,
-    borderColor: "#696969",
+    fontSize: 25,
+    flex:1,
+    zIndex:1
+    //borderColor: "#696969",
   },
   bodyTextInputStyle: {
     width: "100%",
