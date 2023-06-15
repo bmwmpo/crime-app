@@ -92,7 +92,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           />
           <View style={styleSheet.container}>
             <Avatar.Text size={90} label={avatarLabel} />
-            <Text variant="titleSmall" style={styleSheet.usernameStyle}>
+            <Text variant="titleSmall" style={[styleSheet.usernameStyle, isDarkMode && styleSheet.textColor]}>
               {username}
             </Text>
           </View>

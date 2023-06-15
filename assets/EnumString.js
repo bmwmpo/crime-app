@@ -9,5 +9,5 @@ export default EnumString = {
   emailIsMissing: "Email address is missing",
   invalidEmail: "Not a valid email address",
   welcomeMsg: (username) => `Weclome ${ username }`,
-  logOutMsg: 'Do you sure to log out ?',
+  logOutMsg: 'Are you sure you want to log out?',
 }
