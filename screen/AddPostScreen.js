@@ -1,16 +1,17 @@
 import {
   View,
   Text,
-  TextInput,
   Button,
   Pressable,
   TouchableOpacity,
-  KeyboardAvoidingView,
+    KeyboardAvoidingView,
+  ScrollView,
   Platform,
   Share,
   Alert,
   Image,
   SafeAreaView,
+  FlatList,Dimensions
 } from "react-native";
 import styleSheet from "../assets/StyleSheet";
 import { useState, useContext, useEffect } from "react";
@@ -23,6 +24,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import uuid from "react-native-uuid";
 import UserContext from "../UserContext";
 import NotLogInScreen from "./NotLogInScreen";
+import { TextInput, Appbar } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from "@react-navigation/native";
 
 const AddPostScreen = ({ navigation }) => {
   const currentUser  = useContext(UserContext);
@@ -31,6 +35,18 @@ const AddPostScreen = ({ navigation }) => {
   const [isTitleEmpty, setIsTitleEmpty] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(null);
   const [photoSource, setPhotoSource] = useState(null);
+  
+  const [images, setImages] = useState([]);
+    const { bottom } = useSafeAreaInsets();
+      const isDarkMode = useTheme().dark;
+      const outlinedColor = isDarkMode
+    ? styleSheet.darkModeOutlinedColor
+          : styleSheet.lightModeOutlinedColor;
+    const backgroundColor = isDarkMode
+            ? styleSheet.darkModeBackGroundColor
+      : styleSheet.lightModeBackGroundColor
+  const width = Dimensions.get('window').width;
+   const height = Dimensions.get('window').height
   //const [uploading, setUploading] = useState(false);
   //const [getPhoto, setGetPhoto] = useState(null);
 
@@ -52,19 +68,22 @@ const AddPostScreen = ({ navigation }) => {
   const selectPhoto = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        //allowsEditing: true,
+        allowsMultipleSelection:true,
         aspect: [4, 3],
         quality: 1,
       });
 
-      const source = result.assets[0].uri;
-      const filename = source.substring(source.lastIndexOf("/") + 1);
-      setPhotoUrl(source);
-      setPhotoSource(filename);
-      console.log(result.assets[0].uri, filename);
+      const source = result.assets;
+      console.log(source);
+      setImages(source)
+      // const filename = source.substring(source.lastIndexOf("/") + 1);
+      // setPhotoUrl(source);
+      // setPhotoSource(filename);
+      //console.log(result.assets[0].uri, filename);
     } catch (err) {
-      Alert.alert(err.message);
+        console.log(err);
     }
   };
 
@@ -100,7 +119,7 @@ const AddPostScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
-      Alert.alert(err.message);
+        console.log(err);
     }
   };
 
@@ -143,51 +162,43 @@ const AddPostScreen = ({ navigation }) => {
   return !currentUser.signIn ? (
     <NotLogInScreen />
   ) : (
-    <KeyboardAvoidingView
-      style={styleSheet.postingContainer}
-      keyboardVerticalOffset={200}
-      behavior={Platform.OS === "ios" && "height"}
+      <ScrollView nestedScrollEnabled={ true }
+      contentContainerStyle={styleSheet.postingContainer}
     >
-      {/* title text input */}
-      <View style={styleSheet.titleBodyContainer}>
+        {/* title text input */ }
+        
         <TextInput
-          style={styleSheet.titleTextInputStyle}
-          placeholder="Title"
-          value={title}
-          onChangeText={handleTitleTextChange}
-          multiline={true}
-          autoFocus={true}
+          style={ [styleSheet.titleTextInputStyle] }
+                      placeholder="Report a crime"                
+                      value={ title }
+                      onChangeText={ handleTitleTextChange }
+                      multiline={ true }
+          autoFocus={ true }
+          underlineColorColor="transparent"
+                      activeUnderlineColor={ outlinedColor.color }
         />
-        {/* body text input */}
-        <TextInput
-          style={styleSheet.bodyTextInputStyle}
+        {/* <TextInput
+          style={[styleSheet.bodyTextInputStyle, {height: height, backgroundColor:'red'} ]}
           placeholder="Body"
           value={body}
           onChangeText={setBody}
-          multiline={true}
-        />
-      </View>
-      {photoUrl && (
-        <Image source={{ uri: photoUrl }} style={{ width: 300, height: 300 }} />
-      )}
-      {/* add post and share buttons */}
-      <View style={styleSheet.optionBarStyle}>
-        <TouchableOpacity onPress={addPost} disabled={isTitleEmpty}>
-          <Icon
-            name="add-circle-outline"
-            size={40}
-            color={isTitleEmpty ? "#a9a9a9" : "#000000"}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onShare}>
-          <Icon name="share-social-outline" size={40} color="#000000" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={selectPhoto}>
-          <Icon name="image-outline" size={40} color="#000000" />
-        </TouchableOpacity>
-        {/* <Button title="Upload" onPress={uploadPhoto}/> */}
-      </View>
-    </KeyboardAvoidingView>
+                      multiline={ true }
+                      activeUnderlineColor={ outlinedColor.color }
+                      /> */}
+        { images.length > 0 && (
+
+          <FlatList horizontal data={ images } keyExtractor={ (item) => item.uri } style={ { width: width, height: 200} }
+            renderItem={ ({ item }) => (<View><Image source={ { uri: item.uri } } style={ { width:width , height: 200 } } /></View>) } />
+      
+                  ) }
+
+        {/* add post and share buttons */ }
+        <Appbar safeAreaInsets={ bottom } style={ [{ width: '100%', height: bottom + 30, borderTopWidth: 0.1, borderColor: outlinedColor }, backgroundColor] }>
+                  <Appbar.Action icon="plus"/>
+                  <Appbar.Action icon='share' onPress={ onShare } />
+                  <Appbar.Action icon='image' onPress={selectPhoto}/>
+              </Appbar>
+    </ScrollView>
   );
 };
 

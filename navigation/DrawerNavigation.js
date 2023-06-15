@@ -34,26 +34,29 @@ const DrawerNavigation = () => {
           initialRouteName="BottomTabNavigation"
           screenOptions={({ navigation }) => ({
             headerTitle: "",
-            drawerStyle: { width: "60%" },
+            drawerStyle: { width: "55%" },
             headerStyle: { borderBottomWidth: 1 },
             headerLeft: () => (
               <Pressable
                 style={{ margin: "10%" }}
                 onPress={() => navigation.toggleDrawer()}
               >
-                {currentUser.signIn ? (
-                  <Avatar.Text label={avatarLabel} size={30} />
-                ) : (
-                  <Icon
-                    name="person-circle-outline"
-                    color={
-                      isDarkMode
-                        ? styleSheet.textColor.color
-                        : styleSheet.lightModeColor.color
-                    }
-                    size={30}
-                  />
-                )}
+                {
+                  //display avatar if user is logged in
+                  currentUser.signIn ? (
+                    <Avatar.Text label={avatarLabel} size={30} />
+                  ) : (
+                    <Icon
+                      name="person-circle-outline"
+                      color={
+                        isDarkMode
+                          ? styleSheet.textColor.color
+                          : styleSheet.lightModeColor.color
+                      }
+                      size={30}
+                    />
+                  )
+                }
               </Pressable>
             ),
           })}
