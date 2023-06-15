@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
 import { auth } from "../config/firebase_config";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  onAuthStateChanged,
-} from "firebase/auth";
-import {
-  Alert,
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Platform,
+  Platform
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
@@ -51,14 +46,13 @@ const SignUpScreen = ({ navigation }) => {
   const deletePress = () => setEmail("");
 
   //delete the username text input
-    const deleteUserNamePress = () => setUserName("");
-    
-      //hide the error dialog
+  const deleteUserNamePress = () => setUserName("");
+
+  //hide the error dialog
   const hideDialog = () => setShowDialog(false);
 
   //hide the send reset password dialog
-  const hideWelcomeDialog = () =>
-    setShowWelocmeDialog(false);
+  const hideWelcomeDialog = () => setShowWelocmeDialog(false);
 
   //Verify if the username is already in use within Firestore
   const duplicatedUsername = async () => {
@@ -71,6 +65,7 @@ const SignUpScreen = ({ navigation }) => {
       const querySnapshot = await getDocs(q);
       const documents = querySnapshot.docs;
 
+      //if a document with the given username is found, then return false
       if (documents.length > 0) {
         setValidUsername(false);
         return true;
@@ -133,12 +128,17 @@ const SignUpScreen = ({ navigation }) => {
       await setNewUserProfile();
       await saveUserInfoInFirestore(userCredentials.user);
 
-        //show welcome dialog
-      setShowWelocmeDialog(true);
-      setDialogTitleMsg({title:'', message:EnumString.welcomeMsg(userCredentials.user.displayName)})
+      setIsLoading(false);
+      navigation.setOptions({ headerShown: true });
 
       //redirect to the Main Screen upon successful create new account
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
+      //show welcome dialog
+      setShowWelocmeDialog(true);
+      setDialogTitleMsg({
+        title: "",
+        message: EnumString.welcomeMsg(userCredentials.user.displayName),
+      });
     } catch (err) {
       setIsLoading(false);
 
@@ -214,16 +214,16 @@ const SignUpScreen = ({ navigation }) => {
           hideDialog={hideWelcomeDialog}
           showDialog={showWelcomeDialog}
           {...dialogTitleMsg}
-        />
-        <Text
-          variant="headlineSmall"
-          style={[
-            styleSheet.headerStyle,
-            isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-          ]}
-        >
-          Welcome to Toronro Crime Tracker
-        </Text>
+          />
+            <Text
+              variant="headlineSmall"
+              style={ [
+                styleSheet.headerStyle,
+                isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
+              ] }
+            >
+              Welcome to Toronro Crime Tracker
+            </Text> 
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput

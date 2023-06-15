@@ -14,7 +14,6 @@ import {
   TextInput,
   Text,
   HelperText,
-  TouchableRipple,
 } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import styleSheet from "../assets/StyleSheet";
@@ -245,7 +244,7 @@ const LogInScreen = ({ navigation }) => {
             }
           />
           {/* forgot password button */}
-          <TouchableRipple
+          <TouchableOpacity
             style={styleSheet.touchableRippleWidth}
             onPress={handleForgotPassword}
             rippleColor={styleSheet.highLightTextColor.color}
@@ -259,7 +258,7 @@ const LogInScreen = ({ navigation }) => {
             >
               Forgot your password?
             </Text>
-          </TouchableRipple>
+          </TouchableOpacity>
         </View>
         {/* Log in button */}
         <TouchableOpacity
@@ -292,7 +291,7 @@ const LogInScreen = ({ navigation }) => {
           >
             Don't have an account?{" "}
           </Text>
-          <TouchableRipple
+          <TouchableOpacity
             onPress={toSignUpScreen}
             rippleColor={styleSheet.highLightTextColor.color}
           >
@@ -305,7 +304,7 @@ const LogInScreen = ({ navigation }) => {
             >
               Sign Up here
             </Text>
-          </TouchableRipple>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     )

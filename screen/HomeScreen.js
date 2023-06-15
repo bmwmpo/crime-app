@@ -8,30 +8,42 @@ import UserContext from "../UserContext.js";
 
 //main screen
 const HomeScreen = () => {
-  const [currentUser, setCurrentuser] = useState({ signIn: false, userProfile: {username:''} });
+  const [currentUser, setCurrentuser] = useState({
+    signIn: false,
+    userProfile: { username: "" },
+  });
 
   //get user profile from firestore
-  const getUserProfile = async (email) => {
-    try {
-      const collectionRef = collection(db, "UserInfo");
-      const filter = where("email", "==", email);
-      const q = query(collectionRef, filter);
+  const getUserProfile = (email) => {
+    setTimeout(async () => {
+      try {
+        const collectionRef = collection(db, "UserInfo");
+        const filter = where("email", "==", email);
+        const q = query(collectionRef, filter);
 
-      const querySnapshot = await getDocs(q);
-      const documents = querySnapshot.docs;
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs;
 
-      console.log(documents.length)
-      if (documents.length > 0) {
-        setCurrentuser({
-          signIn: true,
-          userProfile: {
-            username: documents[0].data().username,
-          },
-        });
+        console.log(documents.length);
+        if (documents.length > 0) {
+          setCurrentuser({
+            signIn: true,
+            userProfile: {
+              username: documents[0].data().username,
+            },
+          });
+        } else {
+          setCurrentuser({
+            signIn: false,
+            userProfile: {
+              username: "",
+            },
+          });
+        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
-    }
+    }, 2000);
   };
 
   //get the currently signed-in user
