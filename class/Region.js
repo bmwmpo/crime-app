@@ -1,5 +1,5 @@
 export default class Region{
-
+        id=-1
       region_name="defualt_name"
       assult=-1
       autotheft=-1
@@ -16,7 +16,8 @@ export default class Region{
         {latitude: 20, longitude: 20}]
 
 
-    constructor(region_name,assult,autotheft,biketheft,breakenter,homicide,robbery,shooting,theftFromMv,theftOver,region_geo){
+    constructor(id,region_name,assult,autotheft,biketheft,breakenter,homicide,robbery,shooting,theftFromMv,theftOver,region_geo){
+        this.id=id
         this.region_name=region_name
         this.assult=assult
         this.autotheft=autotheft

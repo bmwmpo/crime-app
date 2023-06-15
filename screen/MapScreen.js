@@ -1,19 +1,27 @@
 import { Component, useEffect,useState, useRef } from "react";
-import{View, Text, Button, Dimensions} from "react-native";
+import{View, Text, Button, Dimensions, TextInput} from "react-native";
 import React from 'react';
 import MapView,{ Marker, Polygon }from 'react-native-maps';
 import styleSheet from '../assets/StyleSheet';
 import API_Request from '../API_Request'
 import Region from '../class/Region.js'
+import Drawer from '@mui/material/Drawer';
+import { bottom } from "@popperjs/core";
+
 
 const MapScreen =()=>{
 
 
     const count = useRef(0);
     const [data,setdata] = React.useState([])
-    const [apiFlag,setflag] = React.useState(false)
-    const [eventID, setID] = React.useState(-1)
+    const [region_id, setID] = React.useState([])
+    const [region_name, setName] = React.useState([])
     const [eventCoord, setCoord] = React.useState({latitude: 43.759, longitude: -79.571})
+    const [region_color, setColor] = React.useState(["rgba(255,138,142,0.3)",
+    "rgba(250,228,62,0.3)",
+    "rgba(55,255,41,0.3)",
+    "rgba(41,137,255,0.3)"])
+    const [selectedName, setSelectedName] = React.useState("")
     const default_poly = [
         [ -122.4351431, 37.8025259],
         [ -122.421646, 37.7896386],
@@ -28,18 +36,26 @@ const MapScreen =()=>{
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,}
 
-    const [polyCoord, setPoly] = React.useState(default_poly)
-     const[Region_Obj,setObj] = React.useState(new Region('test_region',0,0,0,0,0,0,0,0,0,default_poly))
+    const [polyCoord, setPoly] = React.useState([default_poly])
+     const[Region_Obj,setObj] = React.useState([new Region(-1,'default_poly',0,0,0,0,0,0,0,0,0,default_poly)])
     
 getApi=async()=>{
-    return fetch(`https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/datastore_search?resource_id=58b33705-45f0-4796-a1a7-5762cc152772&limit=1`)
+    return fetch(`https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/datastore_search?resource_id=58b33705-45f0-4796-a1a7-5762cc152772&limit=200`)
     .then((response)=>response.json())
     .then((json)=>{
-        setdata(json.result.records);
-        //console.log((json.result.records[0].AREA_NAME))
-        setflag(true)
-        //console.log(apiFlag)
-        setPoly(JSON.parse(json.result.records[0].geometry).coordinates[0])
+        // setdata(json.result.records);
+        console.log("name print")
+        console.log(json.result.records[1].AREA_NAME)
+        console.log(JSON.parse(json.result.records[1].geometry).coordinates[0])
+    let i = 0  
+    var temp_obj_list=[]
+    while(i<json.result.total){
+        var temp_obj = new Region(json.result.records[i]._id,json.result.records[i].AREA_NAME,0,0,0,0,0,0,0,0,0,JSON.parse(json.result.records[i].geometry).coordinates[0])
+        temp_obj_list.push(temp_obj)
+        i++
+    }
+     setObj(temp_obj_list)
+
 
     })
     .catch((err)=>{
@@ -49,55 +65,54 @@ getApi=async()=>{
 }
 
 const apiGot=()=>{
-   // console.log("api got")
-   // console.log(polyCoord)
-
-    if(polyCoord!=default_poly){
-        var temp_obj = new Region("published_region",0,0,0,0,0,0,0,0,0,polyCoord)
-        setObj(temp_obj)
-
-    }
+console.log("apiGot")
 }
- 
-useEffect(()=>{
-   // console.log("data to class Obj")
-    //console.log(Region_Obj.region_geo)
-},[Region_Obj])
+
 
 useEffect(()=>{getApi()},[]) 
 
-useEffect(()=>{apiGot()},[polyCoord])
+useEffect(()=>{apiGot()},[Region_Obj])
+
+ RegionPressed=(region_name)=>{
+    console.log("pressed")
+    console.log(region_name)
+    setSelectedName(region_name)
+}
+
+const Poly_list = Region_Obj.map((item)=>
+<Polygon
+coordinates={item.region_geo}
+strokeColor="rgba(255,0,9,0.5)"
+fillColor= {region_color[item.id%4]}
+tappable = {true}
+strokeWidth={2}
+onPress={()=>RegionPressed(item.region_name)}
+/>
+)
+
+const DrawerInfo=(
+    <Text>{selectedName}</Text>
+)
 
 
      return(
         <View>
-    <Text >test_component</Text>
-    <Text>first item EVENT_UNIQUE_ID : {"\n"}{eventID}</Text>
-    
+
+
 
 
     <MapView
-          style= {{width: Dimensions.get('window').width, height: 500}}
+          style= {{width: Dimensions.get('window').width, height:  Dimensions.get('window').height}}
           initialRegion={initRegion}
         //   onRegionChangeComplete={mapMoved}
         //   ref={mapRef}
         >
-            <Polygon
-             coordinates={Region_Obj.region_geo}
-              strokeColor="#000" 
-              strokeColors={[
-                '#7F0000',
-                '#00000000', 
-                '#B24112',
-                '#E5845C',
-                '#238C23',
-                '#7F0000',
-              ]}
-              strokeWidth={6}
-            /> 
+
+
+{Poly_list}
+
 
         </MapView>
-
 
 
 </View>
