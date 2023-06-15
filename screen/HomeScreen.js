@@ -8,7 +8,7 @@ import UserContext from "../UserContext.js";
 
 //main screen
 const HomeScreen = () => {
-  const [currentUser, setCurrentuser] = useState({});
+  const [currentUser, setCurrentuser] = useState({ signIn: false, userProfile: {username:''} });
 
   //get user profile from firestore
   const getUserProfile = async (email) => {

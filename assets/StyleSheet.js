@@ -152,6 +152,9 @@ const styleSheet = StyleSheet.create({
     fontWeight: "bold",
     width: "80%",
   },
+  usernameStyle: {
+    margin: 10
+  }
 });
 
 export default styleSheet;
