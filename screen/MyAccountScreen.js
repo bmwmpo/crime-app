@@ -1,8 +1,8 @@
 import { Text, View } from "react-native";
 
-const MyProfile = () =>
+const MyAccountScreen = () =>
 {
     return (<View><Text>User Profile</Text></View>);
 }
 
-export default MyProfile;
+export default MyAccountScreen;

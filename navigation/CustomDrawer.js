@@ -14,6 +14,10 @@ import { LogOutConfirmDialog } from "../screen/AlertDialog";
 const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   const [showDialog, setShowDialog] = useState(false);
   const isDarkMode = useTheme().dark;
+  //dark mode or light mode text and icon color style object
+  const textColor = isDarkMode
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
   const currentUser = useContext(UserContext);
   const avatarLabel = currentUser.userProfile.username
     .toUpperCase()
@@ -48,34 +52,22 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
       {!currentUser.signIn ? (
+        //no logged in user
         //log in section
         <Drawer.Section>
-          <Paragraph
-            style={[
-              styleSheet.drawerTextStyle,
-              isDarkMode && styleSheet.textColor,
-            ]}
-          >
+          <Paragraph style={[styleSheet.drawerTextStyle, textColor]}>
             Stay informed about neighborhood crime by joining the Toronto Crime
             Tracker
           </Paragraph>
           <Drawer.Item
-            label={
-              <Text style={isDarkMode && styleSheet.textColor}>
-                Log in / Sign up
-              </Text>
-            }
+            label={<Text style={textColor}>Log in / Sign up</Text>}
             onPress={() =>
               navigation.navigate("SignInSignUp", { screen: "LogIn" })
             }
             icon={({ focused, color, size }) => (
               <Icon
                 name="person-circle-outline"
-                color={
-                  isDarkMode
-                    ? styleSheet.textColor.color
-                    : styleSheet.lightModeColor.color
-                }
+                color={textColor.color}
                 size={size}
               />
             )}
@@ -94,10 +86,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
             <Avatar.Text size={90} label={avatarLabel} />
             <Text
               variant="titleSmall"
-              style={[
-                styleSheet.usernameStyle,
-                isDarkMode && styleSheet.textColor,
-              ]}
+              style={[styleSheet.usernameStyle, textColor]}
             >
               {username}
             </Text>
@@ -105,43 +94,42 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           <View style={{ flex: 3, justifyContent: "space-between" }}>
             <Drawer.Section>
               <Drawer.Item
-                label={
-                  <Text style={isDarkMode && styleSheet.textColor}>
-                    My Profile
-                  </Text>
-                }
-                onPress={() => navigation.navigate("MyProfile")}
+                label={<Text style={textColor}>Account</Text>}
+                onPress={() => navigation.navigate("Account")}
+                icon={({ focused, color, size }) => (
+                  <Icon
+                    name="person"
+                    color={textColor.color}
+                    size={size}
+                    style={{ marginRight: 5 }}
+                  />
+                )}
               />
               {/* Dark mode section */}
               <Text
                 variant="titleSmall"
-                style={[
-                  styleSheet.drawerTextStyle,
-                  isDarkMode && styleSheet.textColor,
-                ]}
+                style={[styleSheet.drawerTextStyle, textColor]}
               >
                 Perference
               </Text>
               <View style={styleSheet.drawerContainer}>
-                <Icon
-                  name="moon-outline"
-                  size={20}
-                  color={
-                    isDarkMode
-                      ? styleSheet.textColor.color
-                      : styleSheet.lightModeColor.color
-                  }
-                />
-                <Text
-                  variant="labelLarge"
-                  style={isDarkMode && styleSheet.textColor}
-                >
-                  Dark mode
-                </Text>
-                <Switch
-                  value={isDarkMode}
-                  onValueChange={() => setIsDarkMode((pre) => !pre)}
-                  color={styleSheet.highLightTextColor.color}
+                <Drawer.Item
+                  label={<Text style={textColor}>Dark mode</Text>}
+                  icon={({ focused, color, size }) => (
+                    <Icon
+                      name="moon"
+                      color={textColor.color}
+                      size={size}
+                      style={{ marginRight: 5 }}
+                    />
+                  )}
+                  right={() => (
+                    <Switch
+                      value={isDarkMode}
+                      onValueChange={() => setIsDarkMode((pre) => !pre)}
+                      color={styleSheet.highLightTextColor.color}
+                    />
+                  )}
                 />
               </View>
             </Drawer.Section>
@@ -152,10 +140,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
             <Drawer.Section>
               <Drawer.Item
                 label={
-                  <Text
-                    variant="labelLarge"
-                    style={isDarkMode && styleSheet.textColor}
-                  >
+                  <Text variant="labelLarge" style={textColor}>
                     Log out
                   </Text>
                 }
