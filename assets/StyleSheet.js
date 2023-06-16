@@ -142,9 +142,9 @@ const styleSheet = StyleSheet.create({
     width: "100%",
   },
   drawerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
+    //flexDirection: "row",
+    // justifyContent: "flex-start",
+    // alignItems: "flex-start",
   },
   drawerTextStyle: {
     textAlign: "left",

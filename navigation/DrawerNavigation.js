@@ -16,7 +16,7 @@ import { useState, useContext } from "react";
 import { Pressable } from "react-native";
 import { PaperProvider, Avatar } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import MyProfile from "../screen/MyProfile";
+import AccountStack from "./AccountStack";
 
 const Drawer = createDrawerNavigator();
 
@@ -35,11 +35,10 @@ const DrawerNavigation = () => {
           initialRouteName="BottomTabNavigation"
           screenOptions={({ navigation }) => ({
             headerTitle: "",
-            drawerStyle: { width: "55%" },
+            drawerStyle: { width: "70%" },
             headerStyle: { borderBottomWidth: 1 },
             headerLeft: () => (
               <Pressable
-                style={{ margin: "10%" }}
                 onPress={() => navigation.toggleDrawer()}
               >
                 {
@@ -75,7 +74,7 @@ const DrawerNavigation = () => {
             options={{ headerShown: false }}
           />
           <Drawer.Screen name="Loading" component={LoadingScreen} />
-          <Drawer.Screen name="MyProfile" component={MyProfile} />
+          <Drawer.Screen name="Account" component={AccountStack} options={{ headerShown: false }}/>
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>
