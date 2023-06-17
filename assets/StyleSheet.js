@@ -46,6 +46,10 @@ const styleSheet = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+    flexStartContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   formatContainer: {
     width: "90%",
   },
@@ -154,6 +158,9 @@ const styleSheet = StyleSheet.create({
   },
   usernameStyle: {
     margin: 10
+  },
+  textFontSize: {
+    fontSize:20
   }
 });
 
