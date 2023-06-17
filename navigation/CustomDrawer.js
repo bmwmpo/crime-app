@@ -103,7 +103,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                     size={size}
                     style={{ marginRight: 5 }}
                   />
-                )}
+                ) }
+                   rippleColor={styleSheet.highLightTextColor.color}
               />
               {/* Dark mode section */}
               <Text
