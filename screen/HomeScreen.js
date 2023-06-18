@@ -8,10 +8,7 @@ import useStore from "../zustand/store";
 
 //main screen
 const HomeScreen = () => {
-  const {setSignedInUser, setLogOutUser,  } = useStore(state => state);
-    
-    
-
+  const { setSignedInUser, setLogOutUser } = useStore((state) => state);
 
   //get user profile from firestore
   const getUserProfile = (email) => {
@@ -25,18 +22,13 @@ const HomeScreen = () => {
         const documents = querySnapshot.docs;
 
         console.log(documents.length);
-        if (documents.length > 0)
-        {
+        if (documents.length > 0) {
           const email = documents[0].data().email;
           const username = documents[0].data().username;
 
           setSignedInUser(email, username);
-
-        } else
-        {
-          
+        } else {
           setLogOutUser();
-
         }
       } catch (err) {
         console.log(err);
@@ -49,19 +41,13 @@ const HomeScreen = () => {
     return onAuthStateChanged(auth, (user) => {
       if (user) {
         getUserProfile(user.email);
-
-
-      } else
-      {
+      } else {
         setLogOutUser();
-
       }
     });
   }, []);
 
-  return (
-      <DrawerNavigation />
-  );
+  return <DrawerNavigation />;
 };
 
 export default HomeScreen;

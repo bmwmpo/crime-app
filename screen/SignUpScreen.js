@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
@@ -22,7 +22,12 @@ const SignUpScreen = ({ navigation }) => {
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
   // const [username, setUsername] = useState("");
-  const { user: { email, password, username}, setEmail, setPassword, setUsername } = useStore(state => state);
+  const {
+    user: { email, password, username },
+    setEmail,
+    setPassword,
+    setUsername,
+  } = useStore((state) => state);
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [validPasswordLength, setValidPasswordLength] = useState(false);
@@ -216,16 +221,16 @@ const SignUpScreen = ({ navigation }) => {
           hideDialog={hideWelcomeDialog}
           showDialog={showWelcomeDialog}
           {...dialogTitleMsg}
-          />
-            <Text
-              variant="headlineSmall"
-              style={ [
-                styleSheet.headerStyle,
-                isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-              ] }
-            >
-              Welcome to Toronro Crime Tracker
-            </Text> 
+        />
+        <Text
+          variant="headlineSmall"
+          style={[
+            styleSheet.headerStyle,
+            isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
+          ]}
+        >
+          Welcome to Toronro Crime Tracker
+        </Text>
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
