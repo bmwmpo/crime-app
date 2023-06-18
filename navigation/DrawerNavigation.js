@@ -11,22 +11,23 @@ import CustomDrawer from "../navigation/CustomDrawer";
 import styleSheet from "../assets/StyleSheet";
 import Icon from "react-native-vector-icons/Ionicons";
 import LoadingScreen from "../screen/LoadingScreen";
-import UserContext from "../UserContext";
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Pressable } from "react-native";
 import { PaperProvider, Avatar } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import AccountStack from "./AccountStack";
+import useStore from "../zustand/store";
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigation = () => {
+const DrawerNavigation = () =>
+{
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const currentUser = useContext(UserContext);
-  const avatarLabel = currentUser.userProfile.username
+  const { user, signIn } = useStore(state=>state)
+  const avatarLabel = user.username
     .toUpperCase()
     .substring(0, 1);
-
+  
   return (
     <PaperProvider>
       <StatusBar style={isDarkMode ? "light" : "dark"} />
@@ -43,7 +44,7 @@ const DrawerNavigation = () => {
               >
                 {
                   //display avatar if user is logged in
-                  currentUser.signIn ? (
+                  signIn ? (
                     <Avatar.Text label={avatarLabel} size={30} />
                   ) : (
                     <Icon

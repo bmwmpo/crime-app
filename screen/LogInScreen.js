@@ -10,21 +10,21 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import {
-  TextInput,
-  Text,
-  HelperText,
-} from "react-native-paper";
+import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
 import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
+import useStore from "../zustand/store";
 
 //user log in screen
 const LogInScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    user: { email, password },
+    setEmail,
+    setPassword,
+  } = useStore((state) => state);
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +171,7 @@ const LogInScreen = ({ navigation }) => {
             isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
           ]}
         >
-          Log in to Toronto Crime Tracker
+            Log in to Toronto Crime Tracker 
         </Text>
         {/* email text input */}
         <View style={styleSheet.formatContainer}>

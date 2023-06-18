@@ -4,14 +4,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db } from "../config/firebase_config";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import DrawerNavigation from "../navigation/DrawerNavigation";
-import UserContext from "../UserContext.js";
+import useStore from "../zustand/store";
 
 //main screen
 const HomeScreen = () => {
-  const [currentUser, setCurrentuser] = useState({
-    signIn: false,
-    userProfile: { username: "" },
-  });
+  const {setSignedInUser, setLogOutUser,  } = useStore(state => state);
+    
+    
+
 
   //get user profile from firestore
   const getUserProfile = (email) => {
@@ -25,20 +25,18 @@ const HomeScreen = () => {
         const documents = querySnapshot.docs;
 
         console.log(documents.length);
-        if (documents.length > 0) {
-          setCurrentuser({
-            signIn: true,
-            userProfile: {
-              username: documents[0].data().username,
-            },
-          });
-        } else {
-          setCurrentuser({
-            signIn: false,
-            userProfile: {
-              username: "",
-            },
-          });
+        if (documents.length > 0)
+        {
+          const email = documents[0].data().email;
+          const username = documents[0].data().username;
+
+          setSignedInUser(email, username);
+
+        } else
+        {
+          
+          setLogOutUser();
+
         }
       } catch (err) {
         console.log(err);
@@ -51,21 +49,18 @@ const HomeScreen = () => {
     return onAuthStateChanged(auth, (user) => {
       if (user) {
         getUserProfile(user.email);
-      } else {
-        setCurrentuser({
-          signIn: false,
-          userProfile: {
-            username: "",
-          },
-        });
+
+
+      } else
+      {
+        setLogOutUser();
+
       }
     });
   }, []);
 
   return (
-    <UserContext.Provider value={currentUser}>
       <DrawerNavigation />
-    </UserContext.Provider>
   );
 };
 

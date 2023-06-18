@@ -15,12 +15,14 @@ import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
 import styleSheet from "../assets/StyleSheet";
+import useStore from "../zustand/store";
 
 //user sign up screen
 const SignUpScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUserName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [username, setUsername] = useState("");
+  const { user: { email, password, username}, setEmail, setPassword, setUsername } = useStore(state => state);
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [validPasswordLength, setValidPasswordLength] = useState(false);
@@ -46,7 +48,7 @@ const SignUpScreen = ({ navigation }) => {
   const deletePress = () => setEmail("");
 
   //delete the username text input
-  const deleteUserNamePress = () => setUserName("");
+  const deleteUserNamePress = () => setUsername("");
 
   //hide the error dialog
   const hideDialog = () => setShowDialog(false);
@@ -281,7 +283,7 @@ const SignUpScreen = ({ navigation }) => {
             mode="outlined"
             activeOutlineColor={outlinedColor}
             value={username}
-            onChangeText={setUserName}
+            onChangeText={setUsername}
             outlineColor={
               !validUsername ? styleSheet.errorTextStyle.color : "transparent"
             }

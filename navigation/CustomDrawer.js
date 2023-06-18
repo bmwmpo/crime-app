@@ -5,10 +5,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { View, SafeAreaView } from "react-native";
 import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
 import styleSheet from "../assets/StyleSheet";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
-import UserContext from "../UserContext";
 import { LogOutConfirmDialog } from "../screen/AlertDialog";
+import useStore from "../zustand/store";
 
 //custom drawer content
 const CustomDrawer = ({ navigation, setIsDarkMode }) => {
@@ -18,12 +18,12 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
-  const currentUser = useContext(UserContext);
-  const avatarLabel = currentUser.userProfile.username
+  const { user: currentUser, signIn } = useStore(state => state);
+  const avatarLabel = currentUser.username
     .toUpperCase()
     .substring(0, 1);
 
-  const username = currentUser.userProfile.username;
+  const username = currentUser.username;
 
   const hideDialog = () => setShowDialog(false);
 
@@ -51,7 +51,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
 
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
-      {!currentUser.signIn ? (
+      {!signIn ? (
         //no logged in user
         //log in section
         <Drawer.Section>
