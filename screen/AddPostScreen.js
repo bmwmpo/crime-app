@@ -27,9 +27,10 @@ import NotLogInScreen from "./NotLogInScreen";
 import { TextInput, Appbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from "@react-navigation/native";
+import useStore from "../zustand/store";
 
 const AddPostScreen = ({ navigation }) => {
-  const currentUser  = useContext(UserContext);
+  const { user: currentUser, signIn } = useStore(state=>state)
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [isTitleEmpty, setIsTitleEmpty] = useState(true);
@@ -159,7 +160,7 @@ const AddPostScreen = ({ navigation }) => {
     setTitle(newText);
   };
 
-  return !currentUser.signIn ? (
+  return !signIn ? (
     <NotLogInScreen />
   ) : (
       <ScrollView nestedScrollEnabled={ true }
