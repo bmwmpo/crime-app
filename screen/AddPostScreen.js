@@ -22,7 +22,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import uuid from "react-native-uuid";
-import UserContext from "../UserContext";
 import NotLogInScreen from "./NotLogInScreen";
 import { TextInput, Appbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

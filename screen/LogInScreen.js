@@ -171,7 +171,7 @@ const LogInScreen = ({ navigation }) => {
             isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
           ]}
         >
-            Log in to Toronto Crime Tracker 
+          Log in to Toronto Crime Tracker
         </Text>
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
