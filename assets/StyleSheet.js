@@ -10,7 +10,13 @@ const styleSheet = StyleSheet.create({
   },
   //padding & margin
   margin_10: {
-    margin: 10
+    margin: 10,
+  },
+  height_100: {
+    height: "100%",
+  },
+  width_100: {
+    width: "100%",
   },
   //color
   darkModeBackGroundColor: {
@@ -47,7 +53,7 @@ const styleSheet = StyleSheet.create({
     color: "#E41B17",
   },
   transparentColor: {
-    color:'transparent'
+    color: "transparent",
   },
   //container
   container: {
@@ -55,7 +61,7 @@ const styleSheet = StyleSheet.create({
     justifyContent: "center",
   },
   flexStartContainer: {
-    flex:1,
+    flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
   },
@@ -69,8 +75,8 @@ const styleSheet = StyleSheet.create({
     flexDirection: "row",
   },
   flexEndStyle: {
-    justifyContent: 'flex-end',
-    alignItems:'flex-end'
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
   //text
   headerStyle: {
@@ -97,7 +103,7 @@ const styleSheet = StyleSheet.create({
     fontSize: 15,
   },
   inputPaddingStyle: {
-        paddingTop: 10,
+    paddingTop: 10,
     paddingBottom: 10,
   },
   iconStyle: {
@@ -131,7 +137,7 @@ const styleSheet = StyleSheet.create({
     width: "100%",
     textAlignVertical: "top",
     fontSize: 20,
-    marginBottom:'1%'
+    marginBottom: "1%",
   },
   drawerTextStyle: {
     textAlign: "left",
@@ -140,14 +146,21 @@ const styleSheet = StyleSheet.create({
     width: "80%",
   },
   drawerBottomStyle: {
-    flex: 1, justifyContent: "flex-end"
+    flex: 1,
+    justifyContent: "flex-end",
   },
   drawerOptionsStyle: {
-    flex: 3, justifyContent: "space-between"
+    flex: 3,
+    justifyContent: "space-between",
   },
   textFontSize: {
-    fontSize:20
-  }
+    fontSize: 20,
+  },
+  //create post
+  createPostScrollViewStyle: {
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 });
 
 export default styleSheet;
