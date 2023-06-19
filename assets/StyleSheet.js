@@ -55,13 +55,9 @@ const styleSheet = StyleSheet.create({
     justifyContent: "center",
   },
   flexStartContainer: {
-      flex:1,
+    flex:1,
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-    centerContainer: {
-    alignItems: "center",
-    justifyContent: "center",
   },
   formatContainer: {
     width: "90%",
@@ -71,6 +67,10 @@ const styleSheet = StyleSheet.create({
   },
   flexRowContainer: {
     flexDirection: "row",
+  },
+  flexEndStyle: {
+    justifyContent: 'flex-end',
+    alignItems:'flex-end'
   },
   //text
   headerStyle: {
@@ -127,34 +127,11 @@ const styleSheet = StyleSheet.create({
     fontSize: 16,
   },
   //AddPostScreen
-  postingContainer: {
-    //backgroundColor: "#808080",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    //flex: 1,
-  },
-  titleBodyContainer: {
-    flex: 1,
-    width: "100%",
-  },
   titleTextInputStyle: {
     width: "100%",
     textAlignVertical: "top",
-    fontSize: 25,
-    flex:1,
-    zIndex:1
-    //borderColor: "#696969",
-  },
-  bodyTextInputStyle: {
-    width: "100%",
-    textAlignVertical: "top",
-  },
-  optionBarStyle: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
+    fontSize: 20,
+    marginBottom:'1%'
   },
   drawerTextStyle: {
     textAlign: "left",

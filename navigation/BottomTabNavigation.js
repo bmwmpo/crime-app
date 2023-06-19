@@ -44,7 +44,8 @@ const BottomTabNavigation = ({ navigation }) => {
       <Tab.Screen
         name="AddPost"
         component={AddPostScreen}
-        options={{ headerShown: false }}
+        options={ { headerShown: false } }
+        initialParams={ {renderPortal: true} }
       />
     </Tab.Navigator>
   );
