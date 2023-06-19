@@ -1,13 +1,18 @@
 import { StyleSheet } from "react-native";
 
 const styleSheet = StyleSheet.create({
-  //Login Screen and SignUp Screen
+  //flex
   flex_9: {
     flex: 9,
   },
   flex_1: {
     flex: 1,
   },
+  //padding & margin
+  margin_10: {
+    margin: 10
+  },
+  //color
   darkModeBackGroundColor: {
     backgroundColor: "#0C090A",
   },
@@ -41,12 +46,20 @@ const styleSheet = StyleSheet.create({
   logoutColor: {
     color: "#E41B17",
   },
+  transparentColor: {
+    color:'transparent'
+  },
+  //container
   container: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-    flexStartContainer: {
+  flexStartContainer: {
+      flex:1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+    centerContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
@@ -59,11 +72,7 @@ const styleSheet = StyleSheet.create({
   flexRowContainer: {
     flexDirection: "row",
   },
-  loadingViewStyle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  //text
   headerStyle: {
     marginBottom: 30,
     fontWeight: "bold",
@@ -86,7 +95,9 @@ const styleSheet = StyleSheet.create({
   },
   inputStyle: {
     fontSize: 15,
-    paddingTop: 10,
+  },
+  inputPaddingStyle: {
+        paddingTop: 10,
     paddingBottom: 10,
   },
   iconStyle: {
@@ -145,19 +156,17 @@ const styleSheet = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
   },
-  drawerContainer: {
-    //flexDirection: "row",
-    // justifyContent: "flex-start",
-    // alignItems: "flex-start",
-  },
   drawerTextStyle: {
     textAlign: "left",
     marginHorizontal: "10%",
     fontWeight: "bold",
     width: "80%",
   },
-  usernameStyle: {
-    margin: 10
+  drawerBottomStyle: {
+    flex: 1, justifyContent: "flex-end"
+  },
+  drawerOptionsStyle: {
+    flex: 3, justifyContent: "space-between"
   },
   textFontSize: {
     fontSize:20

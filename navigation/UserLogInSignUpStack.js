@@ -10,9 +10,12 @@ import NotLogInScreen from "../screen/NotLogInScreen";
 const Stack = createNativeStackNavigator();
 
 const UserLogInSignUpStack = ({ navigation, route }) => {
-  const cancelPress = () => navigation.navigate("BottomTabNavigation");
-
   const isDarkMode = useTheme().dark;
+  const textColor = isDarkMode
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
+
+  const cancelPress = () => navigation.navigate("BottomTabNavigation");
 
   return (
     <Stack.Navigator
@@ -32,11 +35,7 @@ const UserLogInSignUpStack = ({ navigation, route }) => {
               <Icon
                 name="close-circle-outline"
                 size={30}
-                color={
-                  isDarkMode
-                    ? styleSheet.darkModeColor.color
-                    : styleSheet.lightModeColor.color
-                }
+                color={textColor.color}
               />
             </Pressable>
           ),

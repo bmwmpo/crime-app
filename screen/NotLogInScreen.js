@@ -8,18 +8,18 @@ const NotLogInScreen = () => {
   //navigate to log in screen
   const navigation = useNavigation();
   const isDarkMode = useTheme().dark;
+  const textColor = isDarkMode
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
 
-    const toLogInScreen = () => navigation.navigate("SignInSignUp", {screen:'LogIn'
-    });
+  const toLogInScreen = () =>
+    navigation.navigate("SignInSignUp", { screen: "LogIn" });
 
   return (
-    <SafeAreaView style={styleSheet.container}>
+    <SafeAreaView style={[styleSheet.container, styleSheet.flex_1]}>
       <Text
         variant="displaySmall"
-        style={[
-          styleSheet.displayTextStyle,
-          isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-        ]}
+        style={[styleSheet.displayTextStyle, textColor]}
       >
         Log in to report crimes
       </Text>

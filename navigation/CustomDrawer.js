@@ -18,12 +18,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
-  const { user: currentUser, signIn } = useStore(state => state);
-  const avatarLabel = currentUser.username
-    .toUpperCase()
-    .substring(0, 1);
-
-  const username = currentUser.username;
+  const { user: currentUser, signIn } = useStore((state) => state);
+  const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
 
   const hideDialog = () => setShowDialog(false);
 
@@ -86,12 +82,12 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
             <Avatar.Text size={90} label={avatarLabel} />
             <Text
               variant="titleSmall"
-              style={[styleSheet.usernameStyle, textColor]}
+              style={[styleSheet.margin_10, textColor]}
             >
-              {username}
+              {currentUser.username}
             </Text>
           </View>
-          <View style={{ flex: 3, justifyContent: "space-between" }}>
+          <View style={styleSheet.drawerOptionsStyle}>
             <Drawer.Section>
               <Drawer.Item
                 label={<Text style={textColor}>Account</Text>}
@@ -103,8 +99,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                     size={size}
                     style={{ marginRight: 5 }}
                   />
-                ) }
-                   rippleColor={styleSheet.highLightTextColor.color}
+                )}
+                rippleColor={styleSheet.highLightTextColor.color}
               />
               {/* Dark mode section */}
               <Text
@@ -113,7 +109,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
               >
                 Perference
               </Text>
-              <View style={styleSheet.drawerContainer}>
+              <View>
                 <Drawer.Item
                   label={<Text style={textColor}>Dark mode</Text>}
                   icon={({ focused, color, size }) => (
@@ -137,7 +133,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
           </View>
 
           {/* log out section */}
-          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <View style={ styleSheet.drawerBottomStyle}>
             <Drawer.Section>
               <Drawer.Item
                 label={

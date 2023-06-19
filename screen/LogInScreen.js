@@ -34,12 +34,19 @@ const LogInScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
   const isDarkMode = useTheme().dark;
+  //stylesheet object
   const textColor = isDarkMode
-    ? styleSheet.darkModeColor.color
-    : styleSheet.lightModeColor.color;
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
   const outlinedColor = isDarkMode
-    ? styleSheet.darkModeOutlinedColor.color
-    : styleSheet.lightModeOutlinedColor.color;
+    ? styleSheet.darkModeOutlinedColor
+    : styleSheet.lightModeOutlinedColor;
+  const backgroundColor = isDarkMode
+    ? styleSheet.darkModeBackGroundColor
+    : styleSheet.lightModeBackGroundColor;
+  const inputTextBackGroundColor = isDarkMode
+    ? styleSheet.darkModeTextInputBackGroundColor
+    : styleSheet.lightModeTextInputBackGroundColor;
 
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -144,12 +151,7 @@ const LogInScreen = ({ navigation }) => {
       <LoadingScreen />
     ) : (
       <KeyboardAvoidingView
-        style={[
-          styleSheet.container,
-          isDarkMode
-            ? styleSheet.darkModeBackGroundColor
-            : styleSheet.lightModeBackGroundColor,
-        ]}
+        style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
         behavior={Platform.OS === "ios" && "padding"}
       >
         {/* display the dialog if the login fails or if sending the reset password fails*/}
@@ -166,32 +168,24 @@ const LogInScreen = ({ navigation }) => {
         />
         <Text
           variant="headlineSmall"
-          style={[
-            styleSheet.headerStyle,
-            isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-          ]}
+          style={[styleSheet.headerStyle, textColor]}
         >
           Log in to Toronto Crime Tracker
         </Text>
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
-            style={[
-              styleSheet.inputStyle,
-              isDarkMode
-                ? styleSheet.darkModeTextInputBackGroundColor
-                : styleSheet.lightModeTextInputBackGroundColor,
-            ]}
+            style={[styleSheet.inputStyle, inputTextBackGroundColor, styleSheet.inputPaddingStyle]}
             label="Email"
-            textColor={textColor}
+            textColor={textColor.color}
             mode="outlined"
-            activeOutlineColor={outlinedColor}
+            activeOutlineColor={outlinedColor.color}
             value={email}
             onChangeText={onEmailTextChange}
             outlineColor={
               !validEmailFormat
                 ? styleSheet.errorTextStyle.color
-                : "transparent"
+                : styleSheet.transparentColor.color
             }
             autoCapitalize="none"
             autoCorrect={false}
@@ -202,7 +196,7 @@ const LogInScreen = ({ navigation }) => {
                 <TextInput.Icon
                   icon="close-circle"
                   onPress={deletePress}
-                  iconColor={textColor}
+                  iconColor={textColor.color}
                 />
               )
             }
@@ -219,17 +213,12 @@ const LogInScreen = ({ navigation }) => {
         {/* password text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
-            style={[
-              styleSheet.inputStyle,
-              isDarkMode
-                ? styleSheet.darkModeTextInputBackGroundColor
-                : styleSheet.lightModeTextInputBackGroundColor,
-            ]}
+            style={[styleSheet.inputStyle, inputTextBackGroundColor, styleSheet.inputPaddingStyle]}
             label="Password"
             mode="outlined"
-            textColor={textColor}
-            activeOutlineColor={outlinedColor}
-            outlineColor="transparent"
+            textColor={textColor.color}
+            activeOutlineColor={outlinedColor.color}
+              outlineColor={ styleSheet.transparentColor.color}
             value={password}
             onChangeText={setPassword}
             autoCapitalize="none"
@@ -239,7 +228,7 @@ const LogInScreen = ({ navigation }) => {
               <TextInput.Icon
                 icon={hidePassword ? "eye" : "eye-off"}
                 onPress={showHidePasswordPress}
-                iconColor={textColor}
+                iconColor={textColor.color}
               />
             }
           />
@@ -272,23 +261,14 @@ const LogInScreen = ({ navigation }) => {
         >
           <Text
             variant="labelLarge"
-            style={[
-              styleSheet.buttonTextStyle,
-              isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-            ]}
+            style={[styleSheet.buttonTextStyle, textColor]}
           >
             Log in
           </Text>
         </TouchableOpacity>
         {/* Go to Sign Up Screen*/}
         <View style={styleSheet.flexRowContainer}>
-          <Text
-            variant="titleMedium"
-            style={[
-              styleSheet.textStyle,
-              isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-            ]}
-          >
+          <Text variant="titleMedium" style={[styleSheet.textStyle, textColor]}>
             Don't have an account?{" "}
           </Text>
           <TouchableOpacity
