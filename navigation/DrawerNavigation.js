@@ -20,14 +20,14 @@ import useStore from "../zustand/store";
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigation = () =>
-{
+const DrawerNavigation = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { user, signIn } = useStore(state=>state)
-  const avatarLabel = user.username
-    .toUpperCase()
-    .substring(0, 1);
-  
+  const { user, signIn } = useStore((state) => state);
+  const avatarLabel = user.username.toUpperCase().substring(0, 1);
+  const textColor = isDarkMode
+    ? styleSheet.textColor
+    : styleSheet.lightModeColor;
+
   return (
     <PaperProvider>
       <StatusBar style={isDarkMode ? "light" : "dark"} />
@@ -39,9 +39,7 @@ const DrawerNavigation = () =>
             drawerStyle: { width: "70%" },
             headerStyle: { borderBottomWidth: 1 },
             headerLeft: () => (
-              <Pressable
-                onPress={() => navigation.toggleDrawer()}
-              >
+              <Pressable onPress={() => navigation.toggleDrawer()}>
                 {
                   //display avatar if user is logged in
                   signIn ? (
@@ -49,11 +47,7 @@ const DrawerNavigation = () =>
                   ) : (
                     <Icon
                       name="person-circle-outline"
-                      color={
-                        isDarkMode
-                          ? styleSheet.textColor.color
-                          : styleSheet.lightModeColor.color
-                      }
+                      color={textColor.color}
                       size={30}
                     />
                   )
@@ -75,7 +69,11 @@ const DrawerNavigation = () =>
             options={{ headerShown: false }}
           />
           <Drawer.Screen name="Loading" component={LoadingScreen} />
-          <Drawer.Screen name="Account" component={AccountStack} options={{ headerShown: false }}/>
+          <Drawer.Screen
+            name="Account"
+            component={AccountStack}
+            options={{ headerShown: false }}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -21,12 +21,14 @@ const HomeScreen = () => {
         const querySnapshot = await getDocs(q);
         const documents = querySnapshot.docs;
 
-        console.log(documents.length);
+        //user document is found
         if (documents.length > 0) {
           const email = documents[0].data().email;
           const username = documents[0].data().username;
+          const docID = documents[0].data().docID;
 
-          setSignedInUser(email, username);
+          //set the user state
+          setSignedInUser(email, username, docID);
         } else {
           setLogOutUser();
         }

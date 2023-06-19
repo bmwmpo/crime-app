@@ -5,7 +5,7 @@ import styleSheet from "../assets/StyleSheet";
 //loading screen
 const LoadingScreen = () => {
   return (
-    <SafeAreaView style={styleSheet.loadingViewStyle}>
+    <SafeAreaView style={[styleSheet.container, styleSheet.flex_1]}>
       <ActivityIndicator
         animating={true}
         color={styleSheet.highLightTextColor.color}

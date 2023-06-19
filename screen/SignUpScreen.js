@@ -10,7 +10,15 @@ import {
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { db } from "../config/firebase_config";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  updateDoc,
+  addDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
@@ -39,11 +47,17 @@ const SignUpScreen = ({ navigation }) => {
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
-    ? styleSheet.darkModeColor.color
-    : styleSheet.lightModeColor.color;
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
   const outlinedColor = isDarkMode
-    ? styleSheet.darkModeOutlinedColor.color
-    : styleSheet.lightModeOutlinedColor.color;
+    ? styleSheet.darkModeOutlinedColor
+    : styleSheet.lightModeOutlinedColor;
+  const backgroundColor = isDarkMode
+    ? styleSheet.darkModeBackGroundColor
+    : styleSheet.lightModeBackGroundColor;
+  const inputTextBackGroundColor = isDarkMode
+    ? styleSheet.darkModeTextInputBackGroundColor
+    : styleSheet.lightModeTextInputBackGroundColor;
   const collectionRef = collection(db, "UserInfo");
 
   //shows or hides the password
@@ -96,6 +110,8 @@ const SignUpScreen = ({ navigation }) => {
       };
 
       const docAdded = await addDoc(collectionRef, data);
+      const docRef = doc(db, "UserInfo", docAdded.id);
+      await updateDoc(docRef, { docID: docAdded.id });
     } catch (err) {
       console.log(err);
     }
@@ -107,7 +123,7 @@ const SignUpScreen = ({ navigation }) => {
       await updateProfile(auth.currentUser, {
         displayName: username.trim().toLowerCase(),
       });
-    } catch (error) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -202,12 +218,7 @@ const SignUpScreen = ({ navigation }) => {
       <LoadingScreen />
     ) : (
       <KeyboardAvoidingView
-        style={[
-          styleSheet.container,
-          isDarkMode
-            ? styleSheet.darkModeBackGroundColor
-            : styleSheet.lightModeBackGroundColor,
-        ]}
+        style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
         behavior={Platform.OS === "ios" && "padding"}
       >
         {/* display the dialog if the login fails or if sending the reset password fails*/}
@@ -224,10 +235,7 @@ const SignUpScreen = ({ navigation }) => {
         />
         <Text
           variant="headlineSmall"
-          style={[
-            styleSheet.headerStyle,
-            isDarkMode ? styleSheet.darkModeColor : styleSheet.lightModeColor,
-          ]}
+          style={[styleSheet.headerStyle, textColor]}
         >
           Welcome to Toronro Crime Tracker
         </Text>
@@ -236,20 +244,20 @@ const SignUpScreen = ({ navigation }) => {
           <TextInput
             style={[
               styleSheet.inputStyle,
-              isDarkMode
-                ? styleSheet.darkModeTextInputBackGroundColor
-                : styleSheet.lightModeTextInputBackGroundColor,
+              inputTextBackGroundColor,
+              ,
+              styleSheet.inputPaddingStyle,
             ]}
             label="Email"
-            textColor={textColor}
+            textColor={textColor.color}
             mode="outlined"
-            activeOutlineColor={outlinedColor}
+            activeOutlineColor={outlinedColor.color}
             value={email}
             onChangeText={onEmailTextChange}
             outlineColor={
               !validEmailFormat
                 ? styleSheet.errorTextStyle.color
-                : "transparent"
+                : styleSheet.transparentColor.color
             }
             autoCapitalize="none"
             autoCorrect={false}
@@ -260,7 +268,7 @@ const SignUpScreen = ({ navigation }) => {
                 <TextInput.Icon
                   icon="close-circle"
                   onPress={deletePress}
-                  iconColor={textColor}
+                  iconColor={textColor.color}
                 />
               )
             }
@@ -279,18 +287,19 @@ const SignUpScreen = ({ navigation }) => {
           <TextInput
             style={[
               styleSheet.inputStyle,
-              isDarkMode
-                ? styleSheet.darkModeTextInputBackGroundColor
-                : styleSheet.lightModeTextInputBackGroundColor,
+              inputTextBackGroundColor,
+              styleSheet.inputPaddingStyle,
             ]}
             label="Username"
-            textColor={textColor}
+            textColor={textColor.color}
             mode="outlined"
-            activeOutlineColor={outlinedColor}
+            activeOutlineColor={outlinedColor.color}
             value={username}
             onChangeText={setUsername}
             outlineColor={
-              !validUsername ? styleSheet.errorTextStyle.color : "transparent"
+              !validUsername
+                ? styleSheet.errorTextStyle.color
+                : styleSheet.transparentColor.color
             }
             autoCapitalize="none"
             autoCorrect={false}
@@ -299,7 +308,7 @@ const SignUpScreen = ({ navigation }) => {
                 <TextInput.Icon
                   icon="close-circle"
                   onPress={deleteUserNamePress}
-                  iconColor={textColor}
+                  iconColor={textColor.color}
                 />
               )
             }
@@ -318,15 +327,14 @@ const SignUpScreen = ({ navigation }) => {
           <TextInput
             style={[
               styleSheet.inputStyle,
-              isDarkMode
-                ? styleSheet.darkModeTextInputBackGroundColor
-                : styleSheet.lightModeTextInputBackGroundColor,
+              styleSheet.inputPaddingStyle,
+              inputTextBackGroundColor,
             ]}
             label="Password"
             mode="outlined"
-            textColor={textColor}
-            activeOutlineColor={outlinedColor}
-            outlineColor="transparent"
+            textColor={textColor.color}
+            activeOutlineColor={outlinedColor.color}
+            outlineColor={styleSheet.transparentColor.color}
             value={password}
             onChangeText={onPasswordTextChange}
             autoCapitalize="none"
@@ -336,7 +344,7 @@ const SignUpScreen = ({ navigation }) => {
               <TextInput.Icon
                 icon={hidePassword ? "eye" : "eye-off"}
                 onPress={showHidePasswordPress}
-                iconColor={textColor}
+                iconColor={textColor.color}
               />
             }
           />
