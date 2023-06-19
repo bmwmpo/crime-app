@@ -28,7 +28,7 @@ const MyAccountScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <View
         style={[
-          styleSheet.centerContainer,
+          styleSheet.container,
           { padding: "4%", borderBottomWidth: 1, borderColor: textColor.color },
         ]}
       >

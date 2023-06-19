@@ -43,9 +43,14 @@ const DrawerNavigation = () => {
                 {
                   //display avatar if user is logged in
                   signIn ? (
-                    <Avatar.Text label={avatarLabel} size={30} />
+                    <Avatar.Text
+                      label={avatarLabel}
+                      style={styleSheet.margin_10}
+                      size={30}
+                    />
                   ) : (
                     <Icon
+                      style={styleSheet.margin_10}
                       name="person-circle-outline"
                       color={textColor.color}
                       size={30}
