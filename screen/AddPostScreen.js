@@ -1,7 +1,6 @@
 import {
   View,
   ScrollView,
-  SafeAreaView,
   Share,
   Alert,
   Image,
@@ -33,18 +32,18 @@ const AddPostScreen = ({ navigation }) => {
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
-  const outlinedColor = isDarkMode
-    ? styleSheet.darkModeOutlinedColor
-    : styleSheet.lightModeOutlinedColor;
+  // const outlinedColor = isDarkMode
+  //   ? styleSheet.darkModeOutlinedColor
+  //   : styleSheet.lightModeOutlinedColor;
   const backgroundColor = isDarkMode
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
-  const inputTextBackGroundColor = isDarkMode
-    ? { backgroundColor: "black" }
-    : styleSheet.lightModeTextInputBackGroundColor;
-  const width = Dimensions.get("window").width;
-  const height = Dimensions.get("window").height;
-  const [textInputHeight, setTextInputHeight] = useState(0);
+  // const inputTextBackGroundColor = isDarkMode
+  //   ? { backgroundColor: "black" }
+  //   : styleSheet.lightModeTextInputBackGroundColor;
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height;
+  //const [textInputHeight, setTextInputHeight] = useState(0);
   //const [uploading, setUploading] = useState(false);
   //const [getPhoto, setGetPhoto] = useState(null);
 
@@ -165,21 +164,21 @@ const AddPostScreen = ({ navigation }) => {
         titleStyle={textColor}
       />
       <Card.Content
-        style={[{ height: "100%", width: "100%" }, backgroundColor]}
+        style={[backgroundColor, styleSheet.height_100, styleSheet.width_100]}
       >
         <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
           <FAB
             icon="image"
             size="small"
             variant="surface"
-            style={{ margin: "3%", position: "relative" }}
+            style={styleSheet.margin_10}
             onPress={selectPhoto}
           />
           <FAB
             icon="share"
             size="small"
             variant="surface"
-            style={{ margin: "3%", position: "relative" }}
+            style={styleSheet.margin_10}
             onPress={onShare}
           />
           <Card.Actions>
@@ -187,11 +186,12 @@ const AddPostScreen = ({ navigation }) => {
           </Card.Actions>
         </View>
         <ScrollView
-          contentContainerStyle={{
-            justifyContent: "space-between",
-              alignItems: "center",
-            paddingBottom:'10%'
-          }}
+          contentContainerStyle={[
+            {
+              paddingBottom: windowHeight * 0.1,
+            },
+            styleSheet.createPostScrollViewStyle,
+          ]}
         >
           <TextInput
             style={[styleSheet.titleTextInputStyle, backgroundColor]}
@@ -210,11 +210,11 @@ const AddPostScreen = ({ navigation }) => {
               horizontal
               data={images}
               keyExtractor={(item) => item.uri}
-              style={{ width: "100%", height: 500, flex: 2 }}
+              style={{ width: windowWidth, height: windowHeight * 0.7 }}
               renderItem={({ item }) => (
                 <Image
                   source={{ uri: item.uri }}
-                  style={{ width: 400, height: 500 }}
+                  style={{ width: windowWidth, height: windowHeight * 0.7 }}
                 />
               )}
             />
