@@ -4,6 +4,7 @@ import MapScreen from "../screen/MapScreen";
 import ChartScreen from "../screen/Chart";
 import AddPostScreen from "../screen/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
+import CrimeStories from "../screen/CrimeStories";
 
 const Tab = createBottomTabNavigator();
 
@@ -17,11 +18,14 @@ const BottomTabNavigation = ({ navigation }) => {
           let iconName;
 
           if (route.name === "Map") {
-            iconName = "map-outline";
+            iconName = "map";
           } else if (route.name === "Chart") {
-            iconName = "bar-chart-outline";
-          } else if (route.name === "AddPost") {
-            iconName = "add-outline";
+            iconName = "bar-chart";
+          } else if (route.name === "Report") {
+            iconName = "add";
+          }
+          else if (route.name === "CrimeStories") {
+            iconName = "newspaper";
           }
 
           return <Icon name={iconName} color={color} size={size} />;
@@ -43,12 +47,17 @@ const BottomTabNavigation = ({ navigation }) => {
         component={ChartScreen}
         options={{ headerShown: false }}
       />
+      {/* Crime Stories */}
+      <Tab.Screen
+        name="CrimeStories"
+        component={CrimeStories}
+        options={{ headerShown: false }}
+      />
       {/* add post screen */}
       <Tab.Screen
         name="Report"
         component={AddPostScreen}
-        options={ { headerShown: false } }
-        initialParams={ {renderPortal: true} }
+        options={{ headerShown: false }}
       />
     </Tab.Navigator>
   );

@@ -10,4 +10,5 @@ export default EnumString = {
   invalidEmail: "Not a valid email address",
   welcomeMsg: (username) => `Weclome ${ username }`,
   logOutMsg: 'Are you sure you want to log out?',
+  thankYouMsg: 'Thank you for your interest in sharing the criminal information you have',
 }

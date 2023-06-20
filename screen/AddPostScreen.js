@@ -12,7 +12,7 @@ import { useState } from "react";
 import { db } from "../config/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
 import { storage } from "../config/firebase_config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
 import { FailDialog, SuccessDialog } from "./AlertDialog";
 import { useTheme } from "@react-navigation/native";
@@ -23,11 +23,12 @@ import styleSheet from "../assets/StyleSheet";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import NotLogInScreen from "./NotLogInScreen";
+import EnumString from "../assets/EnumString";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
   const { user: currentUser, signIn } = useStore((state) => state);
-  
+
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
   const [photoUrl, setPhotoUrl] = useState([]);
@@ -51,22 +52,8 @@ const AddPostScreen = ({ navigation }) => {
   const windowHeight = Dimensions.get("window").height;
 
   const hideFailedDialog = () => setShowFailDialog(false);
-  
+
   const hideSucessDialog = () => setShowSuccessDialog(false);
-
-  // const retreivePhoto = async () => {
-  //     try {
-  //         const photoRef = ref(storage, '0b6281da-e69d-4364-9059-7065d40dee89.jpeg');
-  //         const source = await getDownloadURL(photoRef);
-
-  //         setGetPhoto(source);
-
-  //         console.log(source);
-  //     }
-  //     catch(err){
-  //         console.error(err.message);
-  //     }
-  // }
 
   //select image from gallery
   const selectPhoto = async () => {
@@ -152,7 +139,14 @@ const AddPostScreen = ({ navigation }) => {
 
       //show success dialog
       setShowSuccessDialog(true);
-      setDialogTitleMsg({ title: "", message: "success" });
+      setDialogTitleMsg({
+        title: "",
+        message:
+          EnumString.thankYouMsg
+      });
+      setStory("");
+      setPhotoUrl([]);
+      navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
       //show fail dialog
       setShowFailDialog(true);
