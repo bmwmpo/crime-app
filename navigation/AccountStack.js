@@ -4,8 +4,8 @@ import { Pressable } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import MyAccountScreen from "../screen/MyAccountScreen";
 import styleSheet from "../assets/StyleSheet";
-import ChangeUsernameScreen from "../screen/ChangeUsernameScreen";
 import ChangePasswordScreen from "../screen/ChangePasswordScreen";
+import EditUsernameScreen from "../screen/EditUsernameScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,10 +33,10 @@ const AccountStack = ({ navigation }) => {
             </Pressable>
           ),
           headerTitle: "Account",
-              }) }
-          />
-          <Stack.Screen name="Edit Username" component={ ChangeUsernameScreen } />
-          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen}/>
+        })}
+      />
+      <Stack.Screen name="Edit Username" component={EditUsernameScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
     </Stack.Navigator>
   );
 };

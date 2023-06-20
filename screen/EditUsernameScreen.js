@@ -16,7 +16,8 @@ import useStore from "../zustand/store";
 import styleSheet from "../assets/StyleSheet";
 import LoadingScreen from "./LoadingScreen";
 
-const ChangeUsernameScreen = ({ navigation }) => {
+//edit username screen
+const EditUsernameScreen = ({ navigation }) => {
   const {
     user: { username },
     setUsername,
@@ -143,4 +144,4 @@ const ChangeUsernameScreen = ({ navigation }) => {
   );
 };
 
-export default ChangeUsernameScreen;
+export default EditUsernameScreen;

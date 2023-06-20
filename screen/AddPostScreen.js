@@ -2,50 +2,57 @@ import {
   View,
   ScrollView,
   Share,
-  Alert,
   Image,
   FlatList,
   Dimensions,
+  SafeAreaView,
+  Pressable,
 } from "react-native";
-import styleSheet from "../assets/StyleSheet";
 import { useState } from "react";
 import { db } from "../config/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
 import { storage } from "../config/firebase_config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
+import { FailDialog, SuccessDialog } from "./AlertDialog";
+import { useTheme } from "@react-navigation/native";
+import useStore from "../zustand/store";
+import LoadingScreen from "./LoadingScreen";
+import ImageView from "react-native-image-viewing";
+import styleSheet from "../assets/StyleSheet";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
 import NotLogInScreen from "./NotLogInScreen";
-import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
-import { useTheme } from "@react-navigation/native";
-import useStore from "../zustand/store";
 
+//create post screen
 const AddPostScreen = ({ navigation }) => {
   const { user: currentUser, signIn } = useStore((state) => state);
+  
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
-  const [photoUrl, setPhotoUrl] = useState(null);
-  const [photoSource, setPhotoSource] = useState(null);
+  const [photoUrl, setPhotoUrl] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showFailDialog, setShowFailDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [dialogTitleMsg, setDialogTitleMsg] = useState({});
+  const [showImageView, setShowImageView] = useState({
+    visible: false,
+    index: 0,
+  });
 
-  const [images, setImages] = useState([]);
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
-  // const outlinedColor = isDarkMode
-  //   ? styleSheet.darkModeOutlinedColor
-  //   : styleSheet.lightModeOutlinedColor;
   const backgroundColor = isDarkMode
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
-  // const inputTextBackGroundColor = isDarkMode
-  //   ? { backgroundColor: "black" }
-  //   : styleSheet.lightModeTextInputBackGroundColor;
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
-  //const [textInputHeight, setTextInputHeight] = useState(0);
-  //const [uploading, setUploading] = useState(false);
-  //const [getPhoto, setGetPhoto] = useState(null);
+
+  const hideFailedDialog = () => setShowFailDialog(false);
+  
+  const hideSucessDialog = () => setShowSuccessDialog(false);
 
   // const retreivePhoto = async () => {
   //     try {
@@ -72,31 +79,33 @@ const AddPostScreen = ({ navigation }) => {
         quality: 1,
       });
 
+      //pickup images from gallery
       const source = result.assets;
-      console.log(source);
-      setImages(source);
-      // const filename = source.substring(source.lastIndexOf("/") + 1);
-      // setPhotoUrl(source);
-      // setPhotoSource(filename);
-      //console.log(result.assets[0].uri, filename);
+
+      if (source.length > 0) {
+        //setImages(source);
+        const uri = source.map((item) => ({
+          uri: item.uri,
+          fileName: item.uri.substring(item.uri.lastIndexOf("/") + 1),
+        }));
+        setPhotoUrl(uri);
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  //upload a image to firebase storage
+  //upload images to firebase storage
   const uploadPhoto = async () => {
-    // setUploading(true);
     try {
-      const response = await fetch(photoUrl);
-      const blob = await response.blob();
-      //const filename = photo.substring(photo.lastIndexOf('/') + 1);
+      for (const image of photoUrl) {
+        const response = await fetch(image.uri);
+        console.log(image);
+        const blob = await response.blob();
+        const photoRef = ref(storage, image.fileName);
 
-      //console.log(filename);
-
-      const photoRef = ref(storage, photoSource);
-
-      await uploadBytes(photoRef, blob);
+        await uploadBytes(photoRef, blob);
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -122,25 +131,34 @@ const AddPostScreen = ({ navigation }) => {
   //save the post in firestore
   const addPost = async () => {
     try {
+      setIsLoading(true);
       //upload the phot in firebase storage
       uploadPhoto();
 
+      //save the posting in firestore
       const collectionRef = collection(db, "Postings");
 
       const postingId = uuid.v4();
 
+      const photo = photoUrl.map((item) => item.fileName);
+
       const newPosting = {
-        title,
-        body,
+        story,
         postingId,
-        photoSource,
+        photo,
       };
 
       await addDoc(collectionRef, newPosting);
 
-      Alert.alert("Success");
+      //show success dialog
+      setShowSuccessDialog(true);
+      setDialogTitleMsg({ title: "", message: "success" });
     } catch (err) {
-      Alert.alert(err.message);
+      //show fail dialog
+      setShowFailDialog(true);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -155,73 +173,141 @@ const AddPostScreen = ({ navigation }) => {
 
   return !signIn ? (
     <NotLogInScreen />
+  ) : isLoading ? (
+    <LoadingScreen />
   ) : (
-    <Card style={[styleSheet.flex_1]}>
-      <Card.Title
-        title="Report a crime"
-        style={[backgroundColor]}
-        titleVariant="titleLarge"
-        titleStyle={textColor}
+    <SafeAreaView style={[styleSheet.flex_1]}>
+      {/* fail dialog */}
+      <FailDialog
+        showDialog={showFailDialog}
+        hideDialog={hideFailedDialog}
+        errorMessage={"Failed"}
       />
-      <Card.Content
-        style={[backgroundColor, styleSheet.height_100, styleSheet.width_100]}
-      >
-        <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
-          <FAB
-            icon="image"
-            size="small"
-            variant="surface"
-            style={styleSheet.margin_10}
-            onPress={selectPhoto}
-          />
-          <FAB
-            icon="share"
-            size="small"
-            variant="surface"
-            style={styleSheet.margin_10}
-            onPress={onShare}
-          />
-          <Card.Actions>
-            <Button mode="contained">Report</Button>
-          </Card.Actions>
-        </View>
-        <ScrollView
-          contentContainerStyle={[
-            {
-              paddingBottom: windowHeight * 0.1,
-            },
-            styleSheet.createPostScrollViewStyle,
-          ]}
+      {/* success dialog */}
+      <SuccessDialog
+        showDialog={showSuccessDialog}
+        hideDialog={hideSucessDialog}
+        title={dialogTitleMsg.title}
+        message={dialogTitleMsg.message}
+      />
+      {/* full screen image view */}
+      <ImageView
+        images={photoUrl}
+        imageIndex={showImageView.index}
+        visible={showImageView.visible}
+        onRequestClose={() =>
+          setShowImageView((pre) => ({ ...pre, visible: false }))
+        }
+      />
+      <Card style={[styleSheet.flex_1]}>
+        <Card.Title
+          title="Report a crime"
+          style={[backgroundColor]}
+          titleVariant="titleLarge"
+          titleStyle={textColor}
+        />
+        <Card.Content
+          style={[backgroundColor, styleSheet.height_100, styleSheet.width_100]}
         >
-          <TextInput
-            style={[styleSheet.titleTextInputStyle, backgroundColor]}
-            textColor={textColor.color}
-            placeholder="story"
-            value={story}
-            onChangeText={handleStoryTextChange}
-            multiline={true}
-            autoFocus={true}
-            activeUnderlineColor={styleSheet.transparentColor.color}
-            underlineColor={styleSheet.transparentColor.color}
-            selectionColor={textColor.color}
-          />
-          {images && (
-            <FlatList
-              horizontal
-              data={images}
-              keyExtractor={(item) => item.uri}
-              style={{ width: windowWidth, height: windowHeight * 0.7 }}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: windowWidth, height: windowHeight * 0.7 }}
-                />
-              )}
+          {/* share, select images, and add post opyions */}
+          <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
+            <FAB
+              icon="image"
+              size="small"
+              variant="surface"
+              style={styleSheet.margin_10}
+              onPress={selectPhoto}
             />
-          )}
-        </ScrollView>
-      </Card.Content>
-    </Card>
+            <FAB
+              icon="share"
+              size="small"
+              variant="surface"
+              style={styleSheet.margin_10}
+              onPress={onShare}
+            />
+            <Card.Actions>
+              <Button mode="contained" onPress={addPost}>
+                Report
+              </Button>
+            </Card.Actions>
+          </View>
+          <ScrollView
+            contentContainerStyle={[
+              {
+                paddingBottom: windowHeight * 0.05,
+                width: windowWidth,
+              },
+              styleSheet.createPostScrollViewStyle,
+            ]}
+          >
+            {/* story input */}
+            <TextInput
+              style={[styleSheet.titleTextInputStyle, backgroundColor]}
+              textColor={textColor.color}
+              placeholder="story"
+              value={story}
+              onChangeText={handleStoryTextChange}
+              multiline={true}
+              autoFocus={true}
+              activeUnderlineColor={styleSheet.transparentColor.color}
+              underlineColor={styleSheet.transparentColor.color}
+              selectionColor={textColor.color}
+            />
+            {
+              //images section
+              photoUrl && (
+                <FlatList
+                  horizontal
+                  data={photoUrl}
+                  keyExtractor={(item) => item.uri}
+                  style={{ width: windowWidth, height: windowHeight * 0.7 }}
+                  renderItem={({ item, index }) => (
+                    <View
+                      style={{
+                        justifyContent: "flex-start",
+                        alignItems: "flex-end",
+                        paddingRight: windowWidth * 0.1,
+                      }}
+                    >
+                      <FAB
+                        icon="delete-empty"
+                        style={{
+                          zIndex: 2,
+                          top: windowHeight * 0.06,
+                          right: windowWidth * 0.05,
+                        }}
+                        size="small"
+                        variant="surface"
+                        onPress={() => {
+                          setPhotoUrl((pre) =>
+                            pre.filter((image) => image.uri !== item.uri)
+                          );
+                        }}
+                      />
+                      <Pressable
+                        onPress={() => {
+                          setShowImageView({ visible: true, index });
+                        }}
+                      >
+                        <Image
+                          source={{ uri: item.uri }}
+                          style={{
+                            width: windowWidth * 0.9,
+                            height: windowHeight * 0.6,
+                            zIndex: 1,
+                            borderRadius: 20,
+                          }}
+                        />
+                      </Pressable>
+                    </View>
+                  )}
+                />
+              )
+            }
+          </ScrollView>
+        </Card.Content>
+      </Card>
+    </SafeAreaView>
   );
 };
 

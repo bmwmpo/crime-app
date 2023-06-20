@@ -1,11 +1,10 @@
 import { SafeAreaView } from "react-native";
 import { Text, Button } from "react-native-paper";
-import styleSheet from "../assets/StyleSheet";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import styleSheet from "../assets/StyleSheet";
 
 //user not log in screen
 const NotLogInScreen = () => {
-  //navigate to log in screen
   const navigation = useNavigation();
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode

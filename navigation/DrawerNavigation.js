@@ -64,16 +64,20 @@ const DrawerNavigation = () => {
             <CustomDrawer {...props} setIsDarkMode={setIsDarkMode} />
           )}
         >
+          {/* bottomTabNavigation */}
           <Drawer.Screen
             name="BottomTabNavigation"
             component={BottomTabNavigation}
           />
+          {/* userLogInSigUpStack */}
           <Drawer.Screen
             name="SignInSignUp"
             component={UserLogInSignUpStack}
             options={{ headerShown: false }}
           />
-          <Drawer.Screen name="Loading" component={LoadingScreen} />
+          {/* loading screen */}
+          <Drawer.Screen name="Loading" component={ LoadingScreen } />
+          {/* accountStack */}
           <Drawer.Screen
             name="Account"
             component={AccountStack}

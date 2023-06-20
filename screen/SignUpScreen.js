@@ -19,7 +19,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
+import { FailDialog, SuccessDialog } from "./AlertDialog";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
 import styleSheet from "../assets/StyleSheet";
@@ -221,14 +221,14 @@ const SignUpScreen = ({ navigation }) => {
         style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
         behavior={Platform.OS === "ios" && "padding"}
       >
-        {/* display the dialog if the login fails or if sending the reset password fails*/}
-        <LogInFailedDialog
+        {/* display the dialog if the sign up fails*/}
+        <FailDialog
           hideDialog={hideDialog}
           showDialog={showDialog}
           errorMessage={errorMessage}
         />
-        {/* display the dialog upon successful send reset password email */}
-        <SendResetPasswordDialog
+        {/* display the dialog upon successful create new account */}
+        <SuccessDialog
           hideDialog={hideWelcomeDialog}
           showDialog={showWelcomeDialog}
           {...dialogTitleMsg}

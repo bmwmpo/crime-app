@@ -4,7 +4,7 @@ import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
 
 //error dialog
-const LogInFailedDialog = ({ hideDialog, showDialog, errorMessage }) => {
+const FailDialog = ({ hideDialog, showDialog, errorMessage }) => {
   return (
     <Portal>
       <Dialog visible={showDialog} onDismiss={hideDialog}>
@@ -27,7 +27,7 @@ const LogInFailedDialog = ({ hideDialog, showDialog, errorMessage }) => {
 };
 
 //success dialog
-const SendResetPasswordDialog = ({
+const SuccessDialog = ({
   hideDialog,
   showDialog,
   message,
@@ -76,4 +76,4 @@ const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {
   );
 };
 
-export { LogInFailedDialog, SendResetPasswordDialog, LogOutConfirmDialog };
+export { FailDialog, SuccessDialog, LogOutConfirmDialog };
