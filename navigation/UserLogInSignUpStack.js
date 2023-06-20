@@ -26,6 +26,7 @@ const UserLogInSignUpStack = ({ navigation, route }) => {
         }
       }
     >
+      {/* login screen */}
       <Stack.Screen
         name="LogIn"
         component={LogInScreen}
@@ -42,6 +43,7 @@ const UserLogInSignUpStack = ({ navigation, route }) => {
           headerTitle: "",
         })}
       />
+      {/* signup screen */}
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}

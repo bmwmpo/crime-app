@@ -36,6 +36,7 @@ const SignUpScreen = ({ navigation }) => {
     setPassword,
     setUsername,
   } = useStore((state) => state);
+
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [validPasswordLength, setValidPasswordLength] = useState(false);
@@ -45,6 +46,7 @@ const SignUpScreen = ({ navigation }) => {
   const [showWelcomeDialog, setShowWelocmeDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
+
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
