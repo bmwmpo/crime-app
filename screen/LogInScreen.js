@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
+import { FailDialog, SuccessDialog } from "./AlertDialog";
 import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
 import LoadingScreen from "./LoadingScreen";
-import { LogInFailedDialog, SendResetPasswordDialog } from "./AlertDialog";
 import useStore from "../zustand/store";
 
 //user log in screen
@@ -155,13 +155,13 @@ const LogInScreen = ({ navigation }) => {
         behavior={Platform.OS === "ios" && "padding"}
       >
         {/* display the dialog if the login fails or if sending the reset password fails*/}
-        <LogInFailedDialog
+        <FailDialog
           hideDialog={hideDialog}
           showDialog={showDialog}
           errorMessage={errorMessage}
         />
         {/* display the dialog upon successful send reset password email */}
-        <SendResetPasswordDialog
+        <SuccessDialog
           hideDialog={hideSendResetPasswordDialog}
           showDialog={showSendResetPasswordDialog}
           {...dialogTitleMsg}
@@ -175,7 +175,11 @@ const LogInScreen = ({ navigation }) => {
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
-            style={[styleSheet.inputStyle, inputTextBackGroundColor, styleSheet.inputPaddingStyle]}
+            style={[
+              styleSheet.inputStyle,
+              inputTextBackGroundColor,
+              styleSheet.inputPaddingStyle,
+            ]}
             label="Email"
             textColor={textColor.color}
             mode="outlined"
@@ -213,12 +217,16 @@ const LogInScreen = ({ navigation }) => {
         {/* password text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput
-            style={[styleSheet.inputStyle, inputTextBackGroundColor, styleSheet.inputPaddingStyle]}
+            style={[
+              styleSheet.inputStyle,
+              inputTextBackGroundColor,
+              styleSheet.inputPaddingStyle,
+            ]}
             label="Password"
             mode="outlined"
             textColor={textColor.color}
             activeOutlineColor={outlinedColor.color}
-              outlineColor={ styleSheet.transparentColor.color}
+            outlineColor={styleSheet.transparentColor.color}
             value={password}
             onChangeText={setPassword}
             autoCapitalize="none"

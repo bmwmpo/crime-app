@@ -4,25 +4,30 @@ import { useTheme } from "@react-navigation/native";
 import styleSheet from "../assets/StyleSheet";
 import useStore from "../zustand/store";
 
+//user account screen
 const MyAccountScreen = ({ navigation }) => {
-  const isDarkMode = useTheme().dark;
   const { user: currentUser } = useStore((state) => state);
+
   const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
+  const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
 
   const toEditProfileScreen = () => navigation.navigate("Edit Username");
+
   const toChangePasswordScreen = () => navigation.navigate("ChangePassword");
 
   const ItemComponent = ({ username }) => {
-  return (
-    <View style={[styleSheet.flexRowContainer]}>
-      <Text variant="titleSmall" style={ textColor }>{username}</Text>
-      <List.Icon icon="arrow-right-box" color={textColor.color} />
-    </View>
-  );
-};
+    return (
+      <View style={[styleSheet.flexRowContainer]}>
+        <Text variant="titleSmall" style={textColor}>
+          {username}
+        </Text>
+        <List.Icon icon="arrow-right-box" color={textColor.color} />
+      </View>
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -34,13 +39,13 @@ const MyAccountScreen = ({ navigation }) => {
       >
         <Avatar.Text label={avatarLabel} size={80} />
       </View>
-
       <List.Section style={{ padding: "4%", flex: 2 }}>
         <List.Subheader
           style={[textColor, styleSheet.textStyle, styleSheet.textFontSize]}
         >
           Account Information
         </List.Subheader>
+        {/* edit username screen */}
         <List.Item
           title="Username"
           titleStyle={textColor}
@@ -49,6 +54,7 @@ const MyAccountScreen = ({ navigation }) => {
           onPress={toEditProfileScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />
+        {/* change password screen */}
         <List.Item
           title="Change Password"
           titleStyle={textColor}

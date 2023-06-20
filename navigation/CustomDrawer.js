@@ -131,9 +131,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
               </View>
             </Drawer.Section>
           </View>
-
           {/* log out section */}
-          <View style={ styleSheet.drawerBottomStyle}>
+          <View style={styleSheet.drawerBottomStyle}>
             <Drawer.Section>
               <Drawer.Item
                 label={

@@ -31,18 +31,21 @@ const BottomTabNavigation = ({ navigation }) => {
         },
       })}
     >
+      {/* map screen */}
       <Tab.Screen
         name="Map"
         component={MapScreen}
         options={{ headerShown: false }}
       />
+      {/* chart screen */}
       <Tab.Screen
         name="Chart"
         component={ChartScreen}
         options={{ headerShown: false }}
       />
+      {/* add post screen */}
       <Tab.Screen
-        name="AddPost"
+        name="Report"
         component={AddPostScreen}
         options={ { headerShown: false } }
         initialParams={ {renderPortal: true} }
