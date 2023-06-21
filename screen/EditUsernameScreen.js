@@ -104,7 +104,7 @@ const EditUsernameScreen = ({ navigation }) => {
   return isLoading ? (
     <LoadingScreen />
   ) : (
-    <KeyboardAvoidingView style={styleSheet.flexStartContainer}>
+    <KeyboardAvoidingView style={styleSheet.container}>
       <View style={[styleSheet.formatContainer, { marginTop: "5%" }]}>
         <Text variant="titleMedium" style={textColor}>
           Username

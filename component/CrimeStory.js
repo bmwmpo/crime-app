@@ -34,6 +34,21 @@ const CrimeStory = ({ postingData }) => {
     ? styleSheet.darkModeOutlinedColor
     : styleSheet.lightModeOutlinedColor;
 
+  const postingDateTime = postingData.postingDateTime.toDate();
+
+  //get post time passing
+  const getTimePassing = () => {
+    const timePassingInHrs = (new Date() - postingDateTime) / 1000 / 60 / 60;
+
+    if (timePassingInHrs > 24) {
+      return `${Math.ceil(timePassingInHrs / 24)}d`;
+    } else if (timePassingInHrs < 1) {
+      return `${Math.ceil(timePassingInHrs * 60)}m`;
+    } else {
+      return `${Math.ceil(timePassingInHrs)}h`;
+    }
+  };
+
   //retreive photos from firebase storage
   const retreivePhotoFromFirebaseStorage = async () => {
     setPhotoUri([]);
@@ -78,19 +93,39 @@ const CrimeStory = ({ postingData }) => {
       />
       <Card.Content style={[styleSheet.height_100, styleSheet.width_100]}>
         {/* posting info: author, date and time */}
-        <View style={[styleSheet.flexRowContainer, styleSheet.margin_Vertical]}>
-          <Badge style={styleSheet.margin_Horizontal_right}>
-            {postingData.postBy.substring(0, 1).toUpperCase()}
-          </Badge>
-          <Text
-            variant="labelLarge"
-            style={[styleSheet.margin_Horizontal_right, textColor]}
-          >
-            {postingData.postBy}
-          </Text>
-          <Text variant="labelLarge" style={textColor}>
-            {postingData.postingDateTime.toDate().toLocaleString()}
-          </Text>
+        <View
+          style={[
+            styleSheet.flexRowContainer,
+            styleSheet.margin_Vertical,
+            styleSheet.flexSpaceBetweenStyle,
+            styleSheet.padding_Horizontal,
+          ]}
+        >
+          {/* author */}
+          <View style={styleSheet.container}>
+            <Badge style={styleSheet.margin_Horizontal_right}>
+              {postingData.postBy.substring(0, 1).toUpperCase()}
+            </Badge>
+          </View>
+          {/* date and time */}
+          <View style={[styleSheet.flexStartContainer]}>
+            <Text
+              variant="labelLarge"
+              style={[
+                styleSheet.margin_HorizontflexStartContaineral_right,
+                textColor,
+              ]}
+            >
+              {postingData.postBy}
+            </Text>
+            <Text variant="labelLarge" style={textColor}>
+              {postingDateTime.toLocaleString()}
+            </Text>
+          </View>
+          {/* passing time */}
+          <View style={styleSheet.container}>
+            <Text>{getTimePassing()}</Text>
+          </View>
         </View>
         {/* story */}
         {postingData.story !== "" && (

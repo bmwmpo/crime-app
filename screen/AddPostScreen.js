@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { db } from "../config/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
 import { storage } from "../config/firebase_config";
@@ -41,6 +41,7 @@ const AddPostScreen = ({ navigation }) => {
     index: 0,
   });
 
+  //ref to manipulate the flastlist
   const flatListRef = useRef();
 
   const isDarkMode = useTheme().dark;
@@ -170,9 +171,11 @@ const AddPostScreen = ({ navigation }) => {
     setStory(newText);
   };
 
+  //delete the selected image
   const deleteSelectedImage = (item, index) => {
     setPhotoUri((pre) => pre.filter((image) => image.uri !== item.uri));
 
+    //scroll to the previous or next image of the flatlst 
     flatListRef.current.scrollToIndex({
       animated: false,
       index: index > 0 ? index - 1 : index,
