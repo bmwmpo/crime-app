@@ -22,7 +22,7 @@ const styleSheet = StyleSheet.create({
     marginVertical: "3%",
   },
   padding_Horizontal: {
-    
+    paddingHorizontal: "3%",
   },
   height_100: {
     height: "100%",
@@ -73,8 +73,7 @@ const styleSheet = StyleSheet.create({
     justifyContent: "center",
   },
   flexStartContainer: {
-    flex: 1,
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
   },
   formatContainer: {
@@ -88,6 +87,10 @@ const styleSheet = StyleSheet.create({
   },
   flexEndStyle: {
     justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  flexSpaceBetweenStyle: {
+    justifyContent: "space-between",
     alignItems: "center",
   },
   //text

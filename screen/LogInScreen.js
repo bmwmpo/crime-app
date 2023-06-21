@@ -25,6 +25,7 @@ const LogInScreen = ({ navigation }) => {
     setEmail,
     setPassword,
   } = useStore((state) => state);
+  
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
