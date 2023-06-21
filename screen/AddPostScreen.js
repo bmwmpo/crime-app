@@ -31,7 +31,7 @@ const AddPostScreen = ({ navigation }) => {
 
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
-  const [photoUrl, setPhotoUrl] = useState([]);
+  const [photoUri, setPhotoUri] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showFailDialog, setShowFailDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -75,7 +75,7 @@ const AddPostScreen = ({ navigation }) => {
           uri: item.uri,
           fileName: item.uri.substring(item.uri.lastIndexOf("/") + 1),
         }));
-        setPhotoUrl(uri);
+        setPhotoUri(uri);
       }
     } catch (err) {
       console.log(err);
@@ -85,9 +85,8 @@ const AddPostScreen = ({ navigation }) => {
   //upload images to firebase storage
   const uploadPhoto = async () => {
     try {
-      for (const image of photoUrl) {
+      for (const image of photoUri) {
         const response = await fetch(image.uri);
-        console.log(image);
         const blob = await response.blob();
         const photoRef = ref(storage, image.fileName);
 
@@ -127,12 +126,17 @@ const AddPostScreen = ({ navigation }) => {
 
       const postingId = uuid.v4();
 
-      const photo = photoUrl.map((item) => item.fileName);
+      const photo = photoUri.map((item) => item.fileName);
+
+      const postingDateTime = new Date();
 
       const newPosting = {
         story,
         postingId,
         photo,
+        postingDateTime,
+        postBy: currentUser.username,
+        userEmail: currentUser.email,
       };
 
       await addDoc(collectionRef, newPosting);
@@ -145,7 +149,7 @@ const AddPostScreen = ({ navigation }) => {
           EnumString.thankYouMsg
       });
       setStory("");
-      setPhotoUrl([]);
+      setPhotoUri([]);
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
       //show fail dialog
@@ -186,7 +190,7 @@ const AddPostScreen = ({ navigation }) => {
       />
       {/* full screen image view */}
       <ImageView
-        images={photoUrl}
+        images={photoUri}
         imageIndex={showImageView.index}
         visible={showImageView.visible}
         onRequestClose={() =>
@@ -209,14 +213,14 @@ const AddPostScreen = ({ navigation }) => {
               icon="image"
               size="small"
               variant="surface"
-              style={styleSheet.margin_10}
+               style={styleSheet.margin_Horizontal_3}
               onPress={selectPhoto}
             />
             <FAB
               icon="share"
               size="small"
               variant="surface"
-              style={styleSheet.margin_10}
+               style={styleSheet.margin_Horizontal_3}
               onPress={onShare}
             />
             <Card.Actions>
@@ -249,10 +253,10 @@ const AddPostScreen = ({ navigation }) => {
             />
             {
               //images section
-              photoUrl && (
+              photoUri && (
                 <FlatList
                   horizontal
-                  data={photoUrl}
+                  data={photoUri}
                   keyExtractor={(item) => item.uri}
                   style={{ width: windowWidth, height: windowHeight * 0.7 }}
                   renderItem={({ item, index }) => (
@@ -273,7 +277,7 @@ const AddPostScreen = ({ navigation }) => {
                         size="small"
                         variant="surface"
                         onPress={() => {
-                          setPhotoUrl((pre) =>
+                          setPhotoUri((pre) =>
                             pre.filter((image) => image.uri !== item.uri)
                           );
                         }}
@@ -283,7 +287,7 @@ const AddPostScreen = ({ navigation }) => {
                           setShowImageView({ visible: true, index });
                         }}
                       >
-                        <Image
+                        <Card.Cover
                           source={{ uri: item.uri }}
                           style={{
                             width: windowWidth * 0.9,
