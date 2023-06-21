@@ -124,7 +124,7 @@ const CrimeStory = ({ postingData }) => {
           </View>
           {/* passing time */}
           <View style={styleSheet.container}>
-            <Text>{getTimePassing()}</Text>
+            <Text style={textColor}>{getTimePassing()}</Text>
           </View>
         </View>
         {/* story */}
@@ -135,7 +135,6 @@ const CrimeStory = ({ postingData }) => {
             </Text>
           </Card.Content>
         )}
-
         {/* Photo section */}
         {photoUri.length > 0 && (
           <View style={[styleSheet.flex_1, styleSheet.container]}>
