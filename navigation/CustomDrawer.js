@@ -82,11 +82,12 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
             <Avatar.Text size={90} label={avatarLabel} />
             <Text
               variant="titleSmall"
-              style={[styleSheet.margin_10, textColor]}
+              style={[styleSheet.margin_Vertical, textColor]}
             >
               {currentUser.username}
             </Text>
-          </View>
+            </View>
+            {/* drawer item */}
           <View style={styleSheet.drawerOptionsStyle}>
             <Drawer.Section>
               <Drawer.Item

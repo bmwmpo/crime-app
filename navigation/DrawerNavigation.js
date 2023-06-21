@@ -36,7 +36,7 @@ const DrawerNavigation = () => {
           initialRouteName="BottomTabNavigation"
           screenOptions={({ navigation }) => ({
             headerTitle: "",
-            drawerStyle: { width: "70%" },
+            drawerStyle: { width: "65%" },
             headerStyle: { borderBottomWidth: 1 },
             headerLeft: () => (
               <Pressable onPress={() => navigation.toggleDrawer()}>
@@ -45,12 +45,12 @@ const DrawerNavigation = () => {
                   signIn ? (
                     <Avatar.Text
                       label={avatarLabel}
-                      style={styleSheet.margin_10}
+                      style={styleSheet.margin_Horizontal}
                       size={30}
                     />
                   ) : (
                     <Icon
-                      style={styleSheet.margin_10}
+                      style={styleSheet.margin_Horizontal}
                       name="person-circle-outline"
                       color={textColor.color}
                       size={30}

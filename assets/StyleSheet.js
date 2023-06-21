@@ -9,8 +9,20 @@ const styleSheet = StyleSheet.create({
     flex: 1,
   },
   //padding & margin
-  margin_10: {
-    margin: 10,
+  margin_Horizontal: {
+    marginHorizontal: "10%",
+  },
+  margin_Horizontal_3: {
+    marginHorizontal: "3%",
+  },
+  margin_Horizontal_right: {
+    marginRight: "5%",
+  },
+  margin_Vertical: {
+    marginVertical: "3%",
+  },
+  padding_Horizontal: {
+    
   },
   height_100: {
     height: "100%",
@@ -76,7 +88,7 @@ const styleSheet = StyleSheet.create({
   },
   flexEndStyle: {
     justifyContent: "flex-end",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   //text
   headerStyle: {
