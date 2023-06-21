@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { db } from "../config/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
 import { storage } from "../config/firebase_config";
@@ -40,6 +40,8 @@ const AddPostScreen = ({ navigation }) => {
     visible: false,
     index: 0,
   });
+
+  const flatListRef = useRef();
 
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
@@ -145,8 +147,7 @@ const AddPostScreen = ({ navigation }) => {
       setShowSuccessDialog(true);
       setDialogTitleMsg({
         title: "",
-        message:
-          EnumString.thankYouMsg
+        message: EnumString.thankYouMsg,
       });
       setStory("");
       setPhotoUri([]);
@@ -167,6 +168,15 @@ const AddPostScreen = ({ navigation }) => {
     else setIsStoryEmpty(false);
 
     setStory(newText);
+  };
+
+  const deleteSelectedImage = (item, index) => {
+    setPhotoUri((pre) => pre.filter((image) => image.uri !== item.uri));
+
+    flatListRef.current.scrollToIndex({
+      animated: false,
+      index: index > 0 ? index - 1 : index,
+    });
   };
 
   return !signIn ? (
@@ -213,14 +223,14 @@ const AddPostScreen = ({ navigation }) => {
               icon="image"
               size="small"
               variant="surface"
-               style={styleSheet.margin_Horizontal_3}
+              style={styleSheet.margin_Horizontal_3}
               onPress={selectPhoto}
             />
             <FAB
               icon="share"
               size="small"
               variant="surface"
-               style={styleSheet.margin_Horizontal_3}
+              style={styleSheet.margin_Horizontal_3}
               onPress={onShare}
             />
             <Card.Actions>
@@ -256,6 +266,7 @@ const AddPostScreen = ({ navigation }) => {
               photoUri && (
                 <FlatList
                   horizontal
+                  ref={flatListRef}
                   data={photoUri}
                   keyExtractor={(item) => item.uri}
                   style={{ width: windowWidth, height: windowHeight * 0.7 }}
@@ -276,11 +287,7 @@ const AddPostScreen = ({ navigation }) => {
                         }}
                         size="small"
                         variant="surface"
-                        onPress={() => {
-                          setPhotoUri((pre) =>
-                            pre.filter((image) => image.uri !== item.uri)
-                          );
-                        }}
+                        onPress={() => deleteSelectedImage(item, index)}
                       />
                       <Pressable
                         onPress={() => {
