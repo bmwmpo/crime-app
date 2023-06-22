@@ -138,12 +138,12 @@ const CrimeStoryItem = ({ postingData }) => {
             </View>
             {/* passing time */}
             <View style={styleSheet.container}>
-              <Text>{getTimePassing()}</Text>
+              <Text variant="labelLarge" style={ textColor }>{getTimePassing()}</Text>
             </View>
           </View>
           {/* story */}
           {postingData.story !== "" && (
-            <Card.Content style={styleSheet.margin_Vertical}>
+            <Card.Content style={[styleSheet.margin_Vertical]}>
               <Text variant="titleMedium" style={textColor}>
                 {storyBody}
               </Text>
