@@ -91,8 +91,8 @@ const CrimeStoryItem = ({ postingData }) => {
           backgroundColor,
           {
             borderColor: cardBorderColor.color,
-            borderTopWidth: StyleSheet.hairlineWidth,
-            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderWidth: StyleSheet.hairlineWidth,
+           // borderBottomWidth: StyleSheet.hairlineWidth,
           },
         ]}
       >
