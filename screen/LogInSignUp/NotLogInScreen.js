@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import styleSheet from "../assets/StyleSheet";
+import styleSheet from "../../assets/StyleSheet";
 
 //user not log in screen
 const NotLogInScreen = () => {

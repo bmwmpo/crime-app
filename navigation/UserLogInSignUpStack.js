@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LogInScreen from "../screen/LogInScreen";
-import SignUpScreen from "../screen/SignUpScreen";
+import LogInScreen from "../screen/LogInSignUp/LogInScreen";
+import SignUpScreen from "../screen/LogInSignUp/SignUpScreen";
 import { Pressable } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import styleSheet from "../assets/StyleSheet";
 import { useTheme } from "@react-navigation/native";
-import NotLogInScreen from "../screen/NotLogInScreen";
+import NotLogInScreen from "../screen/LogInSignUp/NotLogInScreen";
 
 const Stack = createNativeStackNavigator();
 

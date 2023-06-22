@@ -1,14 +1,13 @@
 import { View, SafeAreaView, FlatList, RefreshControl } from "react-native";
 import { useState, useEffect, useCallback } from "react";
-import { db } from "../config/firebase_config";
+import { db } from "../../config/firebase_config";
 import { collection, getDocs } from "firebase/firestore";
-import CrimeStory from "../component/CrimeStory";
+import CrimeStory from "../../component/CrimeStoryItem";
 
 //all crime stories screen
-const CrimeStories = () => {
+const CrimeStoriesScreen = () => {
   const [allCrimeStories, setAllCrimeStories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
   //get all crime stories from firestore
   const getAllCrimeStories = async () => {
     const collectionRef = collection(db, "Postings");
@@ -56,4 +55,4 @@ const CrimeStories = () => {
   );
 };
 
-export default CrimeStories;
+export default CrimeStoriesScreen;

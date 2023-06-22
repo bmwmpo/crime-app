@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import { List, Avatar, Text } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import styleSheet from "../assets/StyleSheet";
-import useStore from "../zustand/store";
+import styleSheet from "../../assets/StyleSheet";
+import useStore from "../../zustand/store";
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {

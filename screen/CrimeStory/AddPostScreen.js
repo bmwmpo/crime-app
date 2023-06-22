@@ -9,21 +9,21 @@ import {
   Pressable,
 } from "react-native";
 import { useState, useRef } from "react";
-import { db } from "../config/firebase_config";
+import { db } from "../../config/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
-import { storage } from "../config/firebase_config";
+import { storage } from "../../config/firebase_config";
 import { ref, uploadBytes } from "firebase/storage";
 import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
-import { FailDialog, SuccessDialog } from "./AlertDialog";
+import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { useTheme } from "@react-navigation/native";
-import useStore from "../zustand/store";
-import LoadingScreen from "./LoadingScreen";
+import useStore from "../../zustand/store";
+import LoadingScreen from "../LoadingScreen";
 import ImageView from "react-native-image-viewing";
-import styleSheet from "../assets/StyleSheet";
+import styleSheet from "../../assets/StyleSheet";
 import * as ImagePicker from "expo-image-picker";
 import uuid from "react-native-uuid";
-import NotLogInScreen from "./NotLogInScreen";
-import EnumString from "../assets/EnumString";
+import NotLogInScreen from "../LogInSignUp/NotLogInScreen";
+import EnumString from "../../assets/EnumString";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
