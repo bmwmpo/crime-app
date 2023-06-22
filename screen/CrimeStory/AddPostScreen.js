@@ -134,7 +134,7 @@ const AddPostScreen = ({ navigation }) => {
       const postingDateTime = new Date();
 
       const newPosting = {
-        story,
+        story:story.trim(),
         postingId,
         photo,
         postingDateTime,
