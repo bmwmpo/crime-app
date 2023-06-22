@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import MapScreen from "../screen/MapScreen";
-import ChartScreen from "../screen/Chart";
+import ChartDetail from "../screen/ChartDetail";
 import AddPostScreen from "../screen/CrimeStory/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
@@ -43,10 +43,18 @@ const BottomTabNavigation = ({ navigation }) => {
       />
       {/* chart screen */}
       <Tab.Screen
-        name="Chart"
-        component={ChartScreen}
-        options={{ headerShown: false }}
-      />
+      name="Chart"
+      component={ChartDetail}
+      listeners={({ navigation }) => ({
+        tabPress: (e) => {
+          // Prevent default action
+          e.preventDefault();
+
+          // Do something with the `navigation` object
+          navigation.navigate("Chart", {area : 0});
+        },
+      })}
+    />
       {/* Crime Stories */}
       <Tab.Screen
         name="AllCrimeStories"
