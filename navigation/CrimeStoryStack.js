@@ -9,7 +9,7 @@ import styleSheet from "../assets/StyleSheet";
 const Stack = createNativeStackNavigator();
 
 const CrimeStoryStack = ({ navigation }) => {
-  const isDarkMode = useTheme().dark === "dark";
+  const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
