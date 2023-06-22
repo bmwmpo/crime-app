@@ -17,7 +17,7 @@ export default function ChartScreen() {
       <LineChart
         //sample data
         data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
+          labels: ["January", "February", "Darch", "April", "May", "June"],
           datasets: [
             {
               data: [
