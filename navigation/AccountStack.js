@@ -2,10 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Pressable } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import MyAccountScreen from "../screen/MyAccountScreen";
+import MyAccountScreen from "../screen/UserProfile/MyAccountScreen";
 import styleSheet from "../assets/StyleSheet";
-import ChangePasswordScreen from "../screen/ChangePasswordScreen";
-import EditUsernameScreen from "../screen/EditUsernameScreen";
+import ChangePasswordScreen from "../screen/UserProfile/ChangePasswordScreen";
+import EditUsernameScreen from "../screen/UserProfile/EditUsernameScreen";
 
 const Stack = createNativeStackNavigator();
 

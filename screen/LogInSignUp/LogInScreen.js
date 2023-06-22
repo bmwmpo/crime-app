@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { auth } from "../config/firebase_config";
+import { auth } from "../../config/firebase_config";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -12,11 +12,11 @@ import {
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import { FailDialog, SuccessDialog } from "./AlertDialog";
-import styleSheet from "../assets/StyleSheet";
-import EnumString from "../assets/EnumString";
-import LoadingScreen from "./LoadingScreen";
-import useStore from "../zustand/store";
+import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
+import styleSheet from "../../assets/StyleSheet";
+import EnumString from "../../assets/EnumString";
+import LoadingScreen from "../LoadingScreen";
+import useStore from "../../zustand/store";
 
 //user log in screen
 const LogInScreen = ({ navigation }) => {

@@ -7,7 +7,7 @@ import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
 import styleSheet from "../assets/StyleSheet";
 import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
-import { LogOutConfirmDialog } from "../screen/AlertDialog";
+import { LogOutConfirmDialog } from "../component/AlertDialog";
 import useStore from "../zustand/store";
 
 //custom drawer content

@@ -2,7 +2,7 @@ import { KeyboardAvoidingView, View } from "react-native";
 import { TextInput, Button, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { useState } from "react";
-import { db, auth } from "../config/firebase_config";
+import { db, auth } from "../../config/firebase_config";
 import {
   doc,
   updateDoc,
@@ -12,9 +12,9 @@ import {
   collection,
 } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
-import useStore from "../zustand/store";
-import styleSheet from "../assets/StyleSheet";
-import LoadingScreen from "./LoadingScreen";
+import useStore from "../../zustand/store";
+import styleSheet from "../../assets/StyleSheet";
+import LoadingScreen from "../LoadingScreen";
 
 //edit username screen
 const EditUsernameScreen = ({ navigation }) => {

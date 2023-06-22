@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { auth } from "../config/firebase_config";
+import { auth } from "../../config/firebase_config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   TouchableOpacity,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import { db } from "../config/firebase_config";
+import { db } from "../../config/firebase_config";
 import {
   collection,
   doc,
@@ -19,11 +19,11 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { FailDialog, SuccessDialog } from "./AlertDialog";
-import EnumString from "../assets/EnumString";
-import LoadingScreen from "./LoadingScreen";
-import styleSheet from "../assets/StyleSheet";
-import useStore from "../zustand/store";
+import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
+import EnumString from "../../assets/EnumString";
+import LoadingScreen from "../LoadingScreen";
+import styleSheet from "../../assets/StyleSheet";
+import useStore from "../../zustand/store";
 
 //user sign up screen
 const SignUpScreen = ({ navigation }) => {

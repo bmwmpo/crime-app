@@ -2,9 +2,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import MapScreen from "../screen/MapScreen";
 import ChartScreen from "../screen/Chart";
-import AddPostScreen from "../screen/AddPostScreen";
+import AddPostScreen from "../screen/CrimeStory/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
-import CrimeStories from "../screen/CrimeStories";
+import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,7 @@ const BottomTabNavigation = ({ navigation }) => {
           } else if (route.name === "Report") {
             iconName = "add";
           }
-          else if (route.name === "CrimeStories") {
+          else if (route.name === "AllCrimeStories") {
             iconName = "newspaper";
           }
 
@@ -49,8 +49,8 @@ const BottomTabNavigation = ({ navigation }) => {
       />
       {/* Crime Stories */}
       <Tab.Screen
-        name="CrimeStories"
-        component={CrimeStories}
+        name="AllCrimeStories"
+        component={AllCrimeStoriesScreen}
         options={{ headerShown: false }}
       />
       {/* add post screen */}
