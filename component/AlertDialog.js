@@ -50,6 +50,32 @@ const SuccessDialog = ({
   );
 };
 
+//success dialog
+const LogInDialog = ({
+  hideDialog,
+  navigateToLogIn,
+  showDialog,
+  message,
+  title,
+}) => {
+  return (
+    <Portal>
+      <Dialog visible={showDialog} onDismiss={hideDialog}>
+        <Dialog.Title>
+          <Text variant="titleLarge">{title}</Text>
+        </Dialog.Title>
+        <Dialog.Content>
+          <Text variant="titleMedium">{message}</Text>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={ () => { hideDialog(); navigateToLogIn() } }>Log in/Sign up</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+};
+
+
 //log out dialog
 const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {
   return (
@@ -76,4 +102,4 @@ const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {
   );
 };
 
-export { FailDialog, SuccessDialog, LogOutConfirmDialog };
+export { FailDialog, SuccessDialog, LogOutConfirmDialog, LogInDialog };

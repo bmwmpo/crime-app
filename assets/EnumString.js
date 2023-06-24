@@ -11,4 +11,7 @@ export default EnumString = {
   welcomeMsg: (username) => `Weclome ${ username }`,
   logOutMsg: 'Are you sure you want to log out?',
   thankYouMsg: 'Thank you for your interest in sharing the criminal information you have',
+  postingCollection: 'Postings',
+  logInMsg: 'Please log in or create an account to continue',
+  logInTilte:'Are you interested?',
 }

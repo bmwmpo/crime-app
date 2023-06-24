@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useStore = create((set, get) => ({
-  user: { email: "", username: "", password: "" },
+  user: { email: "", username: "", password: "", userID:"" },
   signIn: false,
   docID: "",
   setEmail: (email) =>
@@ -30,15 +30,15 @@ const useStore = create((set, get) => ({
       signIn: !state.signIn,
       docID: state.docID,
     })),
-  setSignedInUser: (email, username, docID) =>
+  setSignedInUser: (email, username, docID, userId) =>
     set((state) => ({
-      user: { ...state.user, email, username },
+      user: { ...state.user, email, username, userId },
       signIn: true,
       docID,
     })),
   setLogOutUser: () =>
     set((state) => ({
-      user: { email: "", username: "", password: "" },
+      user: { email: "", username: "", password: "", userId:'' },
       signIn: false,
       docID: "",
     })),

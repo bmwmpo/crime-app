@@ -47,7 +47,8 @@ const AllCrimeStoriesScreen = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        data={allCrimeStories}
+        data={ allCrimeStories }
+        ItemSeparatorComponent={ () => (<View style={ {margin:'1%'} }></View>)}
         keyExtractor={(item) => item.postingId}
         renderItem={({ item }) => <CrimeStoryItem postingData={item} />}
       />

@@ -26,9 +26,10 @@ const HomeScreen = () => {
           const email = documents[0].data().email;
           const username = documents[0].data().username;
           const docID = documents[0].data().docID;
+          const userId = documents[0].data().userId;
 
           //set the user state
-          setSignedInUser(email, username, docID);
+          setSignedInUser(email, username, docID, userId);
         } else {
           setLogOutUser();
         }
