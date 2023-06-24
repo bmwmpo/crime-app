@@ -24,6 +24,9 @@ const styleSheet = StyleSheet.create({
   padding_Horizontal: {
     paddingHorizontal: "3%",
   },
+  padding_Vertical: {
+    paddingVertical: "3%",
+  },
   height_100: {
     height: "100%",
   },

@@ -105,7 +105,7 @@ const LogInScreen = ({ navigation }) => {
   const isValidEmailAddress = (newText) => {
     const regex = EnumString.emailRegex;
 
-    setValidEmailFormat(regex.test(newText));
+    setValidEmailFormat(regex.test(newText.trim()));
   };
 
   //update and verify the email state value

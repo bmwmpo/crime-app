@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useState, useRef } from "react";
 import { db } from "../../config/firebase_config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { storage } from "../../config/firebase_config";
 import { ref, uploadBytes } from "firebase/storage";
 import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
@@ -127,7 +127,7 @@ const AddPostScreen = ({ navigation }) => {
       //save the posting in firestore
       const collectionRef = collection(db, "Postings");
 
-      const postingId = uuid.v4();
+     // const postingId = uuid.v4();
 
       const photo = photoUri.map((item) => item.fileName);
 
@@ -135,15 +135,20 @@ const AddPostScreen = ({ navigation }) => {
 
       const newPosting = {
         story:story.trim(),
-        postingId,
+        postingId:'',
         photo,
         postingDateTime,
         postBy: currentUser.username,
         userEmail: currentUser.email,
+        upVote: 0,
+        voters:[]
       };
 
-      await addDoc(collectionRef, newPosting);
+      const docAdded = await addDoc(collectionRef, newPosting);
 
+      const docRef = doc(db, 'Postings', docAdded.id)
+
+      await updateDoc(docRef, {postingId:docAdded.id})
       //show success dialog
       setShowSuccessDialog(true);
       setDialogTitleMsg({
@@ -228,13 +233,6 @@ const AddPostScreen = ({ navigation }) => {
               variant="surface"
               style={styleSheet.margin_Horizontal_3}
               onPress={selectPhoto}
-            />
-            <FAB
-              icon="share"
-              size="small"
-              variant="surface"
-              style={styleSheet.margin_Horizontal_3}
-              onPress={onShare}
             />
             <Card.Actions>
               <Button mode="contained" onPress={addPost}>
