@@ -8,6 +8,9 @@ const styleSheet = StyleSheet.create({
   flex_1: {
     flex: 1,
   },
+  zindex_1: {
+    zindex:1
+  },
   //padding & margin
   margin_Horizontal: {
     marginHorizontal: "10%",
@@ -178,6 +181,13 @@ const styleSheet = StyleSheet.create({
   createPostScrollViewStyle: {
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  FABStyle: {
+    zIndex: 2,
+    backgroundColor: "transparent",
+    position: "absolute",
+    right: 0,
+    left: 0,
   },
 });
 
