@@ -5,16 +5,29 @@ import {
   FlatList,
   Pressable,
   Image,
-  Keyboard,
+  Share,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { Text, Avatar, TextInput, Appbar, Button } from "react-native-paper";
+import { Text, Avatar, Appbar, Button } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native";
+import { db } from "../../config/firebase_config";
+import {
+  doc,
+  updateDoc,
+  onSnapshot,
+  query,
+  where,
+  collection,
+} from "firebase/firestore";
+import { LogInDialog } from "../../component/AlertDialog";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
+import useStore from "../../zustand/store";
 
-const CrimeStoryDetailScreen = ({ route }) => {
+const CrimeStoryDetailScreen = ({ route, navigation }) => {
+  const { user: currentUser, signIn } = useStore((state) => state);
+
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -29,33 +42,138 @@ const CrimeStoryDetailScreen = ({ route }) => {
     visible: false,
     index: 0,
   });
-  const [KeyboardStatus, setKeyboardStatus] = useState(false);
-  const [textInputHeight, setTextInputHeight] = useState(windowHeight * 0.06);
 
   //posting data
-  const { postBy, photo, postingDateTime, story } = route.params.postingData;
+  const { postBy, photo, postingDateTime, story, postingId } =
+    route.params.postingData;
   const { photoUri } = route.params;
+
+  const docRef = doc(db, EnumString.postingCollection, postingId);
   const dateAndTime = postingDateTime.toDate();
+  const [upVoteCount, setUpVoteCount] = useState(0);
+  const [voteStatus, setVoteStatus] = useState(false);
+  const [votersList, setVoterslist] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
 
+  const toCommentScreen = () => navigation.navigate("Comment");
+
+  //to log in screen
+  const toLogInScreen = () =>
+    navigation.navigate("SignInSignUp", { screen: "LogIn" });
+
+  const hideDialog = () => setShowDialog(false);
+
+  //increase or decrease the vote count
+  const updateVoteCount = async () => {
+    try {
+      if (!voteStatus) {
+        await updateDoc(docRef, { upVote: upVoteCount + 1 });
+      } else {
+        await updateDoc(docRef, { upVote: upVoteCount - 1 });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //Check whether the user has voted or not
+  const getVoteState = () => {
+    const voteAlready = votersList.filter(
+      (item) => item === currentUser.userId
+    );
+
+    if (voteAlready.length > 0) {
+      setVoteStatus(true);
+    } else {
+      setVoteStatus(false);
+    }
+  };
+
+  //update the upVote count
+  const updateVoters = async () => {
+    try {
+      //if the vote state is false, add the current user id in the voters list in firestore
+      if (!voteStatus) {
+        await updateDoc(docRef, {
+          voters: [...votersList, currentUser.userId],
+        });
+        setVoteStatus(true);
+      }
+      //else remove the user if from the voters list in firestore
+      else {
+        const voters = votersList.filter((item) => item !== currentUser.userId);
+        await updateDoc(docRef, { voters });
+        setVoteStatus(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //trigger the upvote
+  const onUpVote = () => {
+    if (signIn) {
+      updateVoteCount();
+      updateVoters();
+    } else {
+      setShowDialog(true);
+    }
+  };
+
+  //get real time with firestore
+  const getRealTimeUpdate = () => {
+    const collectionRef = collection(db, EnumString.postingCollection);
+    const q = query(collectionRef, where("postingId", "==", postingId));
+
+    //add snapshot lister to the doc
+    onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        setVoterslist(change.doc.data().voters);
+        setUpVoteCount(change.doc.data().upVote);
+      });
+    });
+  };
+
+  //retreive the photos when the page is first mounted
+  //and get the real time udapte with firestore
   useEffect(() => {
-    const showKeyboard = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardStatus(true);
-    });
-
-    const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardStatus(false);
-    });
-
-    return () => {
-      showKeyboard.remove();
-      hideKeyboard.remove();
-    };
+    getRealTimeUpdate();
   }, []);
+
+  //get the current user vote state
+  useEffect(() => {
+    getVoteState();
+  });
+
+  //share the positng
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: story,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("Yes");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <SafeAreaView
       style={[styleSheet.flex_1, styleSheet.container, backgroundColor]}
     >
+      {/* show the dialog if the user is not logged in */}
+      <LogInDialog
+        hideDialog={hideDialog}
+        showDialog={showDialog}
+        navigateToLogIn={toLogInScreen}
+        message={EnumString.logInMsg}
+        title={EnumString.logInTilte}
+      />
       {/* full image view */}
       <ImageView
         images={photoUri}
@@ -126,13 +244,7 @@ const CrimeStoryDetailScreen = ({ route }) => {
           </View>
         )}
       </ScrollView>
-      <TextInput
-        style={[styleSheet.width_100, backgroundColor]}
-        textColor={textColor.color}
-        placeholder="add a comment"
-        multiline={true}
-      />
-
+      {/* app bar */}
       <Appbar
         style={[
           styleSheet.width_100,
@@ -140,15 +252,34 @@ const CrimeStoryDetailScreen = ({ route }) => {
           backgroundColor,
         ]}
       >
-        <Appbar.Action icon="thumb-up" />
-        <Appbar.Action icon="share" />
-        {KeyboardStatus && (
-          <View style={[styleSheet.flexEndStyle, styleSheet.width_100]}>
-            <Button mode="contained" style={[styleSheet.margin_Horizontal]}>
-              Reply
-            </Button>
-          </View>
+        {/* like */}
+        {voteStatus ? (
+          <Appbar.Action
+            icon="thumb-up"
+            color={textColor.color}
+            onPress={onUpVote}
+          />
+        ) : (
+          <Appbar.Action
+            icon="thumb-up-outline"
+            color={textColor.color}
+            onPress={onUpVote}
+          />
         )}
+
+        <Text style={textColor}>{upVoteCount}</Text>
+        {/* share */}
+        <Appbar.Action icon="share" onPress={onShare} />
+        {/* comment */}
+        <View style={[styleSheet.flexEndStyle, styleSheet.width_100]}>
+          <Button
+            mode="contained"
+            style={[styleSheet.margin_Horizontal]}
+            onPress={toCommentScreen}
+          >
+            Add a comment
+          </Button>
+        </View>
       </Appbar>
     </SafeAreaView>
   );
