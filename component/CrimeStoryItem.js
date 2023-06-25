@@ -1,5 +1,5 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { Text, Card, Avatar } from "react-native-paper";
+import { Text, Card, Avatar, IconButton } from "react-native-paper";
 import { useState, useEffect } from "react";
 import { storage } from "../config/firebase_config";
 import {
@@ -38,7 +38,7 @@ const CrimeStoryItem = ({ postingData }) => {
     index: 0,
   });
   const [upVoteCount, setUpVoteCount] = useState(0);
-  const [voteState, setVoteState] = useState(false);
+  const [voteStatus, setVoteStatus] = useState(false);
   const [votersList, setVoterslist] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
 
@@ -112,7 +112,7 @@ const CrimeStoryItem = ({ postingData }) => {
   //increase or decrease the vote count
   const updateVoteCount = async () => {
     try {
-      if (!voteState) {
+      if (!voteStatus) {
         await updateDoc(docRef, { upVote: upVoteCount + 1 });
       } else {
         await updateDoc(docRef, { upVote: upVoteCount - 1 });
@@ -129,9 +129,9 @@ const CrimeStoryItem = ({ postingData }) => {
     );
 
     if (voteAlready.length > 0) {
-      setVoteState(true);
+      setVoteStatus(true);
     } else {
-      setVoteState(false);
+      setVoteStatus(false);
     }
   };
 
@@ -139,17 +139,17 @@ const CrimeStoryItem = ({ postingData }) => {
   const updateVoters = async () => {
     try {
       //if the vote state is false, add the current user id in the voters list in firestore
-      if (!voteState) {
+      if (!voteStatus) {
         await updateDoc(docRef, {
           voters: [...votersList, currentUser.userId],
         });
-        setVoteState(true);
+        setVoteStatus(true);
       }
       //else remove the user if from the voters list in firestore
       else {
         const voters = votersList.filter((item) => item !== currentUser.userId);
         await updateDoc(docRef, { voters });
-        setVoteState(false);
+        setVoteStatus(false);
       }
     } catch (err) {
       console.log(err);
@@ -237,7 +237,9 @@ const CrimeStoryItem = ({ postingData }) => {
         >
           {/* author */}
           <View>
-            <Avatar.Text label={ postingData.postBy.substring(0, 1).toUpperCase() } size={ 30 }
+            <Avatar.Text
+              label={postingData.postBy.substring(0, 1).toUpperCase()}
+              size={30}
             />
           </View>
           {/* date and time */}
@@ -302,20 +304,19 @@ const CrimeStoryItem = ({ postingData }) => {
         <Card.Content
           style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
         >
-          <Pressable
-            onPress={onUpVote}
-            style={styleSheet.margin_Horizontal_right}
-          >
-            {voteState ? (
-              <Icon name="thumbs-up" size={25} color={textColor.color} />
-            ) : (
-              <Icon
-                name="thumbs-up-outline"
-                size={25}
-                color={textColor.color}
-              />
-            )}
-          </Pressable>
+          {voteStatus ? (
+            <IconButton
+              icon="thumb-up"
+              iconColor={textColor.color}
+              onPress={onUpVote}
+            />
+          ) : (
+            <IconButton
+              icon="thumb-up-outline"
+              iconColor={textColor.color}
+              onPress={onUpVote}
+            />
+          )}
 
           <Text variant="labelLarge" style={textColor}>
             {getCount()}
