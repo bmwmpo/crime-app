@@ -193,7 +193,7 @@ const CrimeStoryItem = ({ postingData }) => {
   //get the current user vote state
   useEffect(() => {
     getVoteState();
-  }, [currentUser.userId]);
+  });
 
   return (
     <TouchableOpacity onPress={toCrimeDetail}>

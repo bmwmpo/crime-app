@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
 import CrimeStoryDetailScreen from "../screen/CrimeStory/CrimeStoryDetailScreen";
 import styleSheet from "../assets/StyleSheet";
+import CommentScreen from "../screen/CrimeStory/CommentScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +40,8 @@ const CrimeStoryStack = ({ navigation }) => {
           ),
           headerTitle: "",
         })}
-      />
+          />
+          <Stack.Screen name='Comment' component={ CommentScreen } options={ () => ({title:''})}/>
     </Stack.Navigator>
   );
 };

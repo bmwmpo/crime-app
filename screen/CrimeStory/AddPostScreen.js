@@ -1,7 +1,6 @@
 import {
   View,
   ScrollView,
-  Share,
   Image,
   FlatList,
   Dimensions,
@@ -97,23 +96,6 @@ const AddPostScreen = ({ navigation }) => {
       }
     } catch (err) {
       console.error(err.message);
-    }
-  };
-
-  //share the positng
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message: story,
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log("Yes");
-        }
-      }
-    } catch (err) {
-      console.log(err);
     }
   };
 
