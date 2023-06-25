@@ -47,7 +47,6 @@ const AllCrimeStoriesScreen = () => {
   const loadMoreData = () => {
     getAllCrimeStories(limitNum + 2);
     setLimitNum(limitNum + 2);
-    console.log("end");
   };
 
   //set FAB's visible to true when a new story is added

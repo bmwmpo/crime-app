@@ -5,9 +5,10 @@ import {
   FlatList,
   Pressable,
   Image,
+  Keyboard,
 } from "react-native";
-import { useState } from "react";
-import { Text, Avatar } from "react-native-paper";
+import { useState, useEffect } from "react";
+import { Text, Avatar, TextInput, Appbar, Button } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import ImageView from "react-native-image-viewing";
@@ -22,18 +23,34 @@ const CrimeStoryDetailScreen = ({ route }) => {
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
 
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height;
   const [showImageView, setShowImageView] = useState({
     visible: false,
     index: 0,
   });
-
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
+  const [KeyboardStatus, setKeyboardStatus] = useState(false);
+  const [textInputHeight, setTextInputHeight] = useState(windowHeight * 0.06);
 
   //posting data
   const { postBy, photo, postingDateTime, story } = route.params.postingData;
   const { photoUri } = route.params;
   const dateAndTime = postingDateTime.toDate();
+
+  useEffect(() => {
+    const showKeyboard = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardStatus(true);
+    });
+
+    const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardStatus(false);
+    });
+
+    return () => {
+      showKeyboard.remove();
+      hideKeyboard.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView
@@ -49,7 +66,10 @@ const CrimeStoryDetailScreen = ({ route }) => {
         }
       />
       <ScrollView
-        style={[{ padding: "4%", width: windowWidth }]}
+        style={[
+          { padding: "4%", width: windowWidth },
+          styleSheet.margin_Vertical,
+        ]}
         contentContainerStyle={styleSheet.flexStartContainer}
       >
         {/* posting information: author, posting date, and time */}
@@ -106,6 +126,30 @@ const CrimeStoryDetailScreen = ({ route }) => {
           </View>
         )}
       </ScrollView>
+      <TextInput
+        style={[styleSheet.width_100, backgroundColor]}
+        textColor={textColor.color}
+        placeholder="add a comment"
+        multiline={true}
+      />
+
+      <Appbar
+        style={[
+          styleSheet.width_100,
+          { height: windowHeight * 0.06 },
+          backgroundColor,
+        ]}
+      >
+        <Appbar.Action icon="thumb-up" />
+        <Appbar.Action icon="share" />
+        {KeyboardStatus && (
+          <View style={[styleSheet.flexEndStyle, styleSheet.width_100]}>
+            <Button mode="contained" style={[styleSheet.margin_Horizontal]}>
+              Reply
+            </Button>
+          </View>
+        )}
+      </Appbar>
     </SafeAreaView>
   );
 };
