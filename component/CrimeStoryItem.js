@@ -1,5 +1,5 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { Text, Card, Badge } from "react-native-paper";
+import { Text, Card, Avatar } from "react-native-paper";
 import { useState, useEffect } from "react";
 import { storage } from "../config/firebase_config";
 import {
@@ -237,7 +237,8 @@ const CrimeStoryItem = ({ postingData }) => {
         >
           {/* author */}
           <View>
-            <Badge>{postingData.postBy.substring(0, 1).toUpperCase()}</Badge>
+            <Avatar.Text label={ postingData.postBy.substring(0, 1).toUpperCase() } size={ 30 }
+            />
           </View>
           {/* date and time */}
           <View style={[styleSheet.flexStartContainer]}>
