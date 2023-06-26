@@ -19,15 +19,38 @@ import {
   query,
   where,
   collection,
+  getDocs,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { LogInDialog } from "../../component/AlertDialog";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
+import EnumString from "../../assets/EnumString";
+import CommentItem from "../../component/CommentItem";
 
+//Crime story detail
 const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const { user: currentUser, signIn } = useStore((state) => state);
 
+  const [commentList, setCommentList] = useState([]);
+  const [showImageView, setShowImageView] = useState({
+    visible: false,
+    index: 0,
+  });
+  const [upVoteCount, setUpVoteCount] = useState(0);
+  const [voteStatus, setVoteStatus] = useState(false);
+  const [votersList, setVoterslist] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+
+  //posting data
+  const { postBy, photo, postingDateTime, story, postingId } =
+    route.params.postingData;
+  const { photoUri } = route.params;
+  const dateAndTime = postingDateTime.toDate();
+
+  //style
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -38,24 +61,14 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
 
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
-  const [showImageView, setShowImageView] = useState({
-    visible: false,
-    index: 0,
-  });
-
-  //posting data
-  const { postBy, photo, postingDateTime, story, postingId } =
-    route.params.postingData;
-  const { photoUri } = route.params;
 
   const docRef = doc(db, EnumString.postingCollection, postingId);
-  const dateAndTime = postingDateTime.toDate();
-  const [upVoteCount, setUpVoteCount] = useState(0);
-  const [voteStatus, setVoteStatus] = useState(false);
-  const [votersList, setVoterslist] = useState([]);
-  const [showDialog, setShowDialog] = useState(false);
 
-  const toCommentScreen = () => navigation.navigate("Comment");
+  //navigate to CommentScreen
+  const toCommentScreen = () => {
+    if (signIn) navigation.navigate("Comment", { postingId });
+    else setShowDialog(true);
+  };
 
   //to log in screen
   const toLogInScreen = () =>
@@ -120,7 +133,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  //get real time with firestore
+  //get real time vote count and voter list with firestore
   const getRealTimeUpdate = () => {
     const collectionRef = collection(db, EnumString.postingCollection);
     const q = query(collectionRef, where("postingId", "==", postingId));
@@ -134,16 +147,28 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     });
   };
 
-  //retreive the photos when the page is first mounted
-  //and get the real time udapte with firestore
-  useEffect(() => {
-    getRealTimeUpdate();
-  }, []);
+  //get real time comment list with firestore
+  const getComments = async () => {
+    const subCollectionRef = collection(
+      db,
+      EnumString.postingCollection,
+      postingId,
+      EnumString.commentsSubCollection
+    );
 
-  //get the current user vote state
-  useEffect(() => {
-    getVoteState();
-  });
+    const q = query(subCollectionRef, orderBy("replyDateTime"));
+    const list = [];
+
+    onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          list.unshift(change.doc.data());
+        }
+      });
+
+      setCommentList(list);
+    });
+  };
 
   //share the positng
   const onShare = async () => {
@@ -161,6 +186,17 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       console.log(err);
     }
   };
+
+  //get the real time udapte with firestore with the associated posting
+  useEffect(() => {
+    getRealTimeUpdate();
+    getComments();
+  }, [postingId]);
+
+  //get the current user vote state
+  useEffect(() => {
+    getVoteState();
+  });
 
   return (
     <SafeAreaView
@@ -185,10 +221,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       />
       <ScrollView
         style={[
-          { padding: "4%", width: windowWidth },
+          { padding: "2%", width: windowWidth },
           styleSheet.margin_Vertical,
         ]}
         contentContainerStyle={styleSheet.flexStartContainer}
+        nestedScrollEnabled={true}
       >
         {/* posting information: author, posting date, and time */}
         <View
@@ -200,9 +237,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           ]}
         >
           <Avatar.Text label={postBy.substring(0, 1).toUpperCase()} size={45} />
+          {/* author */}
           <Text variant="labelLarge" style={textColor}>
             {postBy}
           </Text>
+          {/* date and time */}
           <Text variant="labelLarge" style={textColor}>
             {dateAndTime.toLocaleString()}
           </Text>
@@ -266,10 +305,9 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
             onPress={onUpVote}
           />
         )}
-
         <Text style={textColor}>{upVoteCount}</Text>
         {/* share */}
-        <Appbar.Action icon="share" onPress={onShare} />
+        <Appbar.Action icon="share" onPress={onShare} color={textColor.color} />
         {/* comment */}
         <View style={[styleSheet.flexEndStyle, styleSheet.width_100]}>
           <Button
@@ -281,6 +319,19 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </Appbar>
+      {/* comments section */}
+      {commentList.length === 0 ? (
+        <Text variant="titleMedium" style={textColor}>
+          Be the first one to respond
+        </Text>
+      ) : (
+        <FlatList
+          style={[{ height: windowHeight * 0.5, width: windowWidth }]}
+          data={commentList}
+          keyExtractor={(item) => item.commentId}
+          renderItem={({ item }) => <CommentItem commentData={item} />}
+        />
+      )}
     </SafeAreaView>
   );
 };

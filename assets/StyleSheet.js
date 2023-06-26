@@ -100,6 +100,9 @@ const styleSheet = StyleSheet.create({
     alignItems: "center",
   },
   //text
+  fontSize_20: {
+    fontSize:20
+  },
   headerStyle: {
     marginBottom: 30,
     fontWeight: "bold",
