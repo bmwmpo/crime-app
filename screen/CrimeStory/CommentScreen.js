@@ -13,6 +13,8 @@ const CommentScreen = ({ navigation, route }) => {
   const { user: currentUser } = useStore((state) => state);
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  //postingId of the selected crime story
   const { postingId } = route.params;
 
   const isDarkMode = useTheme().dark;
@@ -25,6 +27,23 @@ const CommentScreen = ({ navigation, route }) => {
   const backgroundColor = isDarkMode
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
+
+  //save the docId in the comment doc
+  const updateCommentDoc = async (docID) => {
+    try {
+      const subDocRef = doc(
+        db,
+        EnumString.postingCollection,
+        postingId,
+        EnumString.commentsSubCollection,
+        docID
+      );
+
+      await updateDoc(subDocRef, { commentId: docID });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   //save comment in the subcollection of the assoicated posting crime story
   const saveCommentToFireStore = async () => {
@@ -43,15 +62,9 @@ const CommentScreen = ({ navigation, route }) => {
         replyDateTime: new Date(),
       };
       const commentAdded = await addDoc(subCollectionRef, newComment);
-      const subDocRef = doc(
-        db,
-        EnumString.postingCollection,
-        postingId,
-        EnumString.commentsSubCollection,
-        commentAdded.id
-      );
 
-      await updateDoc(subDocRef, { commentId: commentAdded.id });
+      await updateCommentDoc(commentAdded.id);
+
       navigation.goBack();
     } catch (err) {
       console.log(err);

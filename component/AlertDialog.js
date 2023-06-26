@@ -50,7 +50,7 @@ const SuccessDialog = ({
   );
 };
 
-//success dialog
+//request log in dialog
 const LogInDialog = ({
   hideDialog,
   navigateToLogIn,

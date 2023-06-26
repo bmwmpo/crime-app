@@ -160,13 +160,16 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     const list = [];
 
     onSnapshot(q, (snapshot) => {
+      setCommentList([]);
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
           list.unshift(change.doc.data());
+          console.log("add");
         }
       });
 
       setCommentList(list);
+      console.log(list);
     });
   };
 
@@ -221,7 +224,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       />
       <ScrollView
         style={[
-          { padding: "2%", width: windowWidth },
+          { padding: "2%", width: windowWidth, height: windowHeight * 0.75 },
           styleSheet.margin_Vertical,
         ]}
         contentContainerStyle={styleSheet.flexStartContainer}
@@ -326,10 +329,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         </Text>
       ) : (
         <FlatList
-          style={[{ height: windowHeight * 0.5, width: windowWidth }]}
+          style={[{ height: windowHeight * 0.3, width: windowWidth }]}
           data={commentList}
-          keyExtractor={(item) => item.commentId}
-          renderItem={({ item }) => <CommentItem commentData={item} />}
+          renderItem={({ item }) => (
+            <CommentItem key={item.commentId} commentData={item} />
+          )}
         />
       )}
     </SafeAreaView>

@@ -73,7 +73,7 @@ const AllCrimeStoriesScreen = () => {
       getAllCrimeStories();
       setRefreshing(false);
       setVisible(false);
-    }, 1000);
+    }, 800);
   }, []);
 
   return (
@@ -90,7 +90,7 @@ const AllCrimeStoriesScreen = () => {
       <FlatList
         style={styleSheet.zindex_1}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={50}/>
         }
         onEndReachedThreshold={0.5}
         onEndReached={loadMoreData}

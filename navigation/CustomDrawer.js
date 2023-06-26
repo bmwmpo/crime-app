@@ -145,11 +145,11 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                 icon={({ focused, color, size }) => (
                   <Icon
                     name="log-out-outline"
-                    color={styleSheet.logoutColor.color}
+                    color={styleSheet.errorTextStyle.color}
                     size={size}
                   />
                 )}
-                rippleColor={styleSheet.highLightTextColor.color}
+                rippleColor={'red'}
               />
             </Drawer.Section>
           </View>
