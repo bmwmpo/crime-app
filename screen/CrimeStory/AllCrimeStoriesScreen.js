@@ -77,7 +77,7 @@ const AllCrimeStoriesScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={ [styleSheet.flex_1]}>
       <FAB
         color="#BA55D3"
         size="small"

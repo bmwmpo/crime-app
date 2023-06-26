@@ -85,7 +85,7 @@ const LogInScreen = ({ navigation }) => {
       });
 
       //redirect to the Main Screen upon successful sign-in
-      navigation.navigate("BottomTabNavigation", { screen: "Map" });
+      navigation.navigate("BottomTabNavigation");
     } catch (err) {
       setShowDialog(true);
       setErrorMessage(EnumString.invalidEmaillPassword);

@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Button } from "react-native-paper";
 import { Pressable } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { useState } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
 import CrimeStoryDetailScreen from "../screen/CrimeStory/CrimeStoryDetailScreen";
@@ -40,8 +42,15 @@ const CrimeStoryStack = ({ navigation }) => {
           ),
           headerTitle: "",
         })}
-          />
-          <Stack.Screen name='Comment' component={ CommentScreen } options={ () => ({title:''})}/>
+      />
+      <Stack.Screen
+        name="Comment"
+        component={CommentScreen}
+        options={() => ({
+          title: "",
+          headerShown: false,
+        })}
+      />
     </Stack.Navigator>
   );
 };
