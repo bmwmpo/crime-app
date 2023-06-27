@@ -45,7 +45,7 @@ const SuccessDialog = ({ hideDialog, showDialog, message, title }) => {
   );
 };
 
-//success dialog
+//Request log in dialog
 const LogInDialog = ({
   hideDialog,
   navigateToLogIn,

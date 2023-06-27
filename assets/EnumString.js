@@ -9,6 +9,7 @@ export default EnumString = {
   emailIsMissing: "Email address is missing",
   invalidEmail: "Not a valid email address",
   welcomeMsg: (username) => `Weclome ${ username }`,
+  permissionMsg: 'Please go to Setting > Privacy to grant the necessary permission',
   logOutMsg: 'Are you sure you want to log out?',
   thankYouMsg: 'Thank you for your interest in sharing the criminal information you have',
   postingCollection: 'Postings',
