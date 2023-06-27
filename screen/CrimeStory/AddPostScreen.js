@@ -40,8 +40,6 @@ const AddPostScreen = ({ navigation }) => {
     index: 0,
   });
 
-  const [permissionStatus, setPermissionStatus] = ImagePicker.useMediaLibraryPermissions();
-
   //ref to manipulate the flastlist
   const flatListRef = useRef();
 
@@ -65,10 +63,9 @@ const AddPostScreen = ({ navigation }) => {
     {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      console.log(permissionResult)
-
-      if (permissionResult === false)
+      if (permissionResult.granted === false)
         return;
+      
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
