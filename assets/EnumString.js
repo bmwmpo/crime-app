@@ -12,7 +12,8 @@ export default EnumString = {
   logOutMsg: 'Are you sure you want to log out?',
   thankYouMsg: 'Thank you for your interest in sharing the criminal information you have',
   postingCollection: 'Postings',
-  commentsSubCollection:'Comments',
+  commentsSubCollection: 'Comments',
+  userInfoCollection:'UserInfo',
   logInMsg: 'Please log in or create an account to continue',
   logInTilte:'Are you interested?',
 }

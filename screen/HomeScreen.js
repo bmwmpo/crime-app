@@ -14,33 +14,39 @@ const HomeScreen = () => {
 
   //get user profile from firestore
   const getUserProfile = async (email) => {
-    try {
-      setIsLoading(true);
-      const collectionRef = collection(db, "UserInfo");
-      const filter = where("email", "==", email);
-      const q = query(collectionRef, filter);
+    setIsLoading(true);
 
-      const querySnapshot = await getDocs(q);
-      const documents = querySnapshot.docs;
+    //wait while the user information is being saved in firestore
+    //then get user doc from firestore
+    setTimeout(async () => {
+      try {
+        const collectionRef = collection(db, "UserInfo");
+        const filter = where("email", "==", email);
+        const q = query(collectionRef, filter);
 
-      //user document is found
-      if (documents.length > 0) {
-        const email = documents[0].data().email;
-        const username = documents[0].data().username;
-        const docID = documents[0].data().docID;
-        const userId = documents[0].data().userId;
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs;
 
-        //set the user state
-        setSignedInUser(email, username, docID, userId);
-      } else {
-        setLogOutUser();
+        //user document is found
+        if (documents.length > 0) {
+          const email = documents[0].data().email;
+          const username = documents[0].data().username;
+          const docID = documents[0].data().docID;
+          const userId = documents[0].data().userId;
+          const preference = documents[0].data().preference
+          
+          //set the user state
+          setSignedInUser(email, username, docID, userId, preference.darkMode);
+        } else {
+          setLogOutUser();
+        }
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.log(err);
-      setIsLoading(false);
-    } finally {
-      setIsLoading(false);
-    }
+    }, 800);
   };
 
   //get the currently signed-in user

@@ -109,6 +109,7 @@ const SignUpScreen = ({ navigation }) => {
         email,
         userId: uid,
         username: username.toLowerCase().trim(),
+        preference: { darkMode: false },
       };
 
       const docAdded = await addDoc(collectionRef, data);

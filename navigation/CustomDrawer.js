@@ -1,24 +1,34 @@
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { auth } from "../config/firebase_config";
 import { signOut } from "firebase/auth";
-import Icon from "react-native-vector-icons/Ionicons";
 import { View, SafeAreaView } from "react-native";
 import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
-import styleSheet from "../assets/StyleSheet";
 import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { LogOutConfirmDialog } from "../component/AlertDialog";
+import { db } from "../config/firebase_config";
+import { doc, updateDoc } from "firebase/firestore";
 import useStore from "../zustand/store";
+import styleSheet from "../assets/StyleSheet";
+import Icon from "react-native-vector-icons/Ionicons";
+import EnumString from "../assets/EnumString";
 
 //custom drawer content
-const CustomDrawer = ({ navigation, setIsDarkMode }) => {
+const CustomDrawer = ({ navigation }) => {
   const [showDialog, setShowDialog] = useState(false);
   const isDarkMode = useTheme().dark;
   //dark mode or light mode text and icon color style object
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
-  const { user: currentUser, signIn } = useStore((state) => state);
+  const {
+    user: currentUser,
+    signIn,
+    setIsDarkMode,
+    preference: { darkMode },
+    docID
+  } = useStore((state) => state);
+
   const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
 
   const hideDialog = () => setShowDialog(false);
@@ -44,6 +54,27 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
 
   //sign out alert dialog
   const signOutAlert = () => setShowDialog(true);
+
+  //update user's prefernce in firestore
+  const upDateUserPreference = async (darkMode) => {
+    try
+    {
+      const docRef = doc(db, EnumString.userInfoCollection, docID);
+      await updateDoc(docRef, { preference: { darkMode } })
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //handle DarkMode switch
+  const handleSwitch = () =>
+  {
+    const newPerfenenceDarkMode = !darkMode;
+
+    setIsDarkMode(newPerfenenceDarkMode);
+    upDateUserPreference(newPerfenenceDarkMode);
+  }
 
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
@@ -86,8 +117,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
             >
               {currentUser.username}
             </Text>
-            </View>
-            {/* drawer item */}
+          </View>
+          {/* drawer item */}
           <View style={styleSheet.drawerOptionsStyle}>
             <Drawer.Section>
               <Drawer.Item
@@ -108,7 +139,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                 variant="titleSmall"
                 style={[styleSheet.drawerTextStyle, textColor]}
               >
-                Perference
+                Preference
               </Text>
               <View>
                 <Drawer.Item
@@ -123,8 +154,8 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                   )}
                   right={() => (
                     <Switch
-                      value={isDarkMode}
-                      onValueChange={() => setIsDarkMode((pre) => !pre)}
+                      value={darkMode}
+                      onValueChange={handleSwitch}
                       color={styleSheet.highLightTextColor.color}
                     />
                   )}
@@ -149,7 +180,7 @@ const CustomDrawer = ({ navigation, setIsDarkMode }) => {
                     size={size}
                   />
                 )}
-                rippleColor={'red'}
+                rippleColor={"red"}
               />
             </Drawer.Section>
           </View>
