@@ -6,6 +6,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
@@ -46,6 +47,7 @@ const SignUpScreen = ({ navigation }) => {
   const [showWelcomeDialog, setShowWelocmeDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
+  const [keyboardStatus, setKeyboardStatus] = useState(false);
 
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
@@ -215,6 +217,24 @@ const SignUpScreen = ({ navigation }) => {
     isValidPasswordLength(newText);
   };
 
+  //keyboard module
+  useEffect(() => {
+    //keyboardDidShow
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardStatus(true);
+    });
+    //keyboardDidHide
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardStatus(false);
+    });
+
+    //dispatch the listeners
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     //display loading screen when isLoading is true, otherwise display sign up form
     isLoading ? (
@@ -236,12 +256,18 @@ const SignUpScreen = ({ navigation }) => {
           showDialog={showWelcomeDialog}
           {...dialogTitleMsg}
         />
-        <Text
-          variant="headlineSmall"
-          style={[styleSheet.headerStyle, textColor]}
-        >
-          Welcome to Toronro Crime Tracker
-        </Text>
+        {
+          //hide the title when the keyboard did show
+          !keyboardStatus && (
+            <Text
+              variant="headlineSmall"
+              style={[styleSheet.headerStyle, textColor]}
+            >
+              Welcome to Toronro Crime Tracker
+            </Text>
+          )
+        }
+
         {/* email text input */}
         <View style={styleSheet.formatContainer}>
           <TextInput

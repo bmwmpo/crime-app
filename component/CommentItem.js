@@ -42,6 +42,7 @@ const CommentItem = ({ commentData }) => {
           borderTopWidth: StyleSheet.hairlineWidth,
           justifyContent: "center",
         },
+        styleSheet.padding_Horizontal
       ]}
     >
       <Card.Content
@@ -76,9 +77,10 @@ const CommentItem = ({ commentData }) => {
           </Text>
         </View>
       </Card.Content>
+      {/* comment */}
       {comment !== "" && (
-        <Card.Content style={[styleSheet.margin_Vertical]}>
-          <Text variant="titleMedium" style={textColor}>
+        <Card.Content style={ [styleSheet.margin_Vertical]}>
+          <Text variant="titleMedium" style={[textColor, styleSheet.padding_Horizontal]}>
             {comment}
           </Text>
         </Card.Content>
