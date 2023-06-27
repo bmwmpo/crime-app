@@ -59,14 +59,19 @@ const AddPostScreen = ({ navigation }) => {
 
   //select image from gallery
   const selectPhoto = async () => {
-    try
-    {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    try {
+      //request image library permission
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (permissionResult.granted === false)
+      //if grant = false
+      if (permissionResult.granted === false) {
+        setShowSuccessDialog(true);
+        setDialogTitleMsg({ title: "", message: EnumString.permissionMsg });
         return;
-      
+      }
 
+      //open Image library
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         //allowsEditing: true,
@@ -75,9 +80,9 @@ const AddPostScreen = ({ navigation }) => {
         quality: 1,
       });
 
-      if (result.canceled)
-        return;
-      
+      //cancel image selection
+      if (result.canceled) return;
+
       //pickup images from gallery
       const source = result.assets;
 
@@ -117,30 +122,30 @@ const AddPostScreen = ({ navigation }) => {
       uploadPhoto();
 
       //save the posting in firestore
-      const collectionRef = collection(db, "Postings");
+      const collectionRef = collection(db, EnumString.postingCollection);
 
-     // const postingId = uuid.v4();
+      // const postingId = uuid.v4();
 
       const photo = photoUri.map((item) => item.fileName);
 
       const postingDateTime = new Date();
 
       const newPosting = {
-        story:story.trim(),
-        postingId:'',
+        story: story.trim(),
+        postingId: "",
         photo,
         postingDateTime,
         postBy: currentUser.username,
         userEmail: currentUser.email,
         upVote: 0,
-        voters:[]
+        voters: [],
       };
 
       const docAdded = await addDoc(collectionRef, newPosting);
 
-      const docRef = doc(db, 'Postings', docAdded.id)
+      const docRef = doc(db, "Postings", docAdded.id);
 
-      await updateDoc(docRef, {postingId:docAdded.id})
+      await updateDoc(docRef, { postingId: docAdded.id });
       //show success dialog
       setShowSuccessDialog(true);
       setDialogTitleMsg({
@@ -172,7 +177,7 @@ const AddPostScreen = ({ navigation }) => {
   const deleteSelectedImage = (item, index) => {
     setPhotoUri((pre) => pre.filter((image) => image.uri !== item.uri));
 
-    //scroll to the previous or next image of the flatlst 
+    //scroll to the previous or next image of the flatlst
     flatListRef.current.scrollToIndex({
       animated: false,
       index: index > 0 ? index - 1 : index,
