@@ -29,7 +29,7 @@ const AccountStack = ({ navigation }) => {
         options={({ route }) => ({
           headerLeft: () => (
             <Pressable onPress={cancelPress}>
-              <Icon name="arrow-back" size={30} color={textColor.color} />
+              <Icon name="arrow-back" size={25} color={textColor.color} />
             </Pressable>
           ),
           headerTitle: "Account",

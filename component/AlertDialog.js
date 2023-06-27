@@ -27,12 +27,7 @@ const FailDialog = ({ hideDialog, showDialog, errorMessage }) => {
 };
 
 //success dialog
-const SuccessDialog = ({
-  hideDialog,
-  showDialog,
-  message,
-  title,
-}) => {
+const SuccessDialog = ({ hideDialog, showDialog, message, title }) => {
   return (
     <Portal>
       <Dialog visible={showDialog} onDismiss={hideDialog}>
@@ -50,7 +45,7 @@ const SuccessDialog = ({
   );
 };
 
-//request log in dialog
+//success dialog
 const LogInDialog = ({
   hideDialog,
   navigateToLogIn,
@@ -68,13 +63,19 @@ const LogInDialog = ({
           <Text variant="titleMedium">{message}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={ () => { hideDialog(); navigateToLogIn() } }>Log in/Sign up</Button>
+          <Button
+            onPress={() => {
+              hideDialog();
+              navigateToLogIn();
+            }}
+          >
+            Log in/Sign up
+          </Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>
   );
 };
-
 
 //log out dialog
 const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {

@@ -15,6 +15,7 @@ import { updateProfile } from "firebase/auth";
 import useStore from "../../zustand/store";
 import styleSheet from "../../assets/StyleSheet";
 import LoadingScreen from "../LoadingScreen";
+import EnumString from "../../assets/EnumString";
 
 //edit username screen
 const EditUsernameScreen = ({ navigation }) => {
@@ -52,7 +53,7 @@ const EditUsernameScreen = ({ navigation }) => {
   //Verify if the username is already in use
   const duplicatedUsername = async () => {
     const lowcaseUsername = newUsername.trim().toLowerCase();
-    const collectionRef = collection(db, "UserInfo");
+    const collectionRef = collection(db, EnumString.userInfoCollection);
 
     try {
       const filter = where("username", "==", lowcaseUsername);
@@ -87,7 +88,7 @@ const EditUsernameScreen = ({ navigation }) => {
       if (result) return;
 
       //update the username in both userInfo and firebase profile
-      const docRef = doc(db, "UserInfo", docID);
+      const docRef = doc(db, EnumString.userInfoCollection, docID);
       await updateDoc(docRef, { username: newUsername.trim().toLowerCase() });
       await setNewUserProfile();
       setUsername(newUsername.trim().toLowerCase());

@@ -23,17 +23,18 @@ import CrimeStoryStack from "./CrimeStoryStack";
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigation = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const { user, signIn } = useStore((state) => state);
+  
+  //const [isDarkMode, setIsDarkMode] = useState(false);
+  const { user, signIn, preference: { darkMode } } = useStore((state) => state);
   const avatarLabel = user.username.toUpperCase().substring(0, 1);
-  const textColor = isDarkMode
+  const textColor = darkMode
     ? styleSheet.textColor
     : styleSheet.lightModeColor;
 
   return (
     <PaperProvider>
-      <StatusBar style={isDarkMode ? "light" : "dark"} />
-      <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
+      <StatusBar style={darkMode ? "light" : "dark"} />
+      <NavigationContainer theme={darkMode ? DarkTheme : DefaultTheme}>
         <Drawer.Navigator
           initialRouteName="BottomTabNavigation"
           screenOptions={({ navigation }) => ({
@@ -64,7 +65,7 @@ const DrawerNavigation = () => {
             ),
           })}
           drawerContent={(props) => (
-            <CustomDrawer {...props} setIsDarkMode={setIsDarkMode} />
+            <CustomDrawer {...props}/>
           )}
         >
           {/* bottomTabNavigation */}
