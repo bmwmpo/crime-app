@@ -90,8 +90,8 @@ const CrimeStoryItem = ({ postingData }) => {
   const getCount = () => {
     if (upVoteCount < 1000) return `${upVoteCount}`;
     if (upVoteCount >= 1000 && upVoteCount < 1000000)
-      return `${upVoteCount / 1000}k`;
-    if (upVoteCount >= 1000000) return `${upVoteCount / 1000000}m`;
+      return `${(upVoteCount / 1000).toFixed(1)}k`;
+    if (upVoteCount >= 1000000) return `${(upVoteCount / 1000000).toFixed(1)}m`;
   };
 
   //retreive photos from firebase storage

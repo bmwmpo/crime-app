@@ -133,6 +133,14 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     }
   };
 
+    //get the vote count suffix
+  const getCount = () => {
+    if (upVoteCount < 1000) return `${upVoteCount}`;
+    if (upVoteCount >= 1000 && upVoteCount < 1000000)
+      return `${(upVoteCount / 1000).toFixed(1)}k`;
+    if (upVoteCount >= 1000000) return `${(upVoteCount / 1000000).toFixed(1)}m`;
+  };
+
   //get real time vote count and voter list with firestore
   const getRealTimeUpdate = () => {
     const collectionRef = collection(db, EnumString.postingCollection);
@@ -308,14 +316,13 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
             onPress={onUpVote}
           />
         )}
-        <Text style={textColor}>{upVoteCount}</Text>
+        <Text style={textColor}>{getCount()}</Text>
         {/* share */}
         <Appbar.Action icon="share" onPress={onShare} color={textColor.color} />
         {/* comment */}
-        <View style={[styleSheet.flexEndStyle, styleSheet.width_100]}>
+        <View style={ [styleSheet.flexEndStyle, {width: windowWidth*0.8}]}>
           <Button
             mode="contained"
-            style={[styleSheet.margin_Horizontal]}
             onPress={toCommentScreen}
           >
             Add a comment
