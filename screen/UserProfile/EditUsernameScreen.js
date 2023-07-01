@@ -1,5 +1,5 @@
-import { KeyboardAvoidingView, View } from "react-native";
-import { TextInput, Button, Text, HelperText } from "react-native-paper";
+import { KeyboardAvoidingView, View, Dimensions } from "react-native";
+import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { useState } from "react";
 import { db, auth } from "../../config/firebase_config";
@@ -12,9 +12,9 @@ import {
   collection,
 } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
+import { Button } from "@rneui/themed";
 import useStore from "../../zustand/store";
 import styleSheet from "../../assets/StyleSheet";
-import LoadingScreen from "../LoadingScreen";
 import EnumString from "../../assets/EnumString";
 
 //edit username screen
@@ -36,6 +36,7 @@ const EditUsernameScreen = ({ navigation }) => {
   const inputTextBackGroundColor = isDarkMode
     ? styleSheet.darkModeTextInputBackGroundColor
     : styleSheet.lightModeTextInputBackGroundColor;
+  const windowWidth = Dimensions.get('window').width;
 
   const deletePress = () => setNewUsername("");
 
@@ -102,9 +103,7 @@ const EditUsernameScreen = ({ navigation }) => {
     }
   };
 
-  return isLoading ? (
-    <LoadingScreen />
-  ) : (
+  return (
     <KeyboardAvoidingView style={styleSheet.container}>
       <View style={[styleSheet.formatContainer, { marginTop: "5%" }]}>
         <Text variant="titleMedium" style={textColor}>
@@ -134,12 +133,12 @@ const EditUsernameScreen = ({ navigation }) => {
           Username is already in resigtered
         </HelperText>
         <Button
-          mode="contained"
-          style={{ marginTop: "5%" }}
+          title="Update"
+           buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
+           titleStyle={styleSheet.buttonTextStyle}
           onPress={updateUsername}
-        >
-          Update
-        </Button>
+          loading={isLoading}
+        />
       </View>
     </KeyboardAvoidingView>
   );

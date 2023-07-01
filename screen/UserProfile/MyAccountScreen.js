@@ -3,6 +3,7 @@ import { List, Avatar, Text } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
+import ItemComponent from "../../component/ItemComponent";
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {
@@ -18,17 +19,6 @@ const MyAccountScreen = ({ navigation }) => {
 
   const toChangePasswordScreen = () => navigation.navigate("ChangePassword");
 
-  const ItemComponent = ({ username }) => {
-    return (
-      <View style={[styleSheet.flexRowContainer]}>
-        <Text variant="titleSmall" style={textColor}>
-          {username}
-        </Text>
-        <List.Icon icon="arrow-right-box" color={textColor.color} />
-      </View>
-    );
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -43,14 +33,16 @@ const MyAccountScreen = ({ navigation }) => {
         <List.Subheader
           style={[textColor, styleSheet.textStyle, styleSheet.textFontSize]}
         >
-          Account Information
+          Edit Profile
         </List.Subheader>
         {/* edit username screen */}
         <List.Item
           title="Username"
           titleStyle={textColor}
-          left={() => <List.Icon icon="human" color={textColor.color} />}
-          right={() => <ItemComponent username={currentUser.username} />}
+          left={() => <List.Icon icon="rename-box" color={textColor.color} />}
+          right={() => (
+            <ItemComponent title={currentUser.username} textColor={textColor} />
+          )}
           onPress={toEditProfileScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />
@@ -60,6 +52,7 @@ const MyAccountScreen = ({ navigation }) => {
           titleStyle={textColor}
           titleEllipsizeMode="clip"
           left={() => <List.Icon icon="cog" color={textColor.color} />}
+          right={() => <ItemComponent textColor={textColor} />}
           onPress={toChangePasswordScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />

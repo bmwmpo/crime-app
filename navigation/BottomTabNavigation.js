@@ -23,8 +23,7 @@ const BottomTabNavigation = ({ navigation }) => {
             iconName = "bar-chart";
           } else if (route.name === "Report") {
             iconName = "add";
-          }
-          else if (route.name === "AllCrimeStories") {
+          } else if (route.name === "AllCrimeStories") {
             iconName = "newspaper";
           }
 
@@ -43,18 +42,18 @@ const BottomTabNavigation = ({ navigation }) => {
       />
       {/* chart screen */}
       <Tab.Screen
-      name="Chart"
-      component={ChartDetail}
-      listeners={({ navigation }) => ({
-        tabPress: (e) => {
-          // Prevent default action
-          e.preventDefault();
+        name="Chart"
+        component={ChartDetail}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            // Prevent default action
+            e.preventDefault();
 
-          // Do something with the `navigation` object
-          navigation.navigate("Chart", {area : 0});
-        },
-      })}
-    />
+            // Do something with the `navigation` object
+            navigation.navigate("Chart", { area: 0 });
+          },
+        })}
+      />
       {/* Crime Stories */}
       <Tab.Screen
         name="AllCrimeStories"
