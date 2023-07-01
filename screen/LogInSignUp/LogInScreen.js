@@ -9,13 +9,14 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
+import { Button } from "@rneui/themed";
 import styleSheet from "../../assets/StyleSheet";
 import EnumString from "../../assets/EnumString";
-import LoadingScreen from "../LoadingScreen";
 import useStore from "../../zustand/store";
 
 //user log in screen
@@ -25,7 +26,7 @@ const LogInScreen = ({ navigation }) => {
     setEmail,
     setPassword,
   } = useStore((state) => state);
-  
+
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +49,9 @@ const LogInScreen = ({ navigation }) => {
   const inputTextBackGroundColor = isDarkMode
     ? styleSheet.darkModeTextInputBackGroundColor
     : styleSheet.lightModeTextInputBackGroundColor;
+
+  //screen window size
+  const windowWidth = Dimensions.get("window").width;
 
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -147,156 +151,144 @@ const LogInScreen = ({ navigation }) => {
   const toSignUpScreen = () => navigation.navigate("SignUp");
 
   return (
-    //display loading screen when isLoading is true, otherwise display login form
-    isLoading ? (
-      <LoadingScreen />
-    ) : (
-      <KeyboardAvoidingView
-        style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
-        behavior={Platform.OS === "ios" && "padding"}
-      >
-        {/* display the dialog if the login fails or if sending the reset password fails*/}
-        <FailDialog
-          hideDialog={hideDialog}
-          showDialog={showDialog}
-          errorMessage={errorMessage}
-        />
-        {/* display the dialog upon successful send reset password email */}
-        <SuccessDialog
-          hideDialog={hideSendResetPasswordDialog}
-          showDialog={showSendResetPasswordDialog}
-          {...dialogTitleMsg}
-        />
-        <Text
-          variant="headlineSmall"
-          style={[styleSheet.headerStyle, textColor]}
-        >
-          Log in to Toronto Crime Tracker
-        </Text>
-        {/* email text input */}
-        <View style={styleSheet.formatContainer}>
-          <TextInput
-            style={[
-              styleSheet.inputStyle,
-              inputTextBackGroundColor,
-              styleSheet.inputPaddingStyle,
-            ]}
-            label="Email"
-            textColor={textColor.color}
-            mode="outlined"
-            activeOutlineColor={outlinedColor.color}
-            value={email}
-            onChangeText={onEmailTextChange}
-            outlineColor={
-              !validEmailFormat
-                ? styleSheet.errorTextStyle.color
-                : styleSheet.transparentColor.color
-            }
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            autoFocus={true}
-            right={
-              !(email === "") && (
-                <TextInput.Icon
-                  icon="close-circle"
-                  onPress={deletePress}
-                  iconColor={textColor.color}
-                />
-              )
-            }
-          />
-          <HelperText
-            type="error"
-            padding="none"
-            style={styleSheet.errorTextStyle}
-            visible={!validEmailFormat}
-          >
-            Not a valid email address
-          </HelperText>
-        </View>
-        {/* password text input */}
-        <View style={styleSheet.formatContainer}>
-          <TextInput
-            style={[
-              styleSheet.inputStyle,
-              inputTextBackGroundColor,
-              styleSheet.inputPaddingStyle,
-            ]}
-            label="Password"
-            mode="outlined"
-            textColor={textColor.color}
-            activeOutlineColor={outlinedColor.color}
-            outlineColor={styleSheet.transparentColor.color}
-            value={password}
-            onChangeText={setPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={hidePassword}
-            right={
+    <KeyboardAvoidingView
+      style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
+      behavior={Platform.OS === "ios" && "padding"}
+    >
+      {/* display the dialog if the login fails or if sending the reset password fails*/}
+      <FailDialog
+        hideDialog={hideDialog}
+        showDialog={showDialog}
+        errorMessage={errorMessage}
+      />
+      {/* display the dialog upon successful send reset password email */}
+      <SuccessDialog
+        hideDialog={hideSendResetPasswordDialog}
+        showDialog={showSendResetPasswordDialog}
+        {...dialogTitleMsg}
+      />
+      <Text variant="headlineSmall" style={[styleSheet.headerStyle, textColor]}>
+        Log in to Toronto Crime Tracker
+      </Text>
+      {/* email text input */}
+      <View style={styleSheet.formatContainer}>
+        <TextInput
+          style={[
+            styleSheet.inputStyle,
+            inputTextBackGroundColor,
+            styleSheet.inputPaddingStyle,
+          ]}
+          label="Email"
+          textColor={textColor.color}
+          mode="outlined"
+          activeOutlineColor={outlinedColor.color}
+          value={email}
+          onChangeText={onEmailTextChange}
+          outlineColor={
+            !validEmailFormat
+              ? styleSheet.errorTextStyle.color
+              : styleSheet.transparentColor.color
+          }
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
+          autoFocus={true}
+          right={
+            !(email === "") && (
               <TextInput.Icon
-                icon={hidePassword ? "eye" : "eye-off"}
-                onPress={showHidePasswordPress}
+                icon="close-circle"
+                onPress={deletePress}
                 iconColor={textColor.color}
               />
-            }
-          />
-          {/* forgot password button */}
-          <TouchableOpacity
-            style={styleSheet.touchableRippleWidth}
-            onPress={handleForgotPassword}
-            rippleColor={styleSheet.highLightTextColor.color}
-          >
-            <Text
-              variant="titleMedium"
-              style={[
-                styleSheet.underLineTextStyle,
-                styleSheet.highLightTextColor,
-              ]}
-            >
-              Forgot your password?
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {/* Log in button */}
-        <TouchableOpacity
-          style={
-            isEmailAddressPasswordEmpty() || !validEmailFormat
-              ? styleSheet.disabledButtonStyle
-              : styleSheet.buttonStyle
+            )
           }
-          onPress={handleLogin}
-          disabled={isEmailAddressPasswordEmpty() || !validEmailFormat}
+        />
+        <HelperText
+          type="error"
+          padding="none"
+          style={styleSheet.errorTextStyle}
+          visible={!validEmailFormat}
+        >
+          Not a valid email address
+        </HelperText>
+      </View>
+      {/* password text input */}
+      <View style={styleSheet.formatContainer}>
+        <TextInput
+          style={[
+            styleSheet.inputStyle,
+            inputTextBackGroundColor,
+            styleSheet.inputPaddingStyle,
+          ]}
+          label="Password"
+          mode="outlined"
+          textColor={textColor.color}
+          activeOutlineColor={outlinedColor.color}
+          outlineColor={styleSheet.transparentColor.color}
+          value={password}
+          onChangeText={setPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry={hidePassword}
+          right={
+            <TextInput.Icon
+              icon={hidePassword ? "eye" : "eye-off"}
+              onPress={showHidePasswordPress}
+              iconColor={textColor.color}
+            />
+          }
+        />
+        {/* forgot password button */}
+        <TouchableOpacity
+          style={styleSheet.touchableRippleWidth}
+          onPress={handleForgotPassword}
+          rippleColor={styleSheet.highLightTextColor.color}
         >
           <Text
-            variant="labelLarge"
-            style={[styleSheet.buttonTextStyle, textColor]}
+            variant="titleMedium"
+            style={[
+              styleSheet.underLineTextStyle,
+              styleSheet.highLightTextColor,
+            ]}
           >
-            Log in
+            Forgot your password?
           </Text>
         </TouchableOpacity>
-        {/* Go to Sign Up Screen*/}
-        <View style={styleSheet.flexRowContainer}>
-          <Text variant="titleMedium" style={[styleSheet.textStyle, textColor]}>
-            Don't have an account?{" "}
-          </Text>
-          <TouchableOpacity
-            onPress={toSignUpScreen}
-            rippleColor={styleSheet.highLightTextColor.color}
+      </View>
+      {/* Log in button */}
+      <Button
+        title="Log in"
+        buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
+        titleStyle={styleSheet.buttonTextStyle}
+        disabled={isEmailAddressPasswordEmpty() || !validEmailFormat}
+        disabledStyle={[
+          styleSheet.disabledButtonStyle,
+          { width: windowWidth * 0.9 },
+        ]}
+        onPress={handleLogin}
+        loading={isLoading}
+      />
+      {/* Go to Sign Up Screen*/}
+      <View style={styleSheet.flexRowContainer}>
+        <Text variant="titleMedium" style={[styleSheet.textStyle, textColor]}>
+          Don't have an account?{" "}
+        </Text>
+        <TouchableOpacity
+          onPress={toSignUpScreen}
+          rippleColor={styleSheet.highLightTextColor.color}
+        >
+          <Text
+            variant="titleMedium"
+            style={[
+              styleSheet.underLineTextStyle,
+              styleSheet.highLightTextColor,
+            ]}
           >
-            <Text
-              variant="titleMedium"
-              style={[
-                styleSheet.underLineTextStyle,
-                styleSheet.highLightTextColor,
-              ]}
-            >
-              Sign Up here
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    )
+            Sign Up here
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

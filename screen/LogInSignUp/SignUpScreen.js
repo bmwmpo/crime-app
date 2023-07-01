@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { auth } from "../../config/firebase_config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
-  TouchableOpacity,
   View,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
@@ -21,16 +21,13 @@ import {
   where,
 } from "firebase/firestore";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
+import { Button } from "@rneui/themed";
 import EnumString from "../../assets/EnumString";
-import LoadingScreen from "../LoadingScreen";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 
 //user sign up screen
 const SignUpScreen = ({ navigation }) => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [username, setUsername] = useState("");
   const {
     user: { email, password, username },
     setEmail,
@@ -63,6 +60,7 @@ const SignUpScreen = ({ navigation }) => {
     ? styleSheet.darkModeTextInputBackGroundColor
     : styleSheet.lightModeTextInputBackGroundColor;
   const collectionRef = collection(db, "UserInfo");
+  const windowWidth = Dimensions.get("window").width;
 
   //shows or hides the password
   const showHidePasswordPress = () => setHidePassword(!hidePassword);
@@ -173,6 +171,7 @@ const SignUpScreen = ({ navigation }) => {
       //show error dialog if sign up fail
       setShowDialog(true);
       setErrorMessage(EnumString.emailAlreadyInUse);
+      setValidEmailFormat(false);
       console.log(err);
     } finally {
       setIsLoading(false);
@@ -236,177 +235,169 @@ const SignUpScreen = ({ navigation }) => {
   }, []);
 
   return (
-    //display loading screen when isLoading is true, otherwise display sign up form
-    isLoading ? (
-      <LoadingScreen />
-    ) : (
-      <KeyboardAvoidingView
-        style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
-        behavior={Platform.OS === "ios" && "padding"}
-      >
-        {/* display the dialog if the sign up fails*/}
-        <FailDialog
-          hideDialog={hideDialog}
-          showDialog={showDialog}
-          errorMessage={errorMessage}
-        />
-        {/* display the dialog upon successful create new account */}
-        <SuccessDialog
-          hideDialog={hideWelcomeDialog}
-          showDialog={showWelcomeDialog}
-          {...dialogTitleMsg}
-        />
-        {
-          //hide the title when the keyboard did show
-          !keyboardStatus && (
-            <Text
-              variant="headlineSmall"
-              style={[styleSheet.headerStyle, textColor]}
-            >
-              Welcome to Toronro Crime Tracker
-            </Text>
-          )
-        }
-
-        {/* email text input */}
-        <View style={styleSheet.formatContainer}>
-          <TextInput
-            style={[
-              styleSheet.inputStyle,
-              inputTextBackGroundColor,
-              ,
-              styleSheet.inputPaddingStyle,
-            ]}
-            label="Email"
-            textColor={textColor.color}
-            mode="outlined"
-            activeOutlineColor={outlinedColor.color}
-            value={email}
-            onChangeText={onEmailTextChange}
-            outlineColor={
-              !validEmailFormat
-                ? styleSheet.errorTextStyle.color
-                : styleSheet.transparentColor.color
-            }
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="email-address"
-            autoFocus={true}
-            right={
-              !(email === "") && (
-                <TextInput.Icon
-                  icon="close-circle"
-                  onPress={deletePress}
-                  iconColor={textColor.color}
-                />
-              )
-            }
-          />
-          <HelperText
-            type="error"
-            padding="none"
-            style={styleSheet.errorTextStyle}
-            visible={!validEmailFormat}
+    <KeyboardAvoidingView
+      style={[styleSheet.container, backgroundColor, styleSheet.flex_1]}
+      behavior={Platform.OS === "ios" && "padding"}
+    >
+      {/* display the dialog if the sign up fails*/}
+      <FailDialog
+        hideDialog={hideDialog}
+        showDialog={showDialog}
+        errorMessage={errorMessage}
+      />
+      {/* display the dialog upon successful create new account */}
+      <SuccessDialog
+        hideDialog={hideWelcomeDialog}
+        showDialog={showWelcomeDialog}
+        {...dialogTitleMsg}
+      />
+      {
+        //hide the title when the keyboard did show
+        !keyboardStatus && (
+          <Text
+            variant="headlineSmall"
+            style={[styleSheet.headerStyle, textColor]}
           >
-            Not a valid email address
-          </HelperText>
-        </View>
-        {/* username text input */}
-        <View style={styleSheet.formatContainer}>
-          <TextInput
-            style={[
-              styleSheet.inputStyle,
-              inputTextBackGroundColor,
-              styleSheet.inputPaddingStyle,
-            ]}
-            label="Username"
-            textColor={textColor.color}
-            mode="outlined"
-            activeOutlineColor={outlinedColor.color}
-            value={username}
-            onChangeText={setUsername}
-            outlineColor={
-              !validUsername
-                ? styleSheet.errorTextStyle.color
-                : styleSheet.transparentColor.color
-            }
-            autoCapitalize="none"
-            autoCorrect={false}
-            right={
-              !(username === "") && (
-                <TextInput.Icon
-                  icon="close-circle"
-                  onPress={deleteUserNamePress}
-                  iconColor={textColor.color}
-                />
-              )
-            }
-          />
-          <HelperText
-            type="error"
-            padding="none"
-            style={styleSheet.errorTextStyle}
-            visible={!validUsername}
-          >
-            Username is already in resigtered
-          </HelperText>
-        </View>
-        {/* password text input */}
-        <View style={styleSheet.formatContainer}>
-          <TextInput
-            style={[
-              styleSheet.inputStyle,
-              styleSheet.inputPaddingStyle,
-              inputTextBackGroundColor,
-            ]}
-            label="Password"
-            mode="outlined"
-            textColor={textColor.color}
-            activeOutlineColor={outlinedColor.color}
-            outlineColor={styleSheet.transparentColor.color}
-            value={password}
-            onChangeText={onPasswordTextChange}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={hidePassword}
-            right={
+            Welcome to Toronro Crime Tracker
+          </Text>
+        )
+      }
+      {/* email text input */}
+      <View style={styleSheet.formatContainer}>
+        <TextInput
+          style={[
+            styleSheet.inputStyle,
+            inputTextBackGroundColor,
+            ,
+            styleSheet.inputPaddingStyle,
+          ]}
+          label="Email"
+          textColor={textColor.color}
+          mode="outlined"
+          activeOutlineColor={outlinedColor.color}
+          value={email}
+          onChangeText={onEmailTextChange}
+          outlineColor={
+            !validEmailFormat
+              ? styleSheet.errorTextStyle.color
+              : styleSheet.transparentColor.color
+          }
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
+          autoFocus={true}
+          right={
+            !(email === "") && (
               <TextInput.Icon
-                icon={hidePassword ? "eye" : "eye-off"}
-                onPress={showHidePasswordPress}
+                icon="close-circle"
+                onPress={deletePress}
                 iconColor={textColor.color}
               />
-            }
-          />
-          <HelperText
-            type="error"
-            padding="none"
-            style={styleSheet.errorTextStyle}
-            visible={!validPasswordLength}
-          >
-            Password must be at least 6 characters
-          </HelperText>
-        </View>
-        <TouchableOpacity
-          style={
-            isEmailusernamePasswordEmpty() ||
-            !validEmailFormat ||
-            !validPasswordLength
-              ? styleSheet.disabledButtonStyle
-              : styleSheet.buttonStyle
+            )
           }
-          onPress={handleCreateNewAccount}
-          disabled={
-            isEmailusernamePasswordEmpty() ||
-            !validEmailFormat ||
-            !validPasswordLength
-          }
+        />
+        <HelperText
+          type="error"
+          padding="none"
+          style={styleSheet.errorTextStyle}
+          visible={!validEmailFormat}
         >
-          <Text variant="labelLarge" style={styleSheet.buttonTextStyle}>
-            Create account
-          </Text>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
-    )
+          Not a valid email address
+        </HelperText>
+      </View>
+      {/* username text input */}
+      <View style={styleSheet.formatContainer}>
+        <TextInput
+          style={[
+            styleSheet.inputStyle,
+            inputTextBackGroundColor,
+            styleSheet.inputPaddingStyle,
+          ]}
+          label="Username"
+          textColor={textColor.color}
+          mode="outlined"
+          activeOutlineColor={outlinedColor.color}
+          value={username}
+          onChangeText={setUsername}
+          outlineColor={
+            !validUsername
+              ? styleSheet.errorTextStyle.color
+              : styleSheet.transparentColor.color
+          }
+          autoCapitalize="none"
+          autoCorrect={false}
+          right={
+            !(username === "") && (
+              <TextInput.Icon
+                icon="close-circle"
+                onPress={deleteUserNamePress}
+                iconColor={textColor.color}
+              />
+            )
+          }
+        />
+        <HelperText
+          type="error"
+          padding="none"
+          style={styleSheet.errorTextStyle}
+          visible={!validUsername}
+        >
+          Username is already in resigtered
+        </HelperText>
+      </View>
+      {/* password text input */}
+      <View style={styleSheet.formatContainer}>
+        <TextInput
+          style={[
+            styleSheet.inputStyle,
+            styleSheet.inputPaddingStyle,
+            inputTextBackGroundColor,
+          ]}
+          label="Password"
+          mode="outlined"
+          textColor={textColor.color}
+          activeOutlineColor={outlinedColor.color}
+          outlineColor={styleSheet.transparentColor.color}
+          value={password}
+          onChangeText={onPasswordTextChange}
+          autoCapitalize="none"
+          autoCorrect={false}
+          secureTextEntry={hidePassword}
+          right={
+            <TextInput.Icon
+              icon={hidePassword ? "eye" : "eye-off"}
+              onPress={showHidePasswordPress}
+              iconColor={textColor.color}
+            />
+          }
+        />
+        <HelperText
+          type="error"
+          padding="none"
+          style={styleSheet.errorTextStyle}
+          visible={!validPasswordLength}
+        >
+          Password must be at least 6 characters
+        </HelperText>
+      </View>
+      {/* create account button */}
+      <Button
+        title="Create account"
+        buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
+        titleStyle={styleSheet.buttonTextStyle}
+        disabled={
+          isEmailusernamePasswordEmpty() ||
+          !validEmailFormat ||
+          !validPasswordLength
+        }
+        disabledStyle={[
+          styleSheet.disabledButtonStyle,
+          { width: windowWidth * 0.9 },
+        ]}
+        onPress={handleCreateNewAccount}
+        loading={isLoading}
+      />
+    </KeyboardAvoidingView>
   );
 };
 
