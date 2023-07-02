@@ -7,7 +7,7 @@ import ItemComponent from "../../component/ItemComponent";
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {
-  const { user: currentUser } = useStore((state) => state);
+  const { user: currentUser, preference: { avatarColor} } = useStore((state) => state);
 
   const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
   const isDarkMode = useTheme().dark;
@@ -19,6 +19,8 @@ const MyAccountScreen = ({ navigation }) => {
 
   const toChangePasswordScreen = () => navigation.navigate("ChangePassword");
 
+  const toEditAvatarScreen = () => navigation.navigate("EditAvatar");
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -27,7 +29,7 @@ const MyAccountScreen = ({ navigation }) => {
           { padding: "4%", borderBottomWidth: 1, borderColor: textColor.color },
         ]}
       >
-        <Avatar.Text label={avatarLabel} size={80} />
+        <Avatar.Text label={ avatarLabel } size={ 80 } style={ {backgroundColor:avatarColor} } />
       </View>
       <List.Section style={{ padding: "4%", flex: 2 }}>
         <List.Subheader
@@ -54,6 +56,16 @@ const MyAccountScreen = ({ navigation }) => {
           left={() => <List.Icon icon="cog" color={textColor.color} />}
           right={() => <ItemComponent textColor={textColor} />}
           onPress={toChangePasswordScreen}
+          rippleColor={styleSheet.highLightTextColor.color}
+        />
+        {/* edit avatar */}
+        <List.Item
+          title="Edit Avatar"
+          titleStyle={textColor}
+          titleEllipsizeMode="clip"
+          left={() => <List.Icon icon="square-edit-outline" color={textColor.color} />}
+          right={() => <ItemComponent textColor={textColor} />}
+          onPress={toEditAvatarScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />
       </List.Section>

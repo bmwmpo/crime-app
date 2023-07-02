@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const useStore = create((set, get) => ({
   user: { email: "", username: "", password: "", userID: "" },
-  preference: { darkMode: false },
+  preference: { darkMode: false, avatarColor: "" },
   signIn: false,
   docID: "",
   setEmail: (email) =>
@@ -40,6 +40,13 @@ const useStore = create((set, get) => ({
       docID: state.docID,
       signIn: state.signIn,
     })),
+  setAvatarColor: (color) =>
+    set((state) => ({
+      user: { ...state.user },
+      preference: { ...state.preference, avatarColor: color },
+      docID: state.docID,
+      signIn: state.signIn,
+    })),
   setIsSignIn: () =>
     set((state) => ({
       user: { ...state.user },
@@ -47,17 +54,17 @@ const useStore = create((set, get) => ({
       signIn: !state.signIn,
       docID: state.docID,
     })),
-  setSignedInUser: (email, username, docID, userId, darkMode) =>
+  setSignedInUser: (email, username, docID, userId, darkMode, avatarColor) =>
     set((state) => ({
       user: { ...state.user, email, username, userId },
-      preference: { ...state.preference, darkMode },
+      preference: { ...state.preference, darkMode, avatarColor },
       signIn: true,
       docID,
     })),
   setLogOutUser: () =>
     set((state) => ({
       user: { email: "", username: "", password: "", userId: "" },
-      preference: { darkMode: false },
+      preference: { darkMode: false, avatarColor: "#9400D3" },
       signIn: false,
       docID: "",
     })),

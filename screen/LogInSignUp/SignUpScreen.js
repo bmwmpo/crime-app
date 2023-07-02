@@ -109,7 +109,7 @@ const SignUpScreen = ({ navigation }) => {
         email,
         userId: uid,
         username: username.toLowerCase().trim(),
-        preference: { darkMode: false },
+        preference: { darkMode: false, avatarColor:'#9400D3' },
       };
 
       const docAdded = await addDoc(collectionRef, data);
