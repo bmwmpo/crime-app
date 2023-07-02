@@ -70,7 +70,7 @@ const AllCrimeStoriesScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getAllCrimeStories();
+      getAllCrimeStories(limitNum);
       setRefreshing(false);
       setVisible(false);
     }, 800);

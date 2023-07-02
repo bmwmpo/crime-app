@@ -6,6 +6,7 @@ import MyAccountScreen from "../screen/UserProfile/MyAccountScreen";
 import styleSheet from "../assets/StyleSheet";
 import ChangePasswordScreen from "../screen/UserProfile/ChangePasswordScreen";
 import EditUsernameScreen from "../screen/UserProfile/EditUsernameScreen";
+import EditAvatarScreen from "../screen/UserProfile/EditAvatarScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,14 +30,15 @@ const AccountStack = ({ navigation }) => {
         options={({ route }) => ({
           headerLeft: () => (
             <Pressable onPress={cancelPress}>
-              <Icon name="arrow-back" size={25} color={textColor.color} />
+              <Icon name="arrow-back" size={23} color={textColor.color} />
             </Pressable>
           ),
           headerTitle: "Account",
         })}
       />
       <Stack.Screen name="Edit Username" component={EditUsernameScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
+      <Stack.Screen name='EditAvatar' component={ EditAvatarScreen}/>
     </Stack.Navigator>
   );
 };

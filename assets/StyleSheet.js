@@ -9,7 +9,7 @@ const styleSheet = StyleSheet.create({
     flex: 1,
   },
   zindex_1: {
-    zindex:1
+    zindex: 1,
   },
   //padding & margin
   margin_Horizontal: {
@@ -101,7 +101,7 @@ const styleSheet = StyleSheet.create({
   },
   //text
   fontSize_20: {
-    fontSize:20
+    fontSize: 20,
   },
   headerStyle: {
     marginBottom: 30,

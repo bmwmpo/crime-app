@@ -25,7 +25,7 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigation = () => {
   
   //const [isDarkMode, setIsDarkMode] = useState(false);
-  const { user, signIn, preference: { darkMode } } = useStore((state) => state);
+  const { user, signIn, preference: { darkMode, avatarColor } } = useStore((state) => state);
   const avatarLabel = user.username.toUpperCase().substring(0, 1);
   const textColor = darkMode
     ? styleSheet.textColor
@@ -48,9 +48,9 @@ const DrawerNavigation = () => {
                   //display avatar if user is logged in
                   signIn ? (
                     <Avatar.Text
-                      label={avatarLabel}
-                      style={styleSheet.margin_Horizontal}
-                      size={30}
+                      label={ avatarLabel }
+                      style={ [styleSheet.margin_Horizontal, {backgroundColor: avatarColor}] }
+                      size={ 30 }
                     />
                   ) : (
                     <Icon

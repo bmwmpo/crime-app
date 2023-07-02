@@ -25,7 +25,7 @@ const CustomDrawer = ({ navigation }) => {
     user: currentUser,
     signIn,
     setIsDarkMode,
-    preference: { darkMode },
+    preference: { darkMode, avatarColor },
     docID
   } = useStore((state) => state);
 
@@ -60,7 +60,7 @@ const CustomDrawer = ({ navigation }) => {
     try
     {
       const docRef = doc(db, EnumString.userInfoCollection, docID);
-      await updateDoc(docRef, { preference: { darkMode } })
+      await updateDoc(docRef, { preference: { darkMode, avatarColor } })
 
     } catch (err) {
       console.log(err);
@@ -72,7 +72,9 @@ const CustomDrawer = ({ navigation }) => {
   {
     const newPerfenenceDarkMode = !darkMode;
 
+    //update the user preference in useStore
     setIsDarkMode(newPerfenenceDarkMode);
+    //update the user preference in firestore
     upDateUserPreference(newPerfenenceDarkMode);
   }
 
@@ -110,7 +112,7 @@ const CustomDrawer = ({ navigation }) => {
             logOut={handleSignOut}
           />
           <View style={styleSheet.container}>
-            <Avatar.Text size={90} label={avatarLabel} />
+              <Avatar.Text size={ 90 } label={ avatarLabel } style={ {backgroundColor:avatarColor} } />
             <Text
               variant="titleSmall"
               style={[styleSheet.margin_Vertical, textColor]}
