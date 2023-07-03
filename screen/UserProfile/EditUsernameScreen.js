@@ -20,7 +20,7 @@ import EnumString from "../../assets/EnumString";
 //edit username screen
 const EditUsernameScreen = ({ navigation }) => {
   const {
-    user: { username },
+    user: { username, email },
     setUsername,
     docID,
   } = useStore((state) => state);
@@ -36,7 +36,7 @@ const EditUsernameScreen = ({ navigation }) => {
   const inputTextBackGroundColor = isDarkMode
     ? styleSheet.darkModeTextInputBackGroundColor
     : styleSheet.lightModeTextInputBackGroundColor;
-  const windowWidth = Dimensions.get('window').width;
+  const windowWidth = Dimensions.get("window").width;
 
   const deletePress = () => setNewUsername("");
 
@@ -78,6 +78,68 @@ const EditUsernameScreen = ({ navigation }) => {
     }
   };
 
+  //update the username for the comments created by the current user
+  const updateAllComments = async (postingId) => {
+    try {
+      const commentCollectionRef = collection(
+        db,
+        EnumString.postingCollection,
+        postingId,
+        EnumString.commentsSubCollection
+      );
+      const filter = where("userEmail", "==", email);
+      const q = query(commentCollectionRef, filter);
+
+      const querySnapshot = await getDocs(q);
+
+      const documents = querySnapshot.docs;
+
+      if (documents.length > 0) {
+        for (const document of documents)
+        {
+          const docRef = doc(
+            db,
+            EnumString.postingCollection,
+            postingId,
+            EnumString.commentsSubCollection,
+            document.data().commentId
+          );
+          await updateDoc(docRef, { replyBy: newUsername });
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //update the username field for all postings and comments created by the current user
+  const updateAllPostsComments = async () => {
+    const collectionRef = collection(db, EnumString.postingCollection);
+    const filter = where("userEmail", "==", email);
+    const q = query(collectionRef, filter);
+
+    try {
+      const querySnapshot = await getDocs(q);
+
+      const documents = querySnapshot.docs;
+
+      if (documents.length > 0) {
+        for (const document of documents) {
+          const docRef = doc(
+            db,
+            EnumString.postingCollection,
+            document.data().postingId
+          );
+
+          await updateDoc(docRef, { postBy: newUsername });
+          await updateAllComments(document.data().postingId);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //update the username
   const updateUsername = async () => {
     try {
@@ -88,10 +150,11 @@ const EditUsernameScreen = ({ navigation }) => {
 
       if (result) return;
 
-      //update the username in both userInfo and firebase profile
+      //update the username in both userInfo , firebase profile, and all posting and comments
       const docRef = doc(db, EnumString.userInfoCollection, docID);
       await updateDoc(docRef, { username: newUsername.trim().toLowerCase() });
       await setNewUserProfile();
+      await updateAllPostsComments();
       setUsername(newUsername.trim().toLowerCase());
 
       navigation.goBack();
@@ -134,8 +197,8 @@ const EditUsernameScreen = ({ navigation }) => {
         </HelperText>
         <Button
           title="Update"
-           buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
-           titleStyle={styleSheet.buttonTextStyle}
+          buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
+          titleStyle={styleSheet.buttonTextStyle}
           onPress={updateUsername}
           loading={isLoading}
         />
