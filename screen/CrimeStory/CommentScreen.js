@@ -60,6 +60,7 @@ const CommentScreen = ({ navigation, route }) => {
         comment,
         replyBy: currentUser.username,
         replyDateTime: new Date(),
+        userEmail: currentUser.email
       };
       const commentAdded = await addDoc(subCollectionRef, newComment);
 

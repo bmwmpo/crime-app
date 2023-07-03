@@ -12,6 +12,7 @@ import {
 import { FAB } from "@rneui/themed";
 import CrimeStoryItem from "../../component/CrimeStoryItem";
 import styleSheet from "../../assets/StyleSheet";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 //all crime stories screen
 const AllCrimeStoriesScreen = () => {
@@ -45,8 +46,8 @@ const AllCrimeStoriesScreen = () => {
 
   //load more data from firestore when the users scroll to the end flat list
   const loadMoreData = () => {
-    getAllCrimeStories(limitNum + 2);
-    setLimitNum(limitNum + 2);
+    getAllCrimeStories(limitNum + 5);
+    setLimitNum(limitNum + 5);
   };
 
   //set FAB's visible to true when a new story is added
@@ -79,6 +80,7 @@ const AllCrimeStoriesScreen = () => {
   return (
     <SafeAreaView style={ [styleSheet.flex_1]}>
       <FAB
+        icon={ <Icon name='arrow-up' size={ 20 } color={ styleSheet.darkModeColor.color} /> }
         color="#BA55D3"
         size="small"
         visible={visible}
@@ -97,7 +99,7 @@ const AllCrimeStoriesScreen = () => {
         data={allCrimeStories}
         ItemSeparatorComponent={() => <View style={{ margin: "1%" }}></View>}
         keyExtractor={(item) => item.postingId}
-        renderItem={({ item }) => <CrimeStoryItem postingData={item} />}
+        renderItem={ ({ item }) => <CrimeStoryItem key={ item.postingId } postingData={item} />}
       />
     </SafeAreaView>
   );
