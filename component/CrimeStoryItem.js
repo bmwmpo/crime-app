@@ -44,6 +44,7 @@ const CrimeStoryItem = ({ postingData }) => {
   const [showDialog, setShowDialog] = useState(false);
   //default avatar color
   const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
+  const [creator, setCreator] = useState('');
 
   const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
   const storyBody = `${postingData.story.substring(0, 31)}...`;
@@ -68,7 +69,7 @@ const CrimeStoryItem = ({ postingData }) => {
   const toCrimeDetail = () =>
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
-      params: { postingData, photoUri, userAvatarColor },
+      params: { postingData, photoUri, userAvatarColor, creator },
     });
 
   //to log in screen
@@ -182,6 +183,7 @@ const CrimeStoryItem = ({ postingData }) => {
       snapshot.docChanges().forEach((change) => {
         setVoterslist(change.doc.data().voters);
         setUpVoteCount(change.doc.data().upVote);
+        setCreator(change.doc.data().postBy);
       });
     });
   };
@@ -200,13 +202,6 @@ const CrimeStoryItem = ({ postingData }) => {
             setUserAvatarColor(change.doc.data().preference.avatarColor);
         });
       });
-      // const querySnapshot = await getDocs(q);
-
-      // const document = querySnapshot.docs;
-
-      // if (document.length === 1) {
-      //   setUserAvatarColor(document[0].data().preference.avatarColor);
-      // }
     } catch (err) {
       console.log(err);
     }
@@ -268,7 +263,7 @@ const CrimeStoryItem = ({ postingData }) => {
           {/* author */}
           <View>
             <Avatar.Text
-              label={postingData.postBy.substring(0, 1).toUpperCase()}
+              label={creator.substring(0, 1).toUpperCase()}
               size={30}
               style={{ backgroundColor: userAvatarColor }}
             />
@@ -282,7 +277,7 @@ const CrimeStoryItem = ({ postingData }) => {
                 textColor,
               ]}
             >
-              {postingData.postBy}
+              {creator}
             </Text>
             <Text variant="labelLarge" style={textColor}>
               {postingDateTime.toLocaleString()}

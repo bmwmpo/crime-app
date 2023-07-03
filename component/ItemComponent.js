@@ -10,8 +10,8 @@ const ItemComponent = ({ title, textColor }) => {
     <View
       style={[
         styleSheet.flexRowContainer,
-        { width: windowWidth * 0.2 },
-        styleSheet.flexSpaceBetweenStyle,
+        { width: windowWidth * 0.3 },
+        styleSheet.flexEndStyle,
       ]}
     >
       <Text variant="titleSmall" style={textColor}>

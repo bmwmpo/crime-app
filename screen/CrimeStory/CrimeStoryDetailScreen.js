@@ -32,10 +32,7 @@ import CommentItem from "../../component/CommentItem";
 
 //Crime story detail
 const CrimeStoryDetailScreen = ({ route, navigation }) => {
-  const {
-    user: currentUser,
-    signIn,
-  } = useStore((state) => state);
+  const { user: currentUser, signIn } = useStore((state) => state);
 
   const [commentList, setCommentList] = useState([]);
   const [showImageView, setShowImageView] = useState({
@@ -50,7 +47,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   //posting data
   const { postBy, photo, postingDateTime, story, postingId } =
     route.params.postingData;
-  const { photoUri, userAvatarColor } = route.params;
+  const { photoUri, userAvatarColor, creator } = route.params;
   const dateAndTime = postingDateTime.toDate();
 
   //style
@@ -175,12 +172,17 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
           list.unshift(change.doc.data());
-          console.log("add");
+          //update the username
+        } else if (change.type === "modified") {
+          for (let comment of list) {
+            if (comment.userEmail === change.doc.data().userEmail) {
+              comment.replyBy = change.doc.data().replyBy;
+            }
+          }
         }
       });
 
       setCommentList(list);
-      console.log(list);
     });
   };
 
@@ -251,13 +253,13 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           ]}
         >
           <Avatar.Text
-            label={postBy.substring(0, 1).toUpperCase()}
+            label={creator.substring(0, 1).toUpperCase()}
             size={45}
             style={{ backgroundColor: userAvatarColor }}
           />
           {/* author */}
           <Text variant="labelLarge" style={textColor}>
-            {postBy}
+            {creator}
           </Text>
           {/* date and time */}
           <Text variant="labelLarge" style={textColor}>

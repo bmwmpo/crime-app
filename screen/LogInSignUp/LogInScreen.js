@@ -82,11 +82,11 @@ const LogInScreen = ({ navigation }) => {
       );
 
       //display welcome message
-      setShowSendResetPasswordDialog(true);
-      setDialogTitleMsg({
-        title: "",
-        message: EnumString.welcomeMsg(userCredentials.user.displayName),
-      });
+      // setShowSendResetPasswordDialog(true);
+      // setDialogTitleMsg({
+      //   title: "",
+      //   message: EnumString.welcomeMsg(userCredentials.user.displayName),
+      // });
 
       //redirect to the Main Screen upon successful sign-in
       navigation.navigate("BottomTabNavigation");
