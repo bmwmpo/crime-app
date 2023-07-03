@@ -143,7 +143,7 @@ const AddPostScreen = ({ navigation }) => {
 
       const docAdded = await addDoc(collectionRef, newPosting);
 
-      const docRef = doc(db, "Postings", docAdded.id);
+      const docRef = doc(db, EnumString.postingCollection, docAdded.id);
 
       await updateDoc(docRef, { postingId: docAdded.id });
       //show success dialog

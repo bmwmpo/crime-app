@@ -32,7 +32,10 @@ import CommentItem from "../../component/CommentItem";
 
 //Crime story detail
 const CrimeStoryDetailScreen = ({ route, navigation }) => {
-  const { user: currentUser, signIn } = useStore((state) => state);
+  const {
+    user: currentUser,
+    signIn,
+  } = useStore((state) => state);
 
   const [commentList, setCommentList] = useState([]);
   const [showImageView, setShowImageView] = useState({
@@ -47,7 +50,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   //posting data
   const { postBy, photo, postingDateTime, story, postingId } =
     route.params.postingData;
-  const { photoUri } = route.params;
+  const { photoUri, userAvatarColor } = route.params;
   const dateAndTime = postingDateTime.toDate();
 
   //style
@@ -133,7 +136,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     }
   };
 
-    //get the vote count suffix
+  //get the vote count suffix
   const getCount = () => {
     if (upVoteCount < 1000) return `${upVoteCount}`;
     if (upVoteCount >= 1000 && upVoteCount < 1000000)
@@ -247,7 +250,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
             { width: windowWidth * 0.7 },
           ]}
         >
-          <Avatar.Text label={postBy.substring(0, 1).toUpperCase()} size={45} />
+          <Avatar.Text
+            label={postBy.substring(0, 1).toUpperCase()}
+            size={45}
+            style={{ backgroundColor: userAvatarColor }}
+          />
           {/* author */}
           <Text variant="labelLarge" style={textColor}>
             {postBy}
@@ -320,11 +327,8 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         {/* share */}
         <Appbar.Action icon="share" onPress={onShare} color={textColor.color} />
         {/* comment */}
-        <View style={ [styleSheet.flexEndStyle, {width: windowWidth*0.8}]}>
-          <Button
-            mode="contained"
-            onPress={toCommentScreen}
-          >
+        <View style={[styleSheet.flexEndStyle, { width: windowWidth * 0.9 }]}>
+          <Button mode="contained" onPress={toCommentScreen}>
             Add a comment
           </Button>
         </View>

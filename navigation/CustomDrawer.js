@@ -8,6 +8,7 @@ import { useTheme } from "@react-navigation/native";
 import { LogOutConfirmDialog } from "../component/AlertDialog";
 import { db } from "../config/firebase_config";
 import { doc, updateDoc } from "firebase/firestore";
+import Toast from "react-native-root-toast";
 import useStore from "../zustand/store";
 import styleSheet from "../assets/StyleSheet";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -26,7 +27,7 @@ const CustomDrawer = ({ navigation }) => {
     signIn,
     setIsDarkMode,
     preference: { darkMode, avatarColor },
-    docID
+    docID,
   } = useStore((state) => state);
 
   const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
@@ -49,6 +50,10 @@ const CustomDrawer = ({ navigation }) => {
       setTimeout(() => {
         navigation.navigate("BottomTabNavigation", { screen: "Map" });
       }, 500);
+      //display toast with log out message
+      Toast.show("You have successfully log out", {
+        duration: Toast.durations.SHORT,
+      });
     }
   };
 
@@ -57,26 +62,23 @@ const CustomDrawer = ({ navigation }) => {
 
   //update user's prefernce in firestore
   const upDateUserPreference = async (darkMode) => {
-    try
-    {
+    try {
       const docRef = doc(db, EnumString.userInfoCollection, docID);
-      await updateDoc(docRef, { preference: { darkMode, avatarColor } })
-
+      await updateDoc(docRef, { preference: { darkMode, avatarColor } });
     } catch (err) {
       console.log(err);
     }
   };
 
   //handle DarkMode switch
-  const handleSwitch = () =>
-  {
+  const handleSwitch = () => {
     const newPerfenenceDarkMode = !darkMode;
 
     //update the user preference in useStore
     setIsDarkMode(newPerfenenceDarkMode);
     //update the user preference in firestore
     upDateUserPreference(newPerfenenceDarkMode);
-  }
+  };
 
   return (
     <DrawerContentScrollView contentContainerStyle={styleSheet.flex_1}>
@@ -112,7 +114,11 @@ const CustomDrawer = ({ navigation }) => {
             logOut={handleSignOut}
           />
           <View style={styleSheet.container}>
-              <Avatar.Text size={ 90 } label={ avatarLabel } style={ {backgroundColor:avatarColor} } />
+            <Avatar.Text
+              size={90}
+              label={avatarLabel}
+              style={{ backgroundColor: avatarColor }}
+            />
             <Text
               variant="titleSmall"
               style={[styleSheet.margin_Vertical, textColor]}

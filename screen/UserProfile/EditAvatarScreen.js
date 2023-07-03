@@ -3,14 +3,18 @@ import { Text, Avatar } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "@rneui/themed";
 import { useState } from "react";
-import { avatarColorSet } from "../../assets/EnumString";
+import EnumString, { avatarColorSet } from "../../assets/EnumString";
+import { db } from "../../config/firebase_config";
+import { doc, updateDoc } from "firebase/firestore";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 
-const EditAvatarScreen = () => {
+const EditAvatarScreen = ({ navigation }) => {
   const {
     user: currentUser,
-    preference: { avatarColor },
+    preference: { darkMode, avatarColor },
+    docID,
+    setAvatarColor,
   } = useStore((state) => state);
   const [isLoading, setIsLoading] = useState(false);
   const [newAvatarColor, setNewAvatarColor] = useState(avatarColor);
@@ -23,6 +27,27 @@ const EditAvatarScreen = () => {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
   const avatarLabel = currentUser.username.substring(0, 1).toUpperCase();
+
+  //update user avatar color in firestore and useStore
+  const updateUserAvatarColor = async () => {
+    const docRef = doc(db, EnumString.userInfoCollection, docID);
+
+    setIsLoading(true);
+    try {
+      await updateDoc(docRef, {
+        preference: { darkMode, avatarColor: newAvatarColor },
+      });
+
+      //update the useStore
+      setAvatarColor(newAvatarColor);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+      navigation.goBack();
+    }
+  };
 
   return (
     <SafeAreaView style={[styleSheet.container, styleSheet.flex_1]}>
@@ -81,6 +106,7 @@ const EditAvatarScreen = () => {
         buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
         titleStyle={styleSheet.buttonTextStyle}
         loading={isLoading}
+        onPress={updateUserAvatarColor}
       />
     </SafeAreaView>
   );

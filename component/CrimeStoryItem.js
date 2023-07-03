@@ -19,6 +19,7 @@ import {
   query,
   where,
   collection,
+  getDocs,
 } from "firebase/firestore";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
@@ -41,6 +42,8 @@ const CrimeStoryItem = ({ postingData }) => {
   const [voteStatus, setVoteStatus] = useState(false);
   const [votersList, setVoterslist] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
+  //default avatar color
+  const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
 
   const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
   const storyBody = `${postingData.story.substring(0, 31)}...`;
@@ -65,7 +68,7 @@ const CrimeStoryItem = ({ postingData }) => {
   const toCrimeDetail = () =>
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
-      params: { postingData, photoUri },
+      params: { postingData, photoUri, userAvatarColor },
     });
 
   //to log in screen
@@ -183,11 +186,38 @@ const CrimeStoryItem = ({ postingData }) => {
     });
   };
 
+  //get avatat color
+  const getAvatarColor = async () => {
+    const collectionRef = collection(db, EnumString.userInfoCollection);
+    const filter = where("email", "==", postingData.userEmail);
+    const q = query(collectionRef, filter);
+
+    try {
+      onSnapshot(q, (snapshot) => {
+        //only 1 matching doc
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added" || change.type === "modified") 
+            setUserAvatarColor(change.doc.data().preference.avatarColor);
+        });
+      });
+      // const querySnapshot = await getDocs(q);
+
+      // const document = querySnapshot.docs;
+
+      // if (document.length === 1) {
+      //   setUserAvatarColor(document[0].data().preference.avatarColor);
+      // }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //retreive the photos when the page is first mounted
   //and get the real time udapte with firestore
   useEffect(() => {
     retreivePhotoFromFirebaseStorage();
     getRealTimeUpdate();
+    getAvatarColor();
   }, []);
 
   //get the current user vote state
@@ -240,6 +270,7 @@ const CrimeStoryItem = ({ postingData }) => {
             <Avatar.Text
               label={postingData.postBy.substring(0, 1).toUpperCase()}
               size={30}
+              style={{ backgroundColor: userAvatarColor }}
             />
           </View>
           {/* date and time */}
