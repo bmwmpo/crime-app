@@ -15,11 +15,14 @@ import styleSheet from "../../assets/StyleSheet";
 import Icon from 'react-native-vector-icons/Ionicons';
 
 //all crime stories screen
-const AllCrimeStoriesScreen = () => {
+const AllCrimeStoriesScreen = () =>
+{
+  //state values
   const [allCrimeStories, setAllCrimeStories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [limitNum, setLimitNum] = useState(5);
   const [visible, setVisible] = useState(false);
+
   const collectionRef = collection(db, "Postings");
 
   //get all crime stories from firestore

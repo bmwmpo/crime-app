@@ -7,9 +7,15 @@ import ItemComponent from "../../component/ItemComponent";
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {
-  const { user: currentUser, preference: { avatarColor} } = useStore((state) => state);
+  //current user info
+  const {
+    user: currentUser,
+    preference: { avatarColor },
+  } = useStore((state) => state);
 
   const avatarLabel = currentUser.username.toUpperCase().substring(0, 1);
+
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -29,7 +35,11 @@ const MyAccountScreen = ({ navigation }) => {
           { padding: "4%", borderBottomWidth: 1, borderColor: textColor.color },
         ]}
       >
-        <Avatar.Text label={ avatarLabel } size={ 80 } style={ {backgroundColor:avatarColor} } />
+        <Avatar.Text
+          label={avatarLabel}
+          size={80}
+          style={{ backgroundColor: avatarColor }}
+        />
       </View>
       <List.Section style={{ padding: "4%", flex: 2 }}>
         <List.Subheader
@@ -63,7 +73,9 @@ const MyAccountScreen = ({ navigation }) => {
           title="Edit Avatar"
           titleStyle={textColor}
           titleEllipsizeMode="clip"
-          left={() => <List.Icon icon="square-edit-outline" color={textColor.color} />}
+          left={() => (
+            <List.Icon icon="square-edit-outline" color={textColor.color} />
+          )}
           right={() => <ItemComponent textColor={textColor} />}
           onPress={toEditAvatarScreen}
           rippleColor={styleSheet.highLightTextColor.color}

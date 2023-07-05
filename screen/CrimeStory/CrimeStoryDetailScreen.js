@@ -24,16 +24,20 @@ import {
   limit,
 } from "firebase/firestore";
 import { LogInDialog } from "../../component/AlertDialog";
+import { getCountSuffix } from "../../functions/voting";
+import { MemoizedCommentItem } from "../../component/CommentItem";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 import EnumString from "../../assets/EnumString";
-import CommentItem from "../../component/CommentItem";
+import LoadingScreen from "../LoadingScreen";
 
 //Crime story detail
 const CrimeStoryDetailScreen = ({ route, navigation }) => {
+  //current user infor
   const { user: currentUser, signIn } = useStore((state) => state);
 
+  //state values
   const [commentList, setCommentList] = useState([]);
   const [showImageView, setShowImageView] = useState({
     visible: false,
@@ -43,14 +47,14 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const [voteStatus, setVoteStatus] = useState(false);
   const [votersList, setVoterslist] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   //posting data
-  const { postBy, photo, postingDateTime, story, postingId } =
-    route.params.postingData;
+  const { postingDateTime, story, postingId } = route.params.postingData;
   const { photoUri, userAvatarColor, creator } = route.params;
   const dateAndTime = postingDateTime.toDate();
 
-  //style
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -58,7 +62,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const backgroundColor = isDarkMode
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
-
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
 
@@ -79,11 +82,9 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   //increase or decrease the vote count
   const updateVoteCount = async () => {
     try {
-      if (!voteStatus) {
-        await updateDoc(docRef, { upVote: upVoteCount + 1 });
-      } else {
-        await updateDoc(docRef, { upVote: upVoteCount - 1 });
-      }
+      !voteStatus
+        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
+        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
     } catch (err) {
       console.log(err);
     }
@@ -95,11 +96,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       (item) => item === currentUser.userId
     );
 
-    if (voteAlready.length > 0) {
-      setVoteStatus(true);
-    } else {
-      setVoteStatus(false);
-    }
+    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
   };
 
   //update the upVote count
@@ -133,14 +130,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  //get the vote count suffix
-  const getCount = () => {
-    if (upVoteCount < 1000) return `${upVoteCount}`;
-    if (upVoteCount >= 1000 && upVoteCount < 1000000)
-      return `${(upVoteCount / 1000).toFixed(1)}k`;
-    if (upVoteCount >= 1000000) return `${(upVoteCount / 1000000).toFixed(1)}m`;
-  };
-
   //get real time vote count and voter list with firestore
   const getRealTimeUpdate = () => {
     const collectionRef = collection(db, EnumString.postingCollection);
@@ -168,20 +157,17 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     const list = [];
 
     onSnapshot(q, (snapshot) => {
-      setCommentList([]);
+      //setCommentList([]);
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
           list.unshift(change.doc.data());
-          //update the username
-        } else if (change.type === "modified") {
-          for (let comment of list) {
-            if (comment.userEmail === change.doc.data().userEmail) {
-              comment.replyBy = change.doc.data().replyBy;
-            }
-          }
+        }
+        //update the commentId for the new comment othwewise commentId is underfined
+        else if (change.type === "modified") {
+          for (let comment of list)
+            comment.commentId = change.doc.data().commentId;
         }
       });
-
       setCommentList(list);
     });
   };
@@ -205,8 +191,13 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
 
   //get the real time udapte with firestore with the associated posting
   useEffect(() => {
+    setIsLoading(true);
     getRealTimeUpdate();
     getComments();
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   }, [postingId]);
 
   //get the current user vote state
@@ -239,6 +230,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         style={[
           { padding: "2%", width: windowWidth, height: windowHeight * 0.75 },
           styleSheet.margin_Vertical,
+          styleSheet.padding_Horizontal,
         ]}
         contentContainerStyle={styleSheet.flexStartContainer}
         nestedScrollEnabled={true}
@@ -255,10 +247,16 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           <Avatar.Text
             label={creator.substring(0, 1).toUpperCase()}
             size={45}
-            style={{ backgroundColor: userAvatarColor }}
+            style={[
+              { backgroundColor: userAvatarColor },
+              styleSheet.margin_Horizontal_right,
+            ]}
           />
           {/* author */}
-          <Text variant="labelLarge" style={textColor}>
+          <Text
+            variant="labelLarge"
+            style={[textColor, styleSheet.margin_Horizontal_right]}
+          >
             {creator}
           </Text>
           {/* date and time */}
@@ -325,7 +323,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
             onPress={onUpVote}
           />
         )}
-        <Text style={textColor}>{getCount()}</Text>
+        <Text style={textColor}>{getCountSuffix(upVoteCount)}</Text>
         {/* share */}
         <Appbar.Action icon="share" onPress={onShare} color={textColor.color} />
         {/* comment */}
@@ -340,12 +338,18 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         <Text variant="titleMedium" style={textColor}>
           Be the first one to respond
         </Text>
+      ) : isLoading ? (
+        <LoadingScreen size={"small"} />
       ) : (
         <FlatList
           style={[{ height: windowHeight * 0.3, width: windowWidth }]}
           data={commentList}
           renderItem={({ item }) => (
-            <CommentItem key={item.commentId} commentData={item} />
+            <MemoizedCommentItem
+              key={item.commentId}
+              commentData={item}
+              postingId={postingId}
+            />
           )}
         />
       )}
