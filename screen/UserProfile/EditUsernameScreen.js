@@ -19,16 +19,19 @@ import EnumString from "../../assets/EnumString";
 
 //edit username screen
 const EditUsernameScreen = ({ navigation }) => {
+  //current user info
   const {
     user: { username, email },
     setUsername,
     docID,
   } = useStore((state) => state);
 
+  //state values
   const [newUsername, setNewUsername] = useState(username);
   const [validNewUsername, setValidNewUsername] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -78,68 +81,6 @@ const EditUsernameScreen = ({ navigation }) => {
     }
   };
 
-  //update the username for the comments created by the current user
-  const updateAllComments = async (postingId) => {
-    try {
-      const commentCollectionRef = collection(
-        db,
-        EnumString.postingCollection,
-        postingId,
-        EnumString.commentsSubCollection
-      );
-      const filter = where("userEmail", "==", email);
-      const q = query(commentCollectionRef, filter);
-
-      const querySnapshot = await getDocs(q);
-
-      const documents = querySnapshot.docs;
-
-      if (documents.length > 0) {
-        for (const document of documents)
-        {
-          const docRef = doc(
-            db,
-            EnumString.postingCollection,
-            postingId,
-            EnumString.commentsSubCollection,
-            document.data().commentId
-          );
-          await updateDoc(docRef, { replyBy: newUsername });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //update the username field for all postings and comments created by the current user
-  const updateAllPostsComments = async () => {
-    const collectionRef = collection(db, EnumString.postingCollection);
-    const filter = where("userEmail", "==", email);
-    const q = query(collectionRef, filter);
-
-    try {
-      const querySnapshot = await getDocs(q);
-
-      const documents = querySnapshot.docs;
-
-      if (documents.length > 0) {
-        for (const document of documents) {
-          const docRef = doc(
-            db,
-            EnumString.postingCollection,
-            document.data().postingId
-          );
-
-          await updateDoc(docRef, { postBy: newUsername });
-          await updateAllComments(document.data().postingId);
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   //update the username
   const updateUsername = async () => {
     try {
@@ -154,7 +95,6 @@ const EditUsernameScreen = ({ navigation }) => {
       const docRef = doc(db, EnumString.userInfoCollection, docID);
       await updateDoc(docRef, { username: newUsername.trim().toLowerCase() });
       await setNewUserProfile();
-      await updateAllPostsComments();
       setUsername(newUsername.trim().toLowerCase());
 
       navigation.goBack();
@@ -172,11 +112,13 @@ const EditUsernameScreen = ({ navigation }) => {
         <Text variant="titleMedium" style={textColor}>
           Username
         </Text>
+        {/* username textInput */}
         <TextInput
           style={[styleSheet.inputStyle, inputTextBackGroundColor]}
           placeholder="username"
           value={newUsername}
           onChangeText={setNewUsername}
+          autoFocus={true}
           right={
             !(newUsername === "") && (
               <TextInput.Icon
@@ -187,6 +129,7 @@ const EditUsernameScreen = ({ navigation }) => {
             )
           }
         />
+        {/* error message */}
         <HelperText
           type="error"
           padding="none"
@@ -195,6 +138,7 @@ const EditUsernameScreen = ({ navigation }) => {
         >
           Username is already in resigtered
         </HelperText>
+        {/* update button */}
         <Button
           title="Update"
           buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}

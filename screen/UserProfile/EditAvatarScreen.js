@@ -9,17 +9,22 @@ import { doc, updateDoc } from "firebase/firestore";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 
+//edit avatar screen
 const EditAvatarScreen = ({ navigation }) => {
+  //current user info
   const {
     user: currentUser,
     preference: { darkMode, avatarColor },
     docID,
     setAvatarColor,
   } = useStore((state) => state);
+
+  //state values
   const [isLoading, setIsLoading] = useState(false);
   const [newAvatarColor, setNewAvatarColor] = useState(avatarColor);
   const [selected, setSelected] = useState(avatarColorSet.indexOf(avatarColor));
 
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -74,6 +79,7 @@ const EditAvatarScreen = ({ navigation }) => {
           styleSheet.margin_Vertical,
         ]}
       >
+        {/* color set */}
         {avatarColorSet.map((item, index) => {
           const selectedIndex = selected === index;
           return (

@@ -26,7 +26,7 @@ import EnumString from "../../assets/EnumString";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
-  const { user: currentUser, signIn } = useStore((state) => state);
+  const { user: currentUser, signIn, docID } = useStore((state) => state);
 
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
@@ -135,10 +135,11 @@ const AddPostScreen = ({ navigation }) => {
         postingId: "",
         photo,
         postingDateTime,
-        postBy: currentUser.username,
-        userEmail: currentUser.email,
+        //postBy: currentUser.username,
+        //userEmail: currentUser.email,
         upVote: 0,
         voters: [],
+        user: doc(db, EnumString.userInfoCollection, docID)
       };
 
       const docAdded = await addDoc(collectionRef, newPosting);

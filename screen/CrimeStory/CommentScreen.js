@@ -10,13 +10,17 @@ import useStore from "../../zustand/store";
 import LoadingScreen from "../LoadingScreen";
 
 const CommentScreen = ({ navigation, route }) => {
-  const { user: currentUser } = useStore((state) => state);
+  //current user infor
+  const { user: currentUser, docID } = useStore((state) => state);
+
+  //state values
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   //postingId of the selected crime story
   const { postingId } = route.params;
 
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -56,12 +60,16 @@ const CommentScreen = ({ navigation, route }) => {
     try {
       setIsLoading(true);
 
+      const userDocRef = doc(db, EnumString.userInfoCollection, docID);
       const newComment = {
         comment,
-        replyBy: currentUser.username,
         replyDateTime: new Date(),
-        userEmail: currentUser.email
+        upVote: 0,
+        voters: [],
+        user: userDocRef,
       };
+
+      //save the comment in the subcollection 'Comments'
       const commentAdded = await addDoc(subCollectionRef, newComment);
 
       await updateCommentDoc(commentAdded.id);

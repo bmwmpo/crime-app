@@ -1,16 +1,50 @@
-import { Card, Text, Avatar } from "react-native-paper";
-import { useTheme } from "@react-navigation/native";
+import { Card, Text, Avatar, IconButton } from "react-native-paper";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { db } from "../config/firebase_config";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import {
+  collection,
+  doc,
+  updateDoc,
+  onSnapshot,
+  query,
+  where,
+  getDoc,
+} from "firebase/firestore";
+import { useEffect, useState, memo } from "react";
+import { LogInDialog } from "./AlertDialog";
+import { getCountSuffix, getTimePassing } from "../functions/voting";
 import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
+import useStore from "../zustand/store";
 
-const CommentItem = ({ commentData }) => {
+//comment item component
+const CommentItem = ({ commentData, postingId }) => {
+  //current user info from useStore
+  const { user: currentUser, signIn } = useStore((state) => state);
+
+  //state values
   const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
+  const [upVoteCount, setUpVoteCount] = useState(0);
+  const [voteStatus, setVoteStatus] = useState(false);
+  const [votersList, setVoterslist] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [creator, setCreator] = useState("");
+
+  //comment data
   const replyDateTime = commentData.replyDateTime.toDate();
-  const { comment, replyBy } = commentData;
+  const { comment, commentId, user: userDocRef } = commentData;
+
+  //document reference
+  const docRef = doc(
+    db,
+    EnumString.postingCollection,
+    postingId,
+    EnumString.commentsSubCollection,
+    commentId
+  );
+
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -24,41 +58,103 @@ const CommentItem = ({ commentData }) => {
     ? styleSheet.darkModeOutlinedColor
     : styleSheet.lightModeOutlinedColor;
 
-  const getTimePassing = () => {
-    const timePassingInHrs = (new Date() - replyDateTime) / 1000 / 60 / 60;
+  const navigation = useNavigation();
 
-    if (timePassingInHrs > 24) {
-      return `${Math.floor(timePassingInHrs / 24)}d`;
-    } else if (timePassingInHrs < 1) {
-      const timePassingInMin = timePassingInHrs * 60;
-      return timePassingInMin > 1 ? `${Math.ceil(timePassingInMin)}m` : "now";
-    } else {
-      return `${Math.ceil(timePassingInHrs)}h`;
-    }
-  };
+  //to log in screen
+  const toLogInScreen = () =>
+    navigation.navigate("SignInSignUp", { screen: "LogIn" });
 
-  //get user avatar color from firestore
-  const getUserAvaterColor = async () => {
-    const collectionRef = collection(db, EnumString.userInfoCollection);
-    const filter = where("email", "==", commentData.userEmail);
-    const q = query(collectionRef, filter);
+  const hideDialog = () => setShowDialog(false);
 
+  //increase or decrease the vote count
+  const updateVoteCount = async () => {
     try {
-      onSnapshot(q, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added" || change.type === "modified") 
-             setUserAvatarColor(change.doc.data().preference.avatarColor);
-        });
-      });
+      !voteStatus
+        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
+        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(() =>
-  {
-    getUserAvaterColor();
-  },[]);
+  //Check whether the user has voted or not
+  const getVoteState = () => {
+    const voteAlready = votersList.filter(
+      (item) => item === currentUser.userId
+    );
+
+    //update the vote status
+    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
+  };
+
+  //update the upVote count
+  const updateVoters = async () => {
+    try {
+      //if the vote state is false, add the current user id in the voters list in firestore
+      if (!voteStatus) {
+        await updateDoc(docRef, {
+          voters: [...votersList, currentUser.userId],
+        });
+        setVoteStatus(true);
+      }
+      //else remove the user if from the voters list in firestore
+      else {
+        const voters = votersList.filter((item) => item !== currentUser.userId);
+        await updateDoc(docRef, { voters });
+        setVoteStatus(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //trigger the upvote
+  const onUpVote = () => {
+    if (signIn) {
+      updateVoteCount();
+      updateVoters();
+    } else {
+      setShowDialog(true);
+    }
+  };
+
+  //access reat time comment creator info from firestore
+  const getUserData = () => {
+    onSnapshot(userDocRef, (snapshot) => {
+      setUserAvatarColor(snapshot.data().preference.avatarColor);
+      setCreator(snapshot.data().username);
+    });
+  };
+
+  //get real time with firestore
+  const getRealTimeUpdate = () => {
+    const collectionRef = collection(
+      db,
+      EnumString.postingCollection,
+      postingId,
+      EnumString.commentsSubCollection
+    );
+
+    const q = query(collectionRef, where("commentId", "==", commentId));
+
+    //add snapshot lister to the doc
+    onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        setVoterslist(change.doc.data().voters);
+        setUpVoteCount(change.doc.data().upVote);
+      });
+    });
+  };
+
+  useEffect(() => {
+    getRealTimeUpdate();
+    getUserData();
+  }, []);
+
+  //get the current user vote state
+  useEffect(() => {
+    getVoteState();
+  }, [votersList, upVoteCount]);
 
   return (
     <Card
@@ -76,12 +172,20 @@ const CommentItem = ({ commentData }) => {
       <Card.Content
         style={[styleSheet.flexRowContainer, styleSheet.flexSpaceBetweenStyle]}
       >
+        {/* show the dialog if the user is not logged in */}
+        <LogInDialog
+          hideDialog={hideDialog}
+          showDialog={showDialog}
+          navigateToLogIn={toLogInScreen}
+          message={EnumString.logInMsg}
+          title={EnumString.logInTilte}
+        />
         {/* author */}
         <View>
           <Avatar.Text
-            label={ commentData.replyBy.substring(0, 1).toUpperCase() }
-            size={ 30 }
-            style={ {backgroundColor:userAvatarColor} }
+            label={creator.substring(0, 1).toUpperCase()}
+            size={30}
+            style={{ backgroundColor: userAvatarColor }}
           />
         </View>
         {/* date and time */}
@@ -93,7 +197,7 @@ const CommentItem = ({ commentData }) => {
               textColor,
             ]}
           >
-            {replyBy}
+            {creator}
           </Text>
           <Text variant="labelLarge" style={textColor}>
             {replyDateTime.toLocaleString()}
@@ -102,7 +206,7 @@ const CommentItem = ({ commentData }) => {
         {/* passing time */}
         <View>
           <Text variant="labelLarge" style={textColor}>
-            {getTimePassing()}
+            {getTimePassing(replyDateTime)}
           </Text>
         </View>
       </Card.Content>
@@ -117,8 +221,30 @@ const CommentItem = ({ commentData }) => {
           </Text>
         </Card.Content>
       )}
+      {/* like button */}
+      <Card.Content
+        style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
+      >
+        {voteStatus ? (
+          <IconButton
+            icon="thumb-up"
+            iconColor={textColor.color}
+            onPress={onUpVote}
+          />
+        ) : (
+          <IconButton
+            icon="thumb-up-outline"
+            iconColor={textColor.color}
+            onPress={onUpVote}
+          />
+        )}
+        <Text variant="labelLarge" style={textColor}>
+          {getCountSuffix(upVoteCount)}
+        </Text>
+      </Card.Content>
     </Card>
   );
 };
 
-export default CommentItem;
+//re-render the comment only if the props has changed
+export const MemoizedCommentItem = memo(CommentItem);

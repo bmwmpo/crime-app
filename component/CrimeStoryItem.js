@@ -20,16 +20,19 @@ import {
   where,
   collection,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
+import { LogInDialog } from "./AlertDialog";
+import { getCountSuffix, getTimePassing } from "../functions/voting";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
 import Icon from "react-native-vector-icons/Ionicons";
 import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
-import { LogInDialog } from "./AlertDialog";
 
 //crime story component
 const CrimeStoryItem = ({ postingData }) => {
+  //current user info from useStore
   const { user: currentUser, signIn } = useStore((state) => state);
 
   //save the photo uri in an object {uri: }
@@ -38,18 +41,23 @@ const CrimeStoryItem = ({ postingData }) => {
     visible: false,
     index: 0,
   });
+
+  //state value
   const [upVoteCount, setUpVoteCount] = useState(0);
   const [voteStatus, setVoteStatus] = useState(false);
   const [votersList, setVoterslist] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
-  //default avatar color
   const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
-  const [creator, setCreator] = useState('');
+  const [creator, setCreator] = useState("");
 
-  const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
+  //posting Data
+  const { user: userDocRef } = postingData;
   const storyBody = `${postingData.story.substring(0, 31)}...`;
   const postingDateTime = postingData.postingDateTime.toDate();
-  const navigation = useNavigation();
+
+  const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
+
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -63,40 +71,29 @@ const CrimeStoryItem = ({ postingData }) => {
     ? styleSheet.darkModeOutlinedColor
     : styleSheet.lightModeOutlinedColor;
 
+  const navigation = useNavigation();
+
   const hideDialog = () => setShowDialog(false);
 
   //to crime story detail screen
   const toCrimeDetail = () =>
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
-      params: { postingData, photoUri, userAvatarColor, creator },
+      params: {
+        postingData: {
+          postingDateTime: postingData.postingDateTime,
+          story: postingData.story,
+          postingId: postingData.postingId,
+        },
+        photoUri,
+        userAvatarColor,
+        creator,
+      },
     });
 
   //to log in screen
   const toLogInScreen = () =>
     navigation.navigate("SignInSignUp", { screen: "LogIn" });
-
-  //get post time passing
-  const getTimePassing = () => {
-    const timePassingInHrs = (new Date() - postingDateTime) / 1000 / 60 / 60;
-
-    if (timePassingInHrs > 24) {
-      return `${Math.floor(timePassingInHrs / 24)}d`;
-    } else if (timePassingInHrs < 1) {
-      const timePassingInMin = timePassingInHrs * 60;
-      return timePassingInMin > 1 ? `${Math.ceil(timePassingInMin)}m` : "now";
-    } else {
-      return `${Math.ceil(timePassingInHrs)}h`;
-    }
-  };
-
-  //get the vote count suffix
-  const getCount = () => {
-    if (upVoteCount < 1000) return `${upVoteCount}`;
-    if (upVoteCount >= 1000 && upVoteCount < 1000000)
-      return `${(upVoteCount / 1000).toFixed(1)}k`;
-    if (upVoteCount >= 1000000) return `${(upVoteCount / 1000000).toFixed(1)}m`;
-  };
 
   //retreive photos from firebase storage
   const retreivePhotoFromFirebaseStorage = async () => {
@@ -116,11 +113,9 @@ const CrimeStoryItem = ({ postingData }) => {
   //increase or decrease the vote count
   const updateVoteCount = async () => {
     try {
-      if (!voteStatus) {
-        await updateDoc(docRef, { upVote: upVoteCount + 1 });
-      } else {
-        await updateDoc(docRef, { upVote: upVoteCount - 1 });
-      }
+      !voteStatus
+        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
+        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
     } catch (err) {
       console.log(err);
     }
@@ -132,11 +127,8 @@ const CrimeStoryItem = ({ postingData }) => {
       (item) => item === currentUser.userId
     );
 
-    if (voteAlready.length > 0) {
-      setVoteStatus(true);
-    } else {
-      setVoteStatus(false);
-    }
+    //update the vote status
+    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
   };
 
   //update the upVote count
@@ -183,28 +175,16 @@ const CrimeStoryItem = ({ postingData }) => {
       snapshot.docChanges().forEach((change) => {
         setVoterslist(change.doc.data().voters);
         setUpVoteCount(change.doc.data().upVote);
-        setCreator(change.doc.data().postBy);
       });
     });
   };
 
-  //get avatat color
-  const getAvatarColor = async () => {
-    const collectionRef = collection(db, EnumString.userInfoCollection);
-    const filter = where("email", "==", postingData.userEmail);
-    const q = query(collectionRef, filter);
-
-    try {
-      onSnapshot(q, (snapshot) => {
-        //only 1 matching doc
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added" || change.type === "modified") 
-            setUserAvatarColor(change.doc.data().preference.avatarColor);
-        });
-      });
-    } catch (err) {
-      console.log(err);
-    }
+  //get crime story publisher info
+  const getUserData = () => {
+    onSnapshot(userDocRef, (snapshot) => {
+      setUserAvatarColor(snapshot.data().preference.avatarColor);
+      setCreator(snapshot.data().username);
+    });
   };
 
   //retreive the photos when the page is first mounted
@@ -212,13 +192,13 @@ const CrimeStoryItem = ({ postingData }) => {
   useEffect(() => {
     retreivePhotoFromFirebaseStorage();
     getRealTimeUpdate();
-    getAvatarColor();
+    getUserData();
   }, []);
 
   //get the current user vote state
   useEffect(() => {
     getVoteState();
-  });
+  }, [votersList, upVoteCount]);
 
   return (
     <TouchableOpacity onPress={toCrimeDetail}>
@@ -253,7 +233,6 @@ const CrimeStoryItem = ({ postingData }) => {
           }
         />
         {/* posting info: author, date and time */}
-
         <Card.Content
           style={[
             styleSheet.flexRowContainer,
@@ -286,7 +265,7 @@ const CrimeStoryItem = ({ postingData }) => {
           {/* passing time */}
           <View>
             <Text variant="labelLarge" style={textColor}>
-              {getTimePassing()}
+              {getTimePassing(postingDateTime)}
             </Text>
           </View>
         </Card.Content>
@@ -343,9 +322,8 @@ const CrimeStoryItem = ({ postingData }) => {
               onPress={onUpVote}
             />
           )}
-
           <Text variant="labelLarge" style={textColor}>
-            {getCount()}
+            {getCountSuffix(upVoteCount)}
           </Text>
         </Card.Content>
       </Card>
