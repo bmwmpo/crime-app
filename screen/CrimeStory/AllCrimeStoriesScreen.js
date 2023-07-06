@@ -12,11 +12,10 @@ import {
 import { FAB } from "@rneui/themed";
 import CrimeStoryItem from "../../component/CrimeStoryItem";
 import styleSheet from "../../assets/StyleSheet";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 
 //all crime stories screen
-const AllCrimeStoriesScreen = () =>
-{
+const AllCrimeStoriesScreen = () => {
   //state values
   const [allCrimeStories, setAllCrimeStories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -81,9 +80,15 @@ const AllCrimeStoriesScreen = () =>
   }, []);
 
   return (
-    <SafeAreaView style={ [styleSheet.flex_1]}>
+    <SafeAreaView style={[styleSheet.flex_1]}>
       <FAB
-        icon={ <Icon name='arrow-up' size={ 20 } color={ styleSheet.darkModeColor.color} /> }
+        icon={
+          <Icon
+            name="arrow-up"
+            size={20}
+            color={styleSheet.darkModeColor.color}
+          />
+        }
         color="#BA55D3"
         size="small"
         visible={visible}
@@ -95,14 +100,20 @@ const AllCrimeStoriesScreen = () =>
       <FlatList
         style={styleSheet.zindex_1}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={50}/>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={50}
+          />
         }
         onEndReachedThreshold={0.5}
         onEndReached={loadMoreData}
         data={allCrimeStories}
-        ItemSeparatorComponent={() => <View style={{ margin: "1%" }}></View>}
+        ItemSeparatorComponent={() => <View style={{ margin: "0.5%" }}></View>}
         keyExtractor={(item) => item.postingId}
-        renderItem={ ({ item }) => <CrimeStoryItem key={ item.postingId } postingData={item} />}
+        renderItem={({ item }) => (
+          <CrimeStoryItem key={item.postingId} postingData={item} />
+        )}
       />
     </SafeAreaView>
   );

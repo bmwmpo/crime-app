@@ -21,10 +21,25 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.g05.crimeapp",
+      "config":{
+        "googleMaps":{
+          "apiKey": "AIzaSyDo4leSw4LLPK_c7MiuOv94-6qXEC1Jm6I"
+        }
       }
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3f633037-5a1f-44a1-a6ad-d8e566e1f35e"
+      }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-1971382760141735~3468145448"
   }
 }

@@ -1,6 +1,6 @@
 import { ref, getDownloadURL } from "firebase/storage";
 import { Text, Card, Avatar, IconButton } from "react-native-paper";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { storage } from "../config/firebase_config";
 import {
   FlatList,
@@ -24,6 +24,11 @@ import {
 } from "firebase/firestore";
 import { LogInDialog } from "./AlertDialog";
 import { getCountSuffix, getTimePassing } from "../functions/voting";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -74,6 +79,15 @@ const CrimeStoryItem = ({ postingData }) => {
   const navigation = useNavigation();
 
   const hideDialog = () => setShowDialog(false);
+
+  const showAds = () => {
+    const num = Math.ceil(Math.random() * 5);
+
+    if (num === 5) return true;
+    else return false;
+  };
+
+  const isShowAds = useMemo(() => showAds(), [1]);
 
   //to crime story detail screen
   const toCrimeDetail = () =>
@@ -201,133 +215,162 @@ const CrimeStoryItem = ({ postingData }) => {
   }, [votersList, upVoteCount]);
 
   return (
-    <TouchableOpacity onPress={toCrimeDetail}>
-      <Card
-        style={[
-          styleSheet.flex_1,
-          backgroundColor,
-          styleSheet.padding_Vertical,
-          styleSheet.padding_Horizontal,
-          {
-            borderColor: cardBorderColor.color,
-            borderWidth: StyleSheet.hairlineWidth,
-            justifyContent: "center",
-          },
-        ]}
-      >
-        {/* show the dialog if the user is not logged in */}
-        <LogInDialog
-          hideDialog={hideDialog}
-          showDialog={showDialog}
-          navigateToLogIn={toLogInScreen}
-          message={EnumString.logInMsg}
-          title={EnumString.logInTilte}
-        />
-        {/* image full screen */}
-        <ImageView
-          images={photoUri}
-          imageIndex={showImageView.index}
-          visible={showImageView.visible}
-          onRequestClose={() =>
-            setShowImageView((pre) => ({ ...pre, visible: false }))
-          }
-        />
-        {/* posting info: author, date and time */}
-        <Card.Content
+    <View>
+      <TouchableOpacity onPress={toCrimeDetail} style={[{ margin: "2%" }]}>
+        <Card
           style={[
-            styleSheet.flexRowContainer,
-            styleSheet.flexSpaceBetweenStyle,
+            styleSheet.flex_1,
+            backgroundColor,
+            styleSheet.padding_Vertical,
+            styleSheet.padding_Horizontal,
+            {
+              borderColor: cardBorderColor.color,
+              borderWidth: StyleSheet.hairlineWidth,
+              justifyContent: "center",
+            },
           ]}
         >
-          {/* author */}
-          <View>
-            <Avatar.Text
-              label={creator.substring(0, 1).toUpperCase()}
-              size={30}
-              style={{ backgroundColor: userAvatarColor }}
-            />
-          </View>
-          {/* date and time */}
-          <View style={[styleSheet.flexStartContainer]}>
-            <Text
-              variant="labelLarge"
-              style={[
-                styleSheet.margin_HorizontflexStartContaineral_right,
-                textColor,
-              ]}
-            >
-              {creator}
-            </Text>
-            <Text variant="labelLarge" style={textColor}>
-              {postingDateTime.toLocaleString()}
-            </Text>
-          </View>
-          {/* passing time */}
-          <View>
-            <Text variant="labelLarge" style={textColor}>
-              {getTimePassing(postingDateTime)}
-            </Text>
-          </View>
-        </Card.Content>
-        {/* story */}
-        {postingData.story !== "" && (
-          <Card.Content style={[styleSheet.margin_Vertical]}>
-            <Text variant="titleMedium" style={textColor}>
-              {storyBody}
-            </Text>
-          </Card.Content>
-        )}
-        {/* Photo section */}
-        {photoUri.length > 0 && (
+          {/* show the dialog if the user is not logged in */}
+          <LogInDialog
+            hideDialog={hideDialog}
+            showDialog={showDialog}
+            navigateToLogIn={toLogInScreen}
+            message={EnumString.logInMsg}
+            title={EnumString.logInTilte}
+          />
+          {/* image full screen */}
+          <ImageView
+            images={photoUri}
+            imageIndex={showImageView.index}
+            visible={showImageView.visible}
+            onRequestClose={() =>
+              setShowImageView((pre) => ({ ...pre, visible: false }))
+            }
+          />
+          {/* posting info: author, date and time */}
           <Card.Content
-            style={[styleSheet.container, styleSheet.margin_Vertical]}
+            style={[
+              styleSheet.flexRowContainer,
+              styleSheet.flexSpaceBetweenStyle,
+            ]}
           >
-            <FlatList
-              horizontal
-              style={{ width: windowWidth * 0.9, height: windowHeight * 0.2 }}
-              data={photoUri}
-              keyExtractor={(item) => item.uri}
-              renderItem={({ item, index }) => (
-                <Pressable
-                  onPress={() => {
-                    setShowImageView({ visible: true, index });
-                  }}
-                >
-                  <Card.Cover
-                    source={{ uri: item.uri }}
-                    style={{
-                      width: windowWidth * 0.9,
-                      height: windowHeight * 0.2,
+            {/* author */}
+            <View>
+              <Avatar.Text
+                label={creator.substring(0, 1).toUpperCase()}
+                size={30}
+                style={{ backgroundColor: userAvatarColor }}
+              />
+            </View>
+            {/* date and time */}
+            <View style={[styleSheet.flexStartContainer]}>
+              <Text
+                variant="labelLarge"
+                style={[
+                  styleSheet.margin_HorizontflexStartContaineral_right,
+                  textColor,
+                ]}
+              >
+                {creator}
+              </Text>
+              <Text variant="labelLarge" style={textColor}>
+                {postingDateTime.toLocaleString()}
+              </Text>
+            </View>
+            {/* passing time */}
+            <View>
+              <Text variant="labelLarge" style={textColor}>
+                {getTimePassing(postingDateTime)}
+              </Text>
+            </View>
+          </Card.Content>
+          {/* story */}
+          {postingData.story !== "" && (
+            <Card.Content style={[styleSheet.margin_Vertical]}>
+              <Text variant="titleMedium" style={textColor}>
+                {storyBody}
+              </Text>
+            </Card.Content>
+          )}
+          {/* Photo section */}
+          {photoUri.length > 0 && (
+            <Card.Content
+              style={[styleSheet.container, styleSheet.margin_Vertical]}
+            >
+              <FlatList
+                horizontal
+                style={{ width: windowWidth * 0.9, height: windowHeight * 0.2 }}
+                data={photoUri}
+                keyExtractor={(item) => item.uri}
+                renderItem={({ item, index }) => (
+                  <Pressable
+                    onPress={() => {
+                      setShowImageView({ visible: true, index });
                     }}
-                  />
-                </Pressable>
-              )}
+                  >
+                    <Card.Cover
+                      source={{ uri: item.uri }}
+                      style={{
+                        width: windowWidth * 0.9,
+                        height: windowHeight * 0.2,
+                      }}
+                    />
+                  </Pressable>
+                )}
+              />
+            </Card.Content>
+          )}
+          {/* vote section */}
+          <Card.Content
+            style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
+          >
+            {voteStatus ? (
+              <IconButton
+                icon="thumb-up"
+                iconColor={textColor.color}
+                onPress={onUpVote}
+              />
+            ) : (
+              <IconButton
+                icon="thumb-up-outline"
+                iconColor={textColor.color}
+                onPress={onUpVote}
+              />
+            )}
+            <Text variant="labelLarge" style={textColor}>
+              {getCountSuffix(upVoteCount)}
+            </Text>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+      {isShowAds && (
+        <Card
+          style={[
+            styleSheet.flex_1,
+            backgroundColor,
+            styleSheet.padding_Vertical,
+            styleSheet.padding_Horizontal,
+            {
+              borderColor: cardBorderColor.color,
+              borderWidth: StyleSheet.hairlineWidth,
+              justifyContent: "center",
+            },
+            ,
+            { margin: "2%" },
+          ]}
+        >
+          <Card.Content>
+            <BannerAd
+              unitId={TestIds.BANNER}
+              size={BannerAdSize.LARGE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
             />
           </Card.Content>
-        )}
-        {/* vote section */}
-        <Card.Content
-          style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
-        >
-          {voteStatus ? (
-            <IconButton
-              icon="thumb-up"
-              iconColor={textColor.color}
-              onPress={onUpVote}
-            />
-          ) : (
-            <IconButton
-              icon="thumb-up-outline"
-              iconColor={textColor.color}
-              onPress={onUpVote}
-            />
-          )}
-          <Text variant="labelLarge" style={textColor}>
-            {getCountSuffix(upVoteCount)}
-          </Text>
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>
+        </Card>
+      )}
+    </View>
   );
 };
 
