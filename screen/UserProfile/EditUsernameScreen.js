@@ -43,6 +43,15 @@ const EditUsernameScreen = ({ navigation }) => {
 
   const deletePress = () => setNewUsername("");
 
+  //return true if the username input text is empty
+  const isUsernameEmpty = () =>
+  {
+    if (newUsername.trim() === '')
+      return true;
+    else
+      return false;
+  }
+
   //Update new user profile in firebase
   const setNewUserProfile = async () => {
     try {
@@ -141,10 +150,11 @@ const EditUsernameScreen = ({ navigation }) => {
         {/* update button */}
         <Button
           title="Update"
-          buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
-          titleStyle={styleSheet.buttonTextStyle}
-          onPress={updateUsername}
-          loading={isLoading}
+          buttonStyle={ [styleSheet.buttonStyle, { width: windowWidth * 0.9 }] }
+          titleStyle={ styleSheet.buttonTextStyle }
+          onPress={ updateUsername }
+          loading={ isLoading }
+          disabled={ isUsernameEmpty() }
         />
       </View>
     </KeyboardAvoidingView>
