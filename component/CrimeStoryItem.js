@@ -23,7 +23,15 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { LogInDialog } from "./AlertDialog";
-import { getCountSuffix, getTimePassing } from "../functions/voting";
+import {
+  getCountSuffix,
+  getTimePassing,
+  updateVoteCount,
+  getVoteState,
+  updateVoters,
+  getRealTimeUpdate,
+} from "../functions/voting";
+import { retreivePhotoFromFirebaseStorage, getUserData } from "../functions/getCrimeStory";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -80,124 +88,142 @@ const CrimeStoryItem = ({ postingData }) => {
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
       params: {
-        postingData: {
-          postingDateTime: postingData.postingDateTime,
-          story: postingData.story,
-          postingId: postingData.postingId,
-        },
-        photoUri,
-        userAvatarColor,
-        creator,
+         postingId: postingData.postingId,
+        // postingData: {
+        //   postingDateTime: postingData.postingDateTime,
+        //   story: postingData.story,
+        //   postingId: postingData.postingId,
+        // },
+        // photoUri,
+        // userAvatarColor,
+        // creator,
       },
     });
+
+  // const toTest = () => {
+  //   navigation.navigate("CrimeStoryStack", {
+  //     screen: "Test",
+  //     params: {
+  //       postingData: {
+  //         postingId: postingData.postingId,
+  //       },
+  //     },
+  //   });
+  // };
 
   //to log in screen
   const toLogInScreen = () =>
     navigation.navigate("SignInSignUp", { screen: "LogIn" });
 
   //retreive photos from firebase storage
-  const retreivePhotoFromFirebaseStorage = async () => {
-    setPhotoUri([]);
-    try {
-      for (photo of postingData.photo) {
-        const photoRef = ref(storage, photo);
-        const source = await getDownloadURL(photoRef);
+  // const retreivePhotoFromFirebaseStorage = async () => {
+  //   setPhotoUri([]);
+  //   try {
+  //     for (photo of postingData.photo) {
+  //       const photoRef = ref(storage, photo);
+  //       const source = await getDownloadURL(photoRef);
 
-        setPhotoUri((pre) => [...pre, { uri: source }]);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //       setPhotoUri((pre) => [...pre, { uri: source }]);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //increase or decrease the vote count
-  const updateVoteCount = async () => {
-    try {
-      !voteStatus
-        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
-        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const updateVoteCount = async () => {
+  //   try {
+  //     !voteStatus
+  //       ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
+  //       : await updateDoc(docRef, { upVote: upVoteCount - 1 });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //Check whether the user has voted or not
-  const getVoteState = () => {
-    const voteAlready = votersList.filter(
-      (item) => item === currentUser.userId
-    );
+  // const getVoteState = () => {
+  //   const voteAlready = votersList.filter(
+  //     (item) => item === currentUser.userId
+  //   );
 
-    //update the vote status
-    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
-  };
+  //   //update the vote status
+  //   voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
+  // };
 
   //update the upVote count
-  const updateVoters = async () => {
-    try {
-      //if the vote state is false, add the current user id in the voters list in firestore
-      if (!voteStatus) {
-        await updateDoc(docRef, {
-          voters: [...votersList, currentUser.userId],
-        });
-        setVoteStatus(true);
-      }
-      //else remove the user if from the voters list in firestore
-      else {
-        const voters = votersList.filter((item) => item !== currentUser.userId);
-        await updateDoc(docRef, { voters });
-        setVoteStatus(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const updateVoters = async () => {
+  //   try {
+  //     //if the vote state is false, add the current user id in the voters list in firestore
+  //     if (!voteStatus) {
+  //       await updateDoc(docRef, {
+  //         voters: [...votersList, currentUser.userId],
+  //       });
+  //       setVoteStatus(true);
+  //     }
+  //     //else remove the user if from the voters list in firestore
+  //     else {
+  //       const voters = votersList.filter((item) => item !== currentUser.userId);
+  //       await updateDoc(docRef, { voters });
+  //       setVoteStatus(false);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //trigger the upvote
   const onUpVote = () => {
     if (signIn) {
-      updateVoteCount();
-      updateVoters();
+      updateVoteCount(voteStatus, upVoteCount, docRef);
+      updateVoters(
+        voteStatus,
+        setVoteStatus,
+        votersList,
+        docRef,
+        currentUser.userId
+      );
     } else {
       setShowDialog(true);
     }
   };
 
   //get real time with firestore
-  const getRealTimeUpdate = () => {
-    const collectionRef = collection(db, EnumString.postingCollection);
-    const q = query(
-      collectionRef,
-      where("postingId", "==", postingData.postingId)
-    );
+  // const getRealTimeUpdate = () => {
+  //   const collectionRef = collection(db, EnumString.postingCollection);
+  //   const q = query(
+  //     collectionRef,
+  //     where("postingId", "==", postingData.postingId)
+  //   );
 
-    //add snapshot lister to the doc
-    onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        setVoterslist(change.doc.data().voters);
-        setUpVoteCount(change.doc.data().upVote);
-      });
-    });
-  };
+  //   //add snapshot lister to the doc
+  //   onSnapshot(q, (snapshot) => {
+  //     snapshot.docChanges().forEach((change) => {
+  //       setVoterslist(change.doc.data().voters);
+  //       setUpVoteCount(change.doc.data().upVote);
+  //     });
+  //   });
+  // };
 
   //get crime story publisher info
-  const getUserData = () => {
-    onSnapshot(userDocRef, (snapshot) => {
-      setUserAvatarColor(snapshot.data().preference.avatarColor);
-      setCreator(snapshot.data().username);
-    });
-  };
+  // const getUserData = () => {
+  //   onSnapshot(userDocRef, (snapshot) => {
+  //     setUserAvatarColor(snapshot.data().preference.avatarColor);
+  //     setCreator(snapshot.data().username);
+  //   });
+  // };
 
   //retreive the photos when the page is first mounted
   //and get the real time udapte with firestore
   useEffect(() => {
-    retreivePhotoFromFirebaseStorage();
-    getRealTimeUpdate();
-    getUserData();
+    retreivePhotoFromFirebaseStorage(setPhotoUri, postingData);
+    getRealTimeUpdate(postingData.postingId, setVoterslist, setUpVoteCount);
+    getUserData(userDocRef, setUserAvatarColor, setCreator);
   }, []);
 
   //get the current user vote state
   useEffect(() => {
-    getVoteState();
+    getVoteState(votersList, setVoteStatus, currentUser.userId);
   }, [votersList, upVoteCount]);
 
   return (

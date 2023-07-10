@@ -26,8 +26,10 @@ import EnumString from "../../assets/EnumString";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
+  //current user infor from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
 
+  //state values
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
   const [photoUri, setPhotoUri] = useState([]);
@@ -43,6 +45,7 @@ const AddPostScreen = ({ navigation }) => {
   //ref to manipulate the flastlist
   const flatListRef = useRef();
 
+  //styling
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
@@ -135,18 +138,19 @@ const AddPostScreen = ({ navigation }) => {
         postingId: "",
         photo,
         postingDateTime,
-        //postBy: currentUser.username,
-        //userEmail: currentUser.email,
         upVote: 0,
         voters: [],
-        user: doc(db, EnumString.userInfoCollection, docID)
+        user: doc(db, EnumString.userInfoCollection, docID),
       };
 
+      //save the posting in forestore
       const docAdded = await addDoc(collectionRef, newPosting);
 
       const docRef = doc(db, EnumString.postingCollection, docAdded.id);
 
+      //update the postinfId
       await updateDoc(docRef, { postingId: docAdded.id });
+
       //show success dialog
       setShowSuccessDialog(true);
       setDialogTitleMsg({
@@ -155,6 +159,7 @@ const AddPostScreen = ({ navigation }) => {
       });
       setStory("");
       setPhotoUri([]);
+
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
       //show fail dialog

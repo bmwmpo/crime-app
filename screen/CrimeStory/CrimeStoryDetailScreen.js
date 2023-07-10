@@ -22,10 +22,21 @@ import {
   getDocs,
   orderBy,
   limit,
+  getDoc,
 } from "firebase/firestore";
 import { LogInDialog } from "../../component/AlertDialog";
-import { getCountSuffix } from "../../functions/voting";
+import {
+  getCountSuffix,
+  updateVoteCount,
+  getVoteState,
+  updateVoters,
+  getRealTimeUpdate,
+} from "../../functions/voting";
 import { MemoizedCommentItem } from "../../component/CommentItem";
+import {
+  retreivePhotoFromFirebaseStorage,
+  getUserData,
+} from "../../functions/getCrimeStory";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
@@ -39,6 +50,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
 
   //state values
   const [commentList, setCommentList] = useState([]);
+  const [photoUri, setPhotoUri] = useState([]);
   const [showImageView, setShowImageView] = useState({
     visible: false,
     index: 0,
@@ -48,11 +60,15 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const [votersList, setVoterslist] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
+  const [creator, setCreator] = useState("");
+  const [story, setStory] = useState("");
+  const [postingDateTime, setPostingDateTime] = useState("");
 
   //posting data
-  const { postingDateTime, story, postingId } = route.params.postingData;
-  const { photoUri, userAvatarColor, creator } = route.params;
-  const dateAndTime = postingDateTime.toDate();
+  const { postingId } = route.params;
+  // const { userAvatarColor, creator } = route.params;
+  //const dateAndTime = postingDateTime.toDate();
 
   //styling
   const isDarkMode = useTheme().dark;
@@ -80,69 +96,75 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const hideDialog = () => setShowDialog(false);
 
   //increase or decrease the vote count
-  const updateVoteCount = async () => {
-    try {
-      !voteStatus
-        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
-        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const updateVoteCount = async () => {
+  //   try {
+  //     !voteStatus
+  //       ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
+  //       : await updateDoc(docRef, { upVote: upVoteCount - 1 });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //Check whether the user has voted or not
-  const getVoteState = () => {
-    const voteAlready = votersList.filter(
-      (item) => item === currentUser.userId
-    );
+  // const getVoteState = () => {
+  //   const voteAlready = votersList.filter(
+  //     (item) => item === currentUser.userId
+  //   );
 
-    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
-  };
+  //   voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
+  // };
 
   //update the upVote count
-  const updateVoters = async () => {
-    try {
-      //if the vote state is false, add the current user id in the voters list in firestore
-      if (!voteStatus) {
-        await updateDoc(docRef, {
-          voters: [...votersList, currentUser.userId],
-        });
-        setVoteStatus(true);
-      }
-      //else remove the user if from the voters list in firestore
-      else {
-        const voters = votersList.filter((item) => item !== currentUser.userId);
-        await updateDoc(docRef, { voters });
-        setVoteStatus(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const updateVoters = async () => {
+  //   try {
+  //     //if the vote state is false, add the current user id in the voters list in firestore
+  //     if (!voteStatus) {
+  //       await updateDoc(docRef, {
+  //         voters: [...votersList, currentUser.userId],
+  //       });
+  //       setVoteStatus(true);
+  //     }
+  //     //else remove the user if from the voters list in firestore
+  //     else {
+  //       const voters = votersList.filter((item) => item !== currentUser.userId);
+  //       await updateDoc(docRef, { voters });
+  //       setVoteStatus(false);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //trigger the upvote
   const onUpVote = () => {
     if (signIn) {
-      updateVoteCount();
-      updateVoters();
+      updateVoteCount(voteStatus, upVoteCount, docRef);
+      updateVoters(
+        voteStatus,
+        setVoteStatus,
+        votersList,
+        docRef,
+        currentUser.userId
+      );
     } else {
       setShowDialog(true);
     }
   };
 
   //get real time vote count and voter list with firestore
-  const getRealTimeUpdate = () => {
-    const collectionRef = collection(db, EnumString.postingCollection);
-    const q = query(collectionRef, where("postingId", "==", postingId));
+  // const getRealTimeUpdate = () => {
+  //   const collectionRef = collection(db, EnumString.postingCollection);
+  //   const q = query(collectionRef, where("postingId", "==", postingId));
 
-    //add snapshot lister to the doc
-    onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        setVoterslist(change.doc.data().voters);
-        setUpVoteCount(change.doc.data().upVote);
-      });
-    });
-  };
+  //   //add snapshot lister to the doc
+  //   onSnapshot(q, (snapshot) => {
+  //     snapshot.docChanges().forEach((change) => {
+  //       setVoterslist(change.doc.data().voters);
+  //       setUpVoteCount(change.doc.data().upVote);
+  //     });
+  //   });
+  // };
 
   //get real time comment list with firestore
   const getComments = async () => {
@@ -176,7 +198,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        message: story,
+        message: `exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/${postingId}`,
       });
 
       if (result.action === Share.sharedAction) {
@@ -189,23 +211,50 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  //retreive crime story data from firestore
+  const getCrimeStoryData = async () => {
+    const docRef = doc(db, EnumString.postingCollection, postingId);
+
+    try {
+      const document = await getDoc(docRef);
+
+      if (document) {
+        //console.log(document.data());
+        // setCreatorDocRef(document.data().user);
+        setStory(document.data().story);
+        setPostingDateTime(
+          document.data().postingDateTime.toDate().toLocaleString()
+        );
+        retreivePhotoFromFirebaseStorage(setPhotoUri, document.data());
+        getUserData(document.data().user, setUserAvatarColor, setCreator);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //get the real time udapte with firestore with the associated posting
   useEffect(() => {
     setIsLoading(true);
-    getRealTimeUpdate();
+    getRealTimeUpdate(postingId, setVoterslist, setUpVoteCount);
     getComments();
+    getCrimeStoryData();
 
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
+
+    console.log(navigation.getState().routes[0]);
   }, [postingId]);
 
   //get the current user vote state
   useEffect(() => {
-    getVoteState();
-  });
+    getVoteState(votersList, setVoteStatus, currentUser.userId);
+  }, [votersList, upVoteCount]);
 
-  return (
+  return isLoading ? (
+    <LoadingScreen />
+  ) : (
     <SafeAreaView
       style={[styleSheet.flex_1, styleSheet.container, backgroundColor]}
     >
@@ -261,7 +310,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           </Text>
           {/* date and time */}
           <Text variant="labelLarge" style={textColor}>
-            {dateAndTime.toLocaleString()}
+            {postingDateTime}
           </Text>
         </View>
         {/* story */}
@@ -338,8 +387,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         <Text variant="titleMedium" style={textColor}>
           Be the first one to respond
         </Text>
-      ) : isLoading ? (
-        <LoadingScreen size={"small"} />
       ) : (
         <FlatList
           style={[{ height: windowHeight * 0.3, width: windowWidth }]}

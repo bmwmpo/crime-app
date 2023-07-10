@@ -4,10 +4,11 @@ import {
   NavigationContainer,
   DarkTheme,
   DefaultTheme,
+  getStateFromPath,
 } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { Pressable } from "react-native";
-import { PaperProvider, Avatar } from "react-native-paper";
+import { Pressable, } from "react-native";
+import { PaperProvider, Avatar, Text } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import UserLogInSignUpStack from "../navigation/UserLogInSignUpStack";
@@ -19,22 +20,76 @@ import LoadingScreen from "../screen/LoadingScreen";
 import AccountStack from "./AccountStack";
 import useStore from "../zustand/store";
 import CrimeStoryStack from "./CrimeStoryStack";
+import * as Linking from "expo-linking";
 
 const Drawer = createDrawerNavigator();
-
+const prefix = Linking.createURL("crimeapp://");
 const DrawerNavigation = () => {
-  
-  //const [isDarkMode, setIsDarkMode] = useState(false);
-  const { user, signIn, preference: { darkMode, avatarColor } } = useStore((state) => state);
+  const {
+    user,
+    signIn,
+    preference: { darkMode, avatarColor },
+  } = useStore((state) => state);
   const avatarLabel = user.username.toUpperCase().substring(0, 1);
-  const textColor = darkMode
-    ? styleSheet.textColor
-    : styleSheet.lightModeColor;
+  const textColor = darkMode ? styleSheet.textColor : styleSheet.lightModeColor;
+
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        CrimeStoryStack: {
+          screens: {
+            CrimeDetail: {
+              path: "CrimeDetail/:postingId",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const handleDeepLink = (event) => {
+    // let data = Linking.parse(event.url);
+    // setData(data);
+    console.log("open", event.url);
+
+    // const initialURL = await Linking.getInitialURL();
+
+    // console.log("initialURL", initialURL);
+
+    // if (initialURL) Linking.openURL(initialURL);
+  };
+
+  const initialURL = async () => {
+    const initialURL = await Linking.getInitialURL();
+
+    console.log("initialURL", initialURL);
+
+    if (initialURL) Linking.openURL(initialURL);
+  };
+
+  useEffect(() => {
+    //Linking.addEventListener("url", handleDeepLink);
+    initialURL();
+    // return () => {
+    //   Linking.removeEventListener("url");
+
+  }, []);
+
+  // useEffect(() =>
+  // {
+  //   console.log(colorScheme)
+  //   Appearance.setColorScheme('dark')
+  // },[colorScheme])
 
   return (
     <PaperProvider>
       <StatusBar style={darkMode ? "light" : "dark"} />
-      <NavigationContainer theme={darkMode ? DarkTheme : DefaultTheme}>
+      <NavigationContainer
+        theme={darkMode ? DarkTheme : DefaultTheme}
+        linking={linking}
+        fallback={<Text>Loading....</Text>}
+      >
         <Drawer.Navigator
           initialRouteName="BottomTabNavigation"
           screenOptions={({ navigation }) => ({
@@ -48,9 +103,12 @@ const DrawerNavigation = () => {
                   //display avatar if user is logged in
                   signIn ? (
                     <Avatar.Text
-                      label={ avatarLabel }
-                      style={ [styleSheet.margin_Horizontal, {backgroundColor: avatarColor}] }
-                      size={ 30 }
+                      label={avatarLabel}
+                      style={[
+                        styleSheet.margin_Horizontal,
+                        { backgroundColor: avatarColor },
+                      ]}
+                      size={30}
                     />
                   ) : (
                     <Icon
@@ -64,9 +122,7 @@ const DrawerNavigation = () => {
               </Pressable>
             ),
           })}
-          drawerContent={(props) => (
-            <CustomDrawer {...props}/>
-          )}
+          drawerContent={(props) => <CustomDrawer {...props} />}
         >
           {/* bottomTabNavigation */}
           <Drawer.Screen
