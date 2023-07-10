@@ -14,7 +14,7 @@ const EditAvatarScreen = ({ navigation }) => {
   //current user info
   const {
     user: currentUser,
-    preference: { darkMode, avatarColor },
+    preference: { darkMode, avatarColor, autoDarkMode },
     docID,
     setAvatarColor,
   } = useStore((state) => state);
@@ -40,7 +40,7 @@ const EditAvatarScreen = ({ navigation }) => {
     setIsLoading(true);
     try {
       await updateDoc(docRef, {
-        preference: { darkMode, avatarColor: newAvatarColor },
+        preference: { darkMode, avatarColor: newAvatarColor, autoDarkMode },
       });
 
       //update the useStore

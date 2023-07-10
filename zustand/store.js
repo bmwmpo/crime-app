@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const useStore = create((set, get) => ({
   user: { email: "", username: "", password: "", userID: "" },
-  preference: { darkMode: false, avatarColor: "#9400D3" },
+  preference: { darkMode: false, avatarColor: "#9400D3", autoDarkMode: false },
   signIn: false,
   docID: "",
   setEmail: (email) =>
@@ -40,6 +40,13 @@ const useStore = create((set, get) => ({
       docID: state.docID,
       signIn: state.signIn,
     })),
+  setIsAutoDarkMode: (isAutoDarkMode) =>
+    set((state) => ({
+      user: { ...state.user },
+      preference: { ...state.preference, autoDarkMode: isAutoDarkMode },
+      docID: state.docID,
+      signIn: state.signIn,
+    })),
   setAvatarColor: (color) =>
     set((state) => ({
       user: { ...state.user },
@@ -54,17 +61,29 @@ const useStore = create((set, get) => ({
       signIn: !state.signIn,
       docID: state.docID,
     })),
-  setSignedInUser: (email, username, docID, userId, darkMode, avatarColor) =>
+  setSignedInUser: (
+    email,
+    username,
+    docID,
+    userId,
+    darkMode,
+    avatarColor,
+    autoDarkMode
+  ) =>
     set((state) => ({
       user: { ...state.user, email, username, userId },
-      preference: { ...state.preference, darkMode, avatarColor },
+      preference: { ...state.preference, darkMode, avatarColor, autoDarkMode },
       signIn: true,
       docID,
     })),
   setLogOutUser: () =>
     set((state) => ({
       user: { email: "", username: "", password: "", userId: "" },
-      preference: { darkMode: false, avatarColor: "#9400D3" },
+      preference: {
+        darkMode: false,
+        avatarColor: "#9400D3",
+        autoDarkMode: false,
+      },
       signIn: false,
       docID: "",
     })),

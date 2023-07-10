@@ -15,7 +15,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import EnumString from "../assets/EnumString";
 
 //custom drawer content
-const CustomDrawer = ({ navigation }) => {
+const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
   const [showDialog, setShowDialog] = useState(false);
   const isDarkMode = useTheme().dark;
   //dark mode or light mode text and icon color style object
@@ -26,7 +26,7 @@ const CustomDrawer = ({ navigation }) => {
     user: currentUser,
     signIn,
     setIsDarkMode,
-    preference: { darkMode, avatarColor },
+    preference: { darkMode, avatarColor, autoDarkMode },
     docID,
   } = useStore((state) => state);
 
@@ -64,7 +64,7 @@ const CustomDrawer = ({ navigation }) => {
   const upDateUserPreference = async (darkMode) => {
     try {
       const docRef = doc(db, EnumString.userInfoCollection, docID);
-      await updateDoc(docRef, { preference: { darkMode, avatarColor } });
+      await updateDoc(docRef, { preference: { darkMode, avatarColor, autoDarkMode } });
     } catch (err) {
       console.log(err);
     }
@@ -73,7 +73,6 @@ const CustomDrawer = ({ navigation }) => {
   //handle DarkMode switch
   const handleSwitch = () => {
     const newPerfenenceDarkMode = !darkMode;
-
     //update the user preference in useStore
     setIsDarkMode(newPerfenenceDarkMode);
     //update the user preference in firestore
@@ -151,6 +150,19 @@ const CustomDrawer = ({ navigation }) => {
               </Text>
               <View>
                 <Drawer.Item
+                  label={<Text style={textColor}>Auto Dark Mode</Text>}
+                  icon={({ focused, color, size }) => (
+                    <Icon
+                      name="cog"
+                      color={textColor.color}
+                      size={size}
+                      style={{ marginRight: 5 }}
+                    />
+                  ) }
+                    onPress={ setVisible }
+                  rippleColor={styleSheet.highLightTextColor.color}
+                />
+                <Drawer.Item
                   label={<Text style={textColor}>Dark mode</Text>}
                   icon={({ focused, color, size }) => (
                     <Icon
@@ -160,11 +172,13 @@ const CustomDrawer = ({ navigation }) => {
                       style={{ marginRight: 5 }}
                     />
                   )}
-                  right={() => (
+                    right={ () => (
+                    //Disble the switch if useSystemSetting is true
                     <Switch
                       value={darkMode}
                       onValueChange={handleSwitch}
-                      color={styleSheet.highLightTextColor.color}
+                      color={ styleSheet.highLightTextColor.color }
+                      disabled={useSystemSetting}
                     />
                   )}
                 />
@@ -193,7 +207,7 @@ const CustomDrawer = ({ navigation }) => {
             </Drawer.Section>
           </View>
         </SafeAreaView>
-      )}
+      ) }
     </DrawerContentScrollView>
   );
 };
