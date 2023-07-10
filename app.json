@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "crime-app",
+    "scheme": "crimeapp",
     "slug": "crime-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,10 +23,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-       "userInterfaceStyle": "automatic"
+      "package": "com.g05.crimeapp",
+      "userInterfaceStyle": "automatic"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3f633037-5a1f-44a1-a6ad-d8e566e1f35e"
+      }
     }
   }
 }
