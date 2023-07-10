@@ -7,10 +7,18 @@ import {
   getStateFromPath,
 } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { Pressable, } from "react-native";
-import { PaperProvider, Avatar, Text } from "react-native-paper";
+import { Pressable, Appearance, useColorScheme, View } from "react-native";
+import {
+  PaperProvider,
+  Avatar,
+  Card,
+  RadioButton,
+  Text,
+} from "react-native-paper";
+import { BottomSheet } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { db } from "../config/firebase_config";
+import { doc, updateDoc } from "firebase/firestore";
 import UserLogInSignUpStack from "../navigation/UserLogInSignUpStack";
 import BottomTabNavigation from "../navigation/BottomTabNavigation";
 import CustomDrawer from "../navigation/CustomDrawer";
@@ -20,18 +28,36 @@ import LoadingScreen from "../screen/LoadingScreen";
 import AccountStack from "./AccountStack";
 import useStore from "../zustand/store";
 import CrimeStoryStack from "./CrimeStoryStack";
+import EnumString from "../assets/EnumString";
 import * as Linking from "expo-linking";
 
 const Drawer = createDrawerNavigator();
 const prefix = Linking.createURL("crimeapp://");
 const DrawerNavigation = () => {
+  //user Info from useStore
   const {
     user,
     signIn,
-    preference: { darkMode, avatarColor },
+    docID,
+    preference: { darkMode, avatarColor, autoDarkMode },
+    setIsAutoDarkMode,
   } = useStore((state) => state);
+
+  //get the system theme
+  const systemTheme = useColorScheme();
+
+  //state value
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  //const [useSystemSetting, setUseSystemSetting] = useState(autoDarkMode);
+
   const avatarLabel = user.username.toUpperCase().substring(0, 1);
-  const textColor = darkMode ? styleSheet.textColor : styleSheet.lightModeColor;
+
+  //styling
+  const textColor = autoDarkMode
+    ? systemTheme === "dark"
+      ? styleSheet.textColor
+      : styleSheet.lightModeColor
+    : darkMode ? styleSheet.textColor : styleSheet.lightModeColor;
 
   const linking = {
     prefixes: [prefix],
@@ -82,13 +108,80 @@ const DrawerNavigation = () => {
   //   Appearance.setColorScheme('dark')
   // },[colorScheme])
 
+  const showHideBottomSheet = () =>
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+
+  //update user's prefernce in firestore
+  const updateUserPreference = async (autoDarkMode) => {
+    const docRef = doc(db, EnumString.userInfoCollection, docID);
+    try {
+      await updateDoc(docRef, {
+        preference: { darkMode, avatarColor, autoDarkMode },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //handle use system theme
+  const handleAutoDarkMode = () => {
+    const isAutoDarkMode = !autoDarkMode;
+    //update the user preference in useStore
+    setIsAutoDarkMode(isAutoDarkMode);
+    //update the user preference in firestore
+    updateUserPreference(isAutoDarkMode);
+  };
+
   return (
     <PaperProvider>
-      <StatusBar style={darkMode ? "light" : "dark"} />
+      <StatusBar
+        style={
+          autoDarkMode
+            ? systemTheme === "dark"
+              ? "light"
+              : "dark"
+            : darkMode
+            ? "light"
+            : "dark"
+        }
+      />
+      {/* bottom sheet  */}
+      <BottomSheet
+        isVisible={isBottomSheetVisible}
+        onBackdropPress={showHideBottomSheet}
+      >
+        <Card
+          style={[styleSheet.padding_Horizontal, styleSheet.padding_Vertical]}
+        >
+          <Text variant="labelLarge">Auto Dark Mode</Text>
+          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+            <RadioButton
+              value={false}
+              status={!autoDarkMode ? "checked" : "unchecked"}
+              onPress={handleAutoDarkMode}
+            />
+            <Text variant="labelLarge">Off</Text>
+          </View>
+          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+            <RadioButton
+              value={true}
+              status={autoDarkMode ? "checked" : "unchecked"}
+              onPress={handleAutoDarkMode}
+            />
+            <Text variant="labelLarge">Use system setting</Text>
+          </View>
+        </Card>
+      </BottomSheet>
       <NavigationContainer
-        theme={darkMode ? DarkTheme : DefaultTheme}
-        linking={linking}
-        fallback={<Text>Loading....</Text>}
+        theme={
+          autoDarkMode
+            ? systemTheme === "dark"
+              ? DarkTheme
+              : DefaultTheme
+            : darkMode
+            ? DarkTheme
+            : DefaultTheme
+        }
       >
         <Drawer.Navigator
           initialRouteName="BottomTabNavigation"
@@ -122,7 +215,13 @@ const DrawerNavigation = () => {
               </Pressable>
             ),
           })}
-          drawerContent={(props) => <CustomDrawer {...props} />}
+          drawerContent={(props) => (
+            <CustomDrawer
+              {...props}
+              setVisible={showHideBottomSheet}
+              useSystemSetting={autoDarkMode}
+            />
+          )}
         >
           {/* bottomTabNavigation */}
           <Drawer.Screen

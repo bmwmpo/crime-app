@@ -33,10 +33,18 @@ const HomeScreen = () => {
           const username = documents[0].data().username;
           const docID = documents[0].data().docID;
           const userId = documents[0].data().userId;
-          const preference = documents[0].data().preference
-          
+          const preference = documents[0].data().preference;
+
           //set the user state
-          setSignedInUser(email, username, docID, userId, preference.darkMode, preference.avatarColor);
+          setSignedInUser(
+            email,
+            username,
+            docID,
+            userId,
+            preference.darkMode,
+            preference.avatarColor,
+            preference.autoDarkMode
+          );
         } else {
           setLogOutUser();
         }
