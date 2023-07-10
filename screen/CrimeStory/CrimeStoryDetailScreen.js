@@ -67,8 +67,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
 
   //posting data
   const { postingId } = route.params;
-  // const { userAvatarColor, creator } = route.params;
-  //const dateAndTime = postingDateTime.toDate();
 
   //styling
   const isDarkMode = useTheme().dark;
@@ -95,47 +93,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
 
   const hideDialog = () => setShowDialog(false);
 
-  //increase or decrease the vote count
-  // const updateVoteCount = async () => {
-  //   try {
-  //     !voteStatus
-  //       ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
-  //       : await updateDoc(docRef, { upVote: upVoteCount - 1 });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  //Check whether the user has voted or not
-  // const getVoteState = () => {
-  //   const voteAlready = votersList.filter(
-  //     (item) => item === currentUser.userId
-  //   );
-
-  //   voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
-  // };
-
-  //update the upVote count
-  // const updateVoters = async () => {
-  //   try {
-  //     //if the vote state is false, add the current user id in the voters list in firestore
-  //     if (!voteStatus) {
-  //       await updateDoc(docRef, {
-  //         voters: [...votersList, currentUser.userId],
-  //       });
-  //       setVoteStatus(true);
-  //     }
-  //     //else remove the user if from the voters list in firestore
-  //     else {
-  //       const voters = votersList.filter((item) => item !== currentUser.userId);
-  //       await updateDoc(docRef, { voters });
-  //       setVoteStatus(false);
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   //trigger the upvote
   const onUpVote = () => {
     if (signIn) {
@@ -151,20 +108,6 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       setShowDialog(true);
     }
   };
-
-  //get real time vote count and voter list with firestore
-  // const getRealTimeUpdate = () => {
-  //   const collectionRef = collection(db, EnumString.postingCollection);
-  //   const q = query(collectionRef, where("postingId", "==", postingId));
-
-  //   //add snapshot lister to the doc
-  //   onSnapshot(q, (snapshot) => {
-  //     snapshot.docChanges().forEach((change) => {
-  //       setVoterslist(change.doc.data().voters);
-  //       setUpVoteCount(change.doc.data().upVote);
-  //     });
-  //   });
-  // };
 
   //get real time comment list with firestore
   const getComments = async () => {

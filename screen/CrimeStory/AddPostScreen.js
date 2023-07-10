@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useState, useRef } from "react";
 import { db } from "../../config/firebase_config";
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { storage } from "../../config/firebase_config";
 import { ref, uploadBytes } from "firebase/storage";
 import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
@@ -117,6 +117,20 @@ const AddPostScreen = ({ navigation }) => {
     }
   };
 
+  //store the reference of the newly posted document in the user's "yourStory" list in firestore
+  const addPostToUserStoryList = async (postingRef) =>
+  {
+    const docRef = doc(db, EnumString.userInfoCollection, docID);
+    try
+    {
+      await updateDoc(docRef, {yourStory: arrayUnion(postingRef)})
+    }
+    catch (err)
+    {
+      console.log(err);
+    }
+  }
+
   //save the post in firestore
   const addPost = async () => {
     try {
@@ -150,6 +164,8 @@ const AddPostScreen = ({ navigation }) => {
 
       //update the postinfId
       await updateDoc(docRef, { postingId: docAdded.id });
+
+      await addPostToUserStoryList(docAdded.id);
 
       //show success dialog
       setShowSuccessDialog(true);

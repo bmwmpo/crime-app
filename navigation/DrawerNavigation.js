@@ -182,6 +182,8 @@ const DrawerNavigation = () => {
             ? DarkTheme
             : DefaultTheme
         }
+
+        linking={linking}
       >
         <Drawer.Navigator
           initialRouteName="BottomTabNavigation"
