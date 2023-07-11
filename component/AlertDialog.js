@@ -77,25 +77,25 @@ const LogInDialog = ({
   );
 };
 
-//log out dialog
-const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {
+//comfirm dialog
+const ConfirmDialog = ({ hideDialog, showDialog, action, title, msg }) => {
   return (
     <Portal>
       <Dialog visible={showDialog} onDismiss={hideDialog}>
         <Dialog.Title>
-          <Text variant="titleLarge">Log out</Text>
+          <Text variant="titleLarge">{ title}</Text>
         </Dialog.Title>
         <Dialog.Content>
-          <Text variant="titleMedium">{EnumString.logOutMsg}</Text>
+          <Text variant="titleMedium">{msg}</Text>
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={hideDialog}>Cancel</Button>
           <Button
             mode="contained"
             buttonColor={styleSheet.errorTextStyle.color}
-            onPress={logOut}
+            onPress={action}
           >
-            Log out
+            {title}
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -103,4 +103,4 @@ const LogOutConfirmDialog = ({ hideDialog, showDialog, logOut }) => {
   );
 };
 
-export { FailDialog, SuccessDialog, LogOutConfirmDialog, LogInDialog };
+export { FailDialog, SuccessDialog, ConfirmDialog, LogInDialog };

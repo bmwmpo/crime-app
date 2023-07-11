@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "crime-app",
+    "scheme": "crimeapp",
     "slug": "crime-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,7 +29,7 @@
           "apiKey": "AIzaSyDo4leSw4LLPK_c7MiuOv94-6qXEC1Jm6I"
         }
       },
-       "userInterfaceStyle": "automatic"
+      "userInterfaceStyle": "automatic"
 
     },
     "web": {

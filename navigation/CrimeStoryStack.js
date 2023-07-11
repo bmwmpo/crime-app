@@ -8,6 +8,7 @@ import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
 import CrimeStoryDetailScreen from "../screen/CrimeStory/CrimeStoryDetailScreen";
 import styleSheet from "../assets/StyleSheet";
 import CommentScreen from "../screen/CrimeStory/CommentScreen";
+import CommentDetailScreen from "../screen/CrimeStory/CommentDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +19,7 @@ const CrimeStoryStack = ({ navigation }) => {
     : styleSheet.lightModeColor;
 
   const cancelPress = () =>
-    navigation.navigate("BottomTabNavigation", { screen: "CrimeStories" });
+    navigation.navigate("BottomTabNavigation", { screen: "AllCrimeStories" });
 
   return (
     <Stack.Navigator initialRouteName="AllCrimeStories">

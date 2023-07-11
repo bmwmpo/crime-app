@@ -4,6 +4,7 @@ import {
   NavigationContainer,
   DarkTheme,
   DefaultTheme,
+  getStateFromPath,
 } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Pressable, Appearance, useColorScheme, View } from "react-native";
@@ -28,9 +29,11 @@ import AccountStack from "./AccountStack";
 import useStore from "../zustand/store";
 import CrimeStoryStack from "./CrimeStoryStack";
 import EnumString from "../assets/EnumString";
+import * as Linking from "expo-linking";
+import YourPostCommentScreen from "../screen/UserPostComment/YourPostCommentScreen";
 
 const Drawer = createDrawerNavigator();
-
+const prefix = Linking.createURL("crimeapp://");
 const DrawerNavigation = () => {
   //user Info from useStore
   const {
@@ -58,6 +61,48 @@ const DrawerNavigation = () => {
     : darkMode
     ? styleSheet.textColor
     : styleSheet.lightModeColor;
+
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        CrimeStoryStack: {
+          screens: {
+            CrimeDetail: {
+              path: "CrimeDetail/:postingId",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const handleDeepLink = (event) => {
+    // let data = Linking.parse(event.url);
+    // setData(data);
+    console.log("open", event.url);
+
+    // const initialURL = await Linking.getInitialURL();
+
+    // console.log("initialURL", initialURL);
+
+    // if (initialURL) Linking.openURL(initialURL);
+  };
+
+  const initialURL = async () => {
+    const initialURL = await Linking.getInitialURL();
+
+    console.log("initialURL", initialURL);
+
+    if (initialURL) Linking.openURL(initialURL);
+  };
+
+  useEffect(() => {
+    //Linking.addEventListener("url", handleDeepLink);
+    initialURL();
+    // return () => {
+    //   Linking.removeEventListener("url");
+  }, []);
 
   const showHideBottomSheet = () =>
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -133,6 +178,7 @@ const DrawerNavigation = () => {
             ? DarkTheme
             : DefaultTheme
         }
+        linking={linking}
       >
         <Drawer.Navigator
           initialRouteName="BottomTabNavigation"
@@ -196,6 +242,11 @@ const DrawerNavigation = () => {
           <Drawer.Screen
             name="CrimeStoryStack"
             component={CrimeStoryStack}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen
+            name="YourPostComment"
+            component={YourPostCommentScreen}
             options={{ headerShown: false }}
           />
         </Drawer.Navigator>

@@ -57,7 +57,7 @@ const AllCrimeStoriesScreen = () => {
     onSnapshot(collectionRef, (snapshot) => {
       if (snapshot.docChanges().length === 1) {
         snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") setVisible(true);
+          if (change.type === "added" || change.type === 'removed') setVisible(true);
         });
       }
     });
@@ -72,11 +72,12 @@ const AllCrimeStoriesScreen = () => {
   //refresh the flatlist and updatedate crime stories
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    getAllCrimeStories(limitNum);
+    
     setTimeout(() => {
-      getAllCrimeStories(limitNum);
       setRefreshing(false);
       setVisible(false);
-    }, 800);
+    }, 600);
   }, []);
 
   return (
@@ -92,7 +93,7 @@ const AllCrimeStoriesScreen = () => {
         color="#BA55D3"
         size="small"
         visible={visible}
-        title="new stories added"
+        title="Update crime stories"
         onPress={onRefresh}
         style={[styleSheet.FABStyle, styleSheet.margin_Vertical]}
       />

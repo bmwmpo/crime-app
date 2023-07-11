@@ -1,5 +1,5 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { Text, Card, Avatar, IconButton } from "react-native-paper";
+import { Text, Card, Avatar, IconButton, Menu } from "react-native-paper";
 import { useState, useEffect, useMemo } from "react";
 import { storage } from "../config/firebase_config";
 import {
@@ -22,8 +22,20 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
-import { LogInDialog } from "./AlertDialog";
-import { getCountSuffix, getTimePassing } from "../functions/voting";
+import { ConfirmDialog, LogInDialog } from "./AlertDialog";
+import {
+  getCountSuffix,
+  getTimePassing,
+  updateVoteCount,
+  getVoteState,
+  updateVoters,
+  getRealTimeUpdate,
+} from "../functions/voting";
+import {
+  retreivePhotoFromFirebaseStorage,
+  getUserData,
+  deleteCrimeStory,
+} from "../functions/getCrimeStory";
 import {
   BannerAd,
   BannerAdSize,
@@ -36,9 +48,9 @@ import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
 
 //crime story component
-const CrimeStoryItem = ({ postingData }) => {
+const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   //current user info from useStore
-  const { user: currentUser, signIn } = useStore((state) => state);
+  const { user: currentUser, signIn, docID } = useStore((state) => state);
 
   //save the photo uri in an object {uri: }
   const [photoUri, setPhotoUri] = useState([]);
@@ -54,6 +66,8 @@ const CrimeStoryItem = ({ postingData }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
   const [creator, setCreator] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   //posting Data
   const { user: userDocRef } = postingData;
@@ -80,6 +94,12 @@ const CrimeStoryItem = ({ postingData }) => {
 
   const hideDialog = () => setShowDialog(false);
 
+  const hideConfirmDialog = () => setShowConfirmDialog(false);
+
+  const openMenu = () => setMenuVisible(true);
+
+  const hideMenu = () => setMenuVisible(false);
+
   const showAds = () => {
     const num = Math.ceil(Math.random() * 5);
 
@@ -94,14 +114,7 @@ const CrimeStoryItem = ({ postingData }) => {
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
       params: {
-        postingData: {
-          postingDateTime: postingData.postingDateTime,
-          story: postingData.story,
-          postingId: postingData.postingId,
-        },
-        photoUri,
-        userAvatarColor,
-        creator,
+        postingId: postingData.postingId,
       },
     });
 
@@ -109,109 +122,40 @@ const CrimeStoryItem = ({ postingData }) => {
   const toLogInScreen = () =>
     navigation.navigate("SignInSignUp", { screen: "LogIn" });
 
-  //retreive photos from firebase storage
-  const retreivePhotoFromFirebaseStorage = async () => {
-    setPhotoUri([]);
-    try {
-      for (photo of postingData.photo) {
-        const photoRef = ref(storage, photo);
-        const source = await getDownloadURL(photoRef);
-
-        setPhotoUri((pre) => [...pre, { uri: source }]);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //increase or decrease the vote count
-  const updateVoteCount = async () => {
-    try {
-      !voteStatus
-        ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
-        : await updateDoc(docRef, { upVote: upVoteCount - 1 });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //Check whether the user has voted or not
-  const getVoteState = () => {
-    const voteAlready = votersList.filter(
-      (item) => item === currentUser.userId
-    );
-
-    //update the vote status
-    voteAlready.length > 0 ? setVoteStatus(true) : setVoteStatus(false);
-  };
-
-  //update the upVote count
-  const updateVoters = async () => {
-    try {
-      //if the vote state is false, add the current user id in the voters list in firestore
-      if (!voteStatus) {
-        await updateDoc(docRef, {
-          voters: [...votersList, currentUser.userId],
-        });
-        setVoteStatus(true);
-      }
-      //else remove the user if from the voters list in firestore
-      else {
-        const voters = votersList.filter((item) => item !== currentUser.userId);
-        await updateDoc(docRef, { voters });
-        setVoteStatus(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   //trigger the upvote
   const onUpVote = () => {
     if (signIn) {
-      updateVoteCount();
-      updateVoters();
+      updateVoteCount(voteStatus, upVoteCount, docRef);
+      updateVoters(
+        voteStatus,
+        setVoteStatus,
+        votersList,
+        docRef,
+        currentUser.userId
+      );
     } else {
       setShowDialog(true);
     }
   };
 
-  //get real time with firestore
-  const getRealTimeUpdate = () => {
-    const collectionRef = collection(db, EnumString.postingCollection);
-    const q = query(
-      collectionRef,
-      where("postingId", "==", postingData.postingId)
-    );
-
-    //add snapshot lister to the doc
-    onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        setVoterslist(change.doc.data().voters);
-        setUpVoteCount(change.doc.data().upVote);
-      });
-    });
-  };
-
-  //get crime story publisher info
-  const getUserData = () => {
-    onSnapshot(userDocRef, (snapshot) => {
-      setUserAvatarColor(snapshot.data().preference.avatarColor);
-      setCreator(snapshot.data().username);
-    });
+  //delete crime story with the given id
+  const handleDelete = async () => {
+    setIsLoading(true);
+    await deleteCrimeStory(postingData.postingId, docID);
+    setIsLoading(false);
   };
 
   //retreive the photos when the page is first mounted
   //and get the real time udapte with firestore
   useEffect(() => {
-    retreivePhotoFromFirebaseStorage();
-    getRealTimeUpdate();
-    getUserData();
+    retreivePhotoFromFirebaseStorage(setPhotoUri, postingData);
+    getRealTimeUpdate(postingData.postingId, setVoterslist, setUpVoteCount);
+    getUserData(userDocRef, setUserAvatarColor, setCreator);
   }, []);
 
   //get the current user vote state
   useEffect(() => {
-    getVoteState();
+    getVoteState(votersList, setVoteStatus, currentUser.userId);
   }, [votersList, upVoteCount]);
 
   return (
@@ -238,7 +182,15 @@ const CrimeStoryItem = ({ postingData }) => {
             message={EnumString.logInMsg}
             title={EnumString.logInTilte}
           />
-          {/* image full screen */}
+          {/* confirm delete dialog */}
+        <ConfirmDialog
+          hideDialog={hideConfirmDialog}
+          showDialog={showConfirmDialog}
+          action={handleDelete}
+          title={EnumString.deleteStoryTitle}
+          msg={EnumString.deleteStoryMsg}
+        />
+        {/* image full screen */}
           <ImageView
             images={photoUri}
             imageIndex={showImageView.index}
@@ -283,7 +235,29 @@ const CrimeStoryItem = ({ postingData }) => {
                 {getTimePassing(postingDateTime)}
               </Text>
             </View>
-          </Card.Content>
+            {showMenu && (
+            <Menu
+              visible={menuVisible}
+              onDismiss={hideMenu}
+              anchor={
+                <IconButton
+                  onPress={openMenu}
+                  icon="dots-vertical"
+                  textColor={textColor.color}
+                ></IconButton>
+              }
+              anchorPosition="bottom"
+            >
+              <Menu.Item
+                title="delete"
+                onPress={() => {
+                  setShowConfirmDialog(true);
+                  hideMenu();
+                }}
+              />
+            </Menu>
+          )}
+        </Card.Content>
           {/* story */}
           {postingData.story !== "" && (
             <Card.Content style={[styleSheet.margin_Vertical]}>
