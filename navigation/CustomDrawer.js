@@ -5,7 +5,7 @@ import { View, SafeAreaView } from "react-native";
 import { Drawer, Paragraph, Switch, Text, Avatar } from "react-native-paper";
 import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
-import { LogOutConfirmDialog } from "../component/AlertDialog";
+import { ConfirmDialog } from "../component/AlertDialog";
 import { db } from "../config/firebase_config";
 import { doc, updateDoc } from "firebase/firestore";
 import Toast from "react-native-root-toast";
@@ -16,12 +16,16 @@ import EnumString from "../assets/EnumString";
 
 //custom drawer content
 const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
+  //state values
   const [showDialog, setShowDialog] = useState(false);
   const isDarkMode = useTheme().dark;
+
   //dark mode or light mode text and icon color style object
   const textColor = isDarkMode
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
+
+  //user Info
   const {
     user: currentUser,
     signIn,
@@ -64,7 +68,9 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
   const upDateUserPreference = async (darkMode) => {
     try {
       const docRef = doc(db, EnumString.userInfoCollection, docID);
-      await updateDoc(docRef, { preference: { darkMode, avatarColor, autoDarkMode } });
+      await updateDoc(docRef, {
+        preference: { darkMode, avatarColor, autoDarkMode },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -105,12 +111,15 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
           />
         </Drawer.Section>
       ) : (
+        //signIn
         <SafeAreaView style={styleSheet.flex_1}>
           {/* log out confirm dialog */}
-          <LogOutConfirmDialog
+          <ConfirmDialog
             hideDialog={hideDialog}
             showDialog={showDialog}
-            logOut={handleSignOut}
+            action={handleSignOut}
+            title={EnumString.logOutTitle}
+            msg={EnumString.logOutMsg}
           />
           <View style={styleSheet.container}>
             <Avatar.Text
@@ -128,6 +137,7 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
           {/* drawer item */}
           <View style={styleSheet.drawerOptionsStyle}>
             <Drawer.Section>
+              {/* Account */}
               <Drawer.Item
                 label={<Text style={textColor}>Account</Text>}
                 onPress={() => navigation.navigate("Account")}
@@ -141,6 +151,20 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
                 )}
                 rippleColor={styleSheet.highLightTextColor.color}
               />
+              {/* Your Post and Comment */}
+              <Drawer.Item
+                label={<Text style={textColor}>Your Posts</Text>}
+                icon={({ focused, color, size }) => (
+                  <Icon
+                    name="document"
+                    color={textColor.color}
+                    size={size}
+                    style={{ marginRight: 5 }}
+                  />
+                )}
+                onPress={() => navigation.navigate("YourPostComment")}
+                rippleColor={styleSheet.highLightTextColor.color}
+              />
               {/* Dark mode section */}
               <Text
                 variant="titleSmall"
@@ -149,6 +173,7 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
                 Preference
               </Text>
               <View>
+                {/* auto dark mode */}
                 <Drawer.Item
                   label={<Text style={textColor}>Auto Dark Mode</Text>}
                   icon={({ focused, color, size }) => (
@@ -158,10 +183,11 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
                       size={size}
                       style={{ marginRight: 5 }}
                     />
-                  ) }
-                    onPress={ setVisible }
+                  )}
+                  onPress={setVisible}
                   rippleColor={styleSheet.highLightTextColor.color}
                 />
+                {/* manually set dark mode */}
                 <Drawer.Item
                   label={<Text style={textColor}>Dark mode</Text>}
                   icon={({ focused, color, size }) => (
@@ -172,12 +198,12 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
                       style={{ marginRight: 5 }}
                     />
                   )}
-                    right={ () => (
+                  right={() => (
                     //Disble the switch if useSystemSetting is true
                     <Switch
                       value={darkMode}
                       onValueChange={handleSwitch}
-                      color={ styleSheet.highLightTextColor.color }
+                      color={styleSheet.highLightTextColor.color}
                       disabled={useSystemSetting}
                     />
                   )}
@@ -207,7 +233,7 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
             </Drawer.Section>
           </View>
         </SafeAreaView>
-      ) }
+      )}
     </DrawerContentScrollView>
   );
 };

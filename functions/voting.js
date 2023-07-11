@@ -33,7 +33,6 @@ const getTimePassing = (dateTime) => {
 //increase or decrease the vote count
 const updateVoteCount = async (voteStatus, upVoteCount, docRef) => {
   try {
-    console.log(voteStatus, upVoteCount, docRef);
     !voteStatus
       ? await updateDoc(docRef, { upVote: upVoteCount + 1 })
       : await updateDoc(docRef, { upVote: upVoteCount - 1 });

@@ -30,6 +30,7 @@ import useStore from "../zustand/store";
 import CrimeStoryStack from "./CrimeStoryStack";
 import EnumString from "../assets/EnumString";
 import * as Linking from "expo-linking";
+import YourPostCommentScreen from "../screen/UserPostComment/YourPostCommentScreen";
 
 const Drawer = createDrawerNavigator();
 const prefix = Linking.createURL("crimeapp://");
@@ -57,7 +58,9 @@ const DrawerNavigation = () => {
     ? systemTheme === "dark"
       ? styleSheet.textColor
       : styleSheet.lightModeColor
-    : darkMode ? styleSheet.textColor : styleSheet.lightModeColor;
+    : darkMode
+    ? styleSheet.textColor
+    : styleSheet.lightModeColor;
 
   const linking = {
     prefixes: [prefix],
@@ -99,14 +102,7 @@ const DrawerNavigation = () => {
     initialURL();
     // return () => {
     //   Linking.removeEventListener("url");
-
   }, []);
-
-  // useEffect(() =>
-  // {
-  //   console.log(colorScheme)
-  //   Appearance.setColorScheme('dark')
-  // },[colorScheme])
 
   const showHideBottomSheet = () =>
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -182,7 +178,6 @@ const DrawerNavigation = () => {
             ? DarkTheme
             : DefaultTheme
         }
-
         linking={linking}
       >
         <Drawer.Navigator
@@ -247,6 +242,11 @@ const DrawerNavigation = () => {
           <Drawer.Screen
             name="CrimeStoryStack"
             component={CrimeStoryStack}
+            options={{ headerShown: false }}
+          />
+          <Drawer.Screen
+            name="YourPostComment"
+            component={YourPostCommentScreen}
             options={{ headerShown: false }}
           />
         </Drawer.Navigator>

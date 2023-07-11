@@ -11,6 +11,7 @@ export default EnumString = {
   welcomeMsg: (username) => `Weclome ${username}`,
   permissionMsg:
     "Please go to Setting > Privacy to grant the necessary permission",
+  logOutTitle:'Log out',
   logOutMsg: "Are you sure you want to log out?",
   thankYouMsg:
     "Thank you for your interest in sharing the criminal information you have",
@@ -19,6 +20,9 @@ export default EnumString = {
   userInfoCollection: "UserInfo",
   logInMsg: "Please log in or create an account to continue",
   logInTilte: "Are you interested?",
+  deleteStoryTitle: 'Delete',
+  deleteStoryMsg: 'Are you sure you want to delete?',
+  emptyCrimeStoriesList: ' Report any crime you witness'
 };
 
 const avatarColorSet = [

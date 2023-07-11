@@ -36,9 +36,9 @@ const AccountStack = ({ navigation }) => {
           headerTitle: "Account",
         })}
       />
-      <Stack.Screen name="Edit Username" component={EditUsernameScreen} />
+      <Stack.Screen name="EditUsername" component={EditUsernameScreen} />
       <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
-      <Stack.Screen name='EditAvatar' component={ EditAvatarScreen}/>
+      <Stack.Screen name='EditAvatar' component={ EditAvatarScreen } />
     </Stack.Navigator>
   );
 };
