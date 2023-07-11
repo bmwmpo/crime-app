@@ -1,8 +1,15 @@
-import { storage } from "../config/firebase_config";
+import { storage, db } from "../config/firebase_config";
 import { ref, getDownloadURL } from "firebase/storage";
-import { onSnapshot } from "firebase/firestore";
+import {
+  onSnapshot,
+  deleteDoc,
+  doc,
+  arrayRemove,
+  updateDoc,
+} from "firebase/firestore";
+import EnumString from "../assets/EnumString";
 
-//retrieve and update the voting status from Firestore for a specific crime story 
+//retrieve and update the voting status from Firestore for a specific crime story
 const retreivePhotoFromFirebaseStorage = async (setPhotoUri, postingData) => {
   setPhotoUri([]);
   try {
@@ -25,4 +32,18 @@ const getUserData = (userDocRef, setUserAvatarColor, setCreator) => {
   });
 };
 
-export { retreivePhotoFromFirebaseStorage, getUserData };
+//delete crime story from firestore
+const deleteCrimeStory = async (postingId, useDocId) => {
+  const docRef = doc(db, EnumString.postingCollection, postingId);
+  const userDocRef = doc(db, EnumString.userInfoCollection, useDocId);
+  try {
+    //delete crime story from Postings collection
+    await deleteDoc(docRef);
+    //remove deleted posting doc ref from 'yourStory' field from userInfo
+    await updateDoc(userDocRef, { yourStory: arrayRemove(docRef) });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { retreivePhotoFromFirebaseStorage, getUserData, deleteCrimeStory };

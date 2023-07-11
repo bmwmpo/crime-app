@@ -21,7 +21,7 @@ const MyAccountScreen = ({ navigation }) => {
     ? styleSheet.darkModeColor
     : styleSheet.lightModeColor;
 
-  const toEditProfileScreen = () => navigation.navigate("Edit Username");
+  const toEditProfileScreen = () => navigation.navigate("EditUsername");
 
   const toChangePasswordScreen = () => navigation.navigate("ChangePassword");
 

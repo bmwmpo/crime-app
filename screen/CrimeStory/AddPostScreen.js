@@ -165,7 +165,7 @@ const AddPostScreen = ({ navigation }) => {
       //update the postinfId
       await updateDoc(docRef, { postingId: docAdded.id });
 
-      await addPostToUserStoryList(docAdded.id);
+      await addPostToUserStoryList(docRef);
 
       //show success dialog
       setShowSuccessDialog(true);

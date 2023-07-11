@@ -52,22 +52,6 @@ const CrimeStoryStack = ({ navigation }) => {
           headerShown: false,
         })}
       />
-      <Stack.Screen
-        name="Test"
-        component={CommentDetailScreen}
-        options={({ route }) => ({
-          headerLeft: () => (
-            <Pressable onPress={cancelPress}>
-              <Icon
-                name="close-circle-outline"
-                size={30}
-                color={textColor.color}
-              />
-            </Pressable>
-          ),
-          headerTitle: "",
-        })}
-      />
     </Stack.Navigator>
   );
 };

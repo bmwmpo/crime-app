@@ -1,5 +1,5 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { Text, Card, Avatar, IconButton } from "react-native-paper";
+import { Text, Card, Avatar, IconButton, Menu } from "react-native-paper";
 import { useState, useEffect } from "react";
 import { storage } from "../config/firebase_config";
 import {
@@ -22,7 +22,7 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
-import { LogInDialog } from "./AlertDialog";
+import { ConfirmDialog, LogInDialog } from "./AlertDialog";
 import {
   getCountSuffix,
   getTimePassing,
@@ -31,7 +31,11 @@ import {
   updateVoters,
   getRealTimeUpdate,
 } from "../functions/voting";
-import { retreivePhotoFromFirebaseStorage, getUserData } from "../functions/getCrimeStory";
+import {
+  retreivePhotoFromFirebaseStorage,
+  getUserData,
+  deleteCrimeStory,
+} from "../functions/getCrimeStory";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -39,9 +43,9 @@ import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
 
 //crime story component
-const CrimeStoryItem = ({ postingData }) => {
+const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   //current user info from useStore
-  const { user: currentUser, signIn } = useStore((state) => state);
+  const { user: currentUser, signIn, docID } = useStore((state) => state);
 
   //save the photo uri in an object {uri: }
   const [photoUri, setPhotoUri] = useState([]);
@@ -57,6 +61,8 @@ const CrimeStoryItem = ({ postingData }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [userAvatarColor, setUserAvatarColor] = useState("#9400D3");
   const [creator, setCreator] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   //posting Data
   const { user: userDocRef } = postingData;
@@ -83,20 +89,18 @@ const CrimeStoryItem = ({ postingData }) => {
 
   const hideDialog = () => setShowDialog(false);
 
+  const hideConfirmDialog = () => setShowConfirmDialog(false);
+
+  const openMenu = () => setMenuVisible(true);
+
+  const hideMenu = () => setMenuVisible(false);
+
   //to crime story detail screen
   const toCrimeDetail = () =>
     navigation.navigate("CrimeStoryStack", {
       screen: "CrimeDetail",
       params: {
-         postingId: postingData.postingId,
-        // postingData: {
-        //   postingDateTime: postingData.postingDateTime,
-        //   story: postingData.story,
-        //   postingId: postingData.postingId,
-        // },
-        // photoUri,
-        // userAvatarColor,
-        // creator,
+        postingId: postingData.postingId,
       },
     });
 
@@ -118,6 +122,13 @@ const CrimeStoryItem = ({ postingData }) => {
     } else {
       setShowDialog(true);
     }
+  };
+
+  //delete crime story with the given id
+  const handleDelete = async () => {
+    setIsLoading(true);
+    await deleteCrimeStory(postingData.postingId, docID);
+    setIsLoading(false);
   };
 
   //retreive the photos when the page is first mounted
@@ -155,6 +166,14 @@ const CrimeStoryItem = ({ postingData }) => {
           navigateToLogIn={toLogInScreen}
           message={EnumString.logInMsg}
           title={EnumString.logInTilte}
+        />
+        {/* confirm delete dialog */}
+        <ConfirmDialog
+          hideDialog={hideConfirmDialog}
+          showDialog={showConfirmDialog}
+          action={handleDelete}
+          title={EnumString.deleteStoryTitle}
+          msg={EnumString.deleteStoryMsg}
         />
         {/* image full screen */}
         <ImageView
@@ -201,6 +220,28 @@ const CrimeStoryItem = ({ postingData }) => {
               {getTimePassing(postingDateTime)}
             </Text>
           </View>
+          {showMenu && (
+            <Menu
+              visible={menuVisible}
+              onDismiss={hideMenu}
+              anchor={
+                <IconButton
+                  onPress={openMenu}
+                  icon="dots-vertical"
+                  textColor={textColor.color}
+                ></IconButton>
+              }
+              anchorPosition="bottom"
+            >
+              <Menu.Item
+                title="delete"
+                onPress={() => {
+                  setShowConfirmDialog(true);
+                  hideMenu();
+                }}
+              />
+            </Menu>
+          )}
         </Card.Content>
         {/* story */}
         {postingData.story !== "" && (
