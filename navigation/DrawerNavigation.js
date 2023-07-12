@@ -34,6 +34,7 @@ import YourPostCommentScreen from "../screen/UserPostComment/YourPostCommentScre
 
 const Drawer = createDrawerNavigator();
 const prefix = Linking.createURL("crimeapp://");
+
 const DrawerNavigation = () => {
   //user Info from useStore
   const {
@@ -47,7 +48,7 @@ const DrawerNavigation = () => {
   //get the system theme
   const systemTheme = useColorScheme();
 
-  //state value
+  //state values
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   //const [useSystemSetting, setUseSystemSetting] = useState(autoDarkMode);
 
