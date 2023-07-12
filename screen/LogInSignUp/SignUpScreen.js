@@ -22,12 +22,17 @@ import {
 } from "firebase/firestore";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { Button } from "@rneui/themed";
+import {
+  setNewUserProfile,
+  duplicatedUsername,
+} from "../../functions/editUserProfile";
 import EnumString from "../../assets/EnumString";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 
 //user sign up screen
 const SignUpScreen = ({ navigation }) => {
+  //user Info
   const {
     user: { email, password, username },
     setEmail,
@@ -61,7 +66,7 @@ const SignUpScreen = ({ navigation }) => {
   const inputTextBackGroundColor = isDarkMode
     ? styleSheet.darkModeTextInputBackGroundColor
     : styleSheet.lightModeTextInputBackGroundColor;
-  const collectionRef = collection(db, "UserInfo");
+  const collectionRef = collection(db, EnumString.userInfoCollection);
   const windowWidth = Dimensions.get("window").width;
 
   //shows or hides the password
@@ -79,55 +84,29 @@ const SignUpScreen = ({ navigation }) => {
   //hide the send reset password dialog
   const hideWelcomeDialog = () => setShowWelocmeDialog(false);
 
-  //Verify if the username is already in use within Firestore
-  const duplicatedUsername = async () => {
-    const lowcaseUsername = username.toLowerCase().trim();
-
-    try {
-      const filter = where("username", "==", lowcaseUsername);
-      const q = query(collectionRef, filter);
-
-      const querySnapshot = await getDocs(q);
-      const documents = querySnapshot.docs;
-
-      //if a document with the given username is found, then return false
-      if (documents.length > 0) {
-        setValidUsername(false);
-        return true;
-      } else {
-        setValidUsername(true);
-        return false;
-      }
-    } catch (err) {
-      console.log("username error:", err);
-      return true;
-    }
-  };
-
   //save the new user infomation in firestore
   const saveUserInfoInFirestore = async ({ email, uid }) => {
+    const trimUsername = username.trim();
+    const capitalizeUsername =
+      trimUsername[0].toUpperCase() +
+      trimUsername.toLowerCase().substring(1, trimUsername.length);
+
     try {
       const data = {
         email,
         userId: uid,
-        username: username.toLowerCase().trim(),
-        preference: { darkMode: false, avatarColor:'#9400D3' },
+        username: capitalizeUsername,
+        preference: {
+          darkMode: false,
+          avatarColor: "#9400D3",
+          autoDarkMode: false,
+        },
+        yourStory: [],
       };
 
       const docAdded = await addDoc(collectionRef, data);
       const docRef = doc(db, "UserInfo", docAdded.id);
       await updateDoc(docRef, { docID: docAdded.id });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //Update new user profile in firebase
-  const setNewUserProfile = async () => {
-    try {
-      await updateProfile(auth.currentUser, {
-        displayName: username.trim().toLowerCase(),
-      });
     } catch (err) {
       console.log(err);
     }
@@ -142,7 +121,11 @@ const SignUpScreen = ({ navigation }) => {
       navigation.setOptions({ headerShown: false });
 
       //If the username is already registered, then return
-      const duplicate = await duplicatedUsername();
+      const duplicate = await duplicatedUsername(
+        collectionRef,
+        username,
+        setValidUsername
+      );
 
       if (duplicate) return;
 
@@ -153,7 +136,7 @@ const SignUpScreen = ({ navigation }) => {
         password
       );
 
-      await setNewUserProfile();
+      await setNewUserProfile(username);
       await saveUserInfoInFirestore(userCredentials.user);
 
       setIsLoading(false);
@@ -197,7 +180,6 @@ const SignUpScreen = ({ navigation }) => {
   //verify the email address
   const isValidEmailAddress = (newText) => {
     const regex = EnumString.emailRegex;
-    // const result = regex.test(newText)
 
     setValidEmailFormat(regex.test(newText));
   };

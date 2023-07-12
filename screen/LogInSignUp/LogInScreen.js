@@ -20,7 +20,9 @@ import EnumString from "../../assets/EnumString";
 import useStore from "../../zustand/store";
 
 //user log in screen
-const LogInScreen = ({ navigation }) => {
+const LogInScreen = ({ navigation }) =>
+{
+  //user Info
   const {
     user: { email, password },
     setEmail,

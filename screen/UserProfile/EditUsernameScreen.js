@@ -11,8 +11,9 @@ import {
   where,
   collection,
 } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
+import { updateProfile,  } from "firebase/auth";
 import { Button } from "@rneui/themed";
+import { setNewUserProfile, duplicatedUsername } from "../../functions/editUserProfile";
 import useStore from "../../zustand/store";
 import styleSheet from "../../assets/StyleSheet";
 import EnumString from "../../assets/EnumString";
@@ -41,53 +42,14 @@ const EditUsernameScreen = ({ navigation }) => {
     : styleSheet.lightModeTextInputBackGroundColor;
   const windowWidth = Dimensions.get("window").width;
 
+  const collectionRef = collection(db, EnumString.userInfoCollection);
+
   const deletePress = () => setNewUsername("");
 
   //return true if the username input text is empty
-  const isUsernameEmpty = () =>
-  {
-    if (newUsername.trim() === '')
-      return true;
-    else
-      return false;
-  }
-
-  //Update new user profile in firebase
-  const setNewUserProfile = async () => {
-    try {
-      await updateProfile(auth.currentUser, {
-        displayName: newUsername.trim().toLowerCase(),
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //Verify if the username is already in use
-  const duplicatedUsername = async () => {
-    const lowcaseUsername = newUsername.trim().toLowerCase();
-    const collectionRef = collection(db, EnumString.userInfoCollection);
-
-    try {
-      const filter = where("username", "==", lowcaseUsername);
-
-      const q = query(collectionRef, filter);
-
-      const querySnapshot = await getDocs(q);
-      const documents = querySnapshot.docs;
-
-      //if a document with the given username is found, then return false
-      if (documents.length > 0) {
-        setValidNewUsername(false);
-        return true;
-      } else {
-        setValidNewUsername(true);
-        return false;
-      }
-    } catch (err) {
-      console.log("username error:", err);
-      return true;
-    }
+  const isUsernameEmpty = () => {
+    if (newUsername.trim() === "") return true;
+    else return false;
   };
 
   //update the username
@@ -96,15 +58,20 @@ const EditUsernameScreen = ({ navigation }) => {
       setIsLoading(true);
 
       //If the username is already in use, return
-      const result = await duplicatedUsername();
+      const result = await duplicatedUsername(collectionRef, newUsername, setValidNewUsername);
+
+      const trimUsername = newUsername.trim();
+      const capitalizeUsername =
+        trimUsername[0].toUpperCase() +
+        trimUsername.toLowerCase().substring(1, trimUsername.length);
 
       if (result) return;
 
       //update the username in both userInfo , firebase profile, and all posting and comments
       const docRef = doc(db, EnumString.userInfoCollection, docID);
-      await updateDoc(docRef, { username: newUsername.trim().toLowerCase() });
-      await setNewUserProfile();
-      setUsername(newUsername.trim().toLowerCase());
+      await updateDoc(docRef, { username: capitalizeUsername });
+      await setNewUserProfile(newUsername);
+      setUsername(capitalizeUsername);
 
       navigation.goBack();
     } catch (err) {
@@ -150,11 +117,11 @@ const EditUsernameScreen = ({ navigation }) => {
         {/* update button */}
         <Button
           title="Update"
-          buttonStyle={ [styleSheet.buttonStyle, { width: windowWidth * 0.9 }] }
-          titleStyle={ styleSheet.buttonTextStyle }
-          onPress={ updateUsername }
-          loading={ isLoading }
-          disabled={ isUsernameEmpty() }
+          buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
+          titleStyle={styleSheet.buttonTextStyle}
+          onPress={updateUsername}
+          loading={isLoading}
+          disabled={isUsernameEmpty()}
         />
       </View>
     </KeyboardAvoidingView>
