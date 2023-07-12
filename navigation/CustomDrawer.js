@@ -91,7 +91,7 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
         //no logged in user
         //log in section
         <Drawer.Section>
-          <Paragraph style={[styleSheet.drawerTextStyle, textColor]}>
+          <Paragraph style={[styleSheet.drawerTextStyle, textColor, styleSheet.margin_Vertical]}>
             Stay informed about neighborhood crime by joining the Toronto Crime
             Tracker
           </Paragraph>
