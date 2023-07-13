@@ -2,7 +2,7 @@ import { View, Dimensions } from "react-native";
 import { List, Text } from "react-native-paper";
 import styleSheet from "../assets/StyleSheet";
 
-//custom list item component
+//custom list item component 
 const ItemComponent = ({ title, textColor }) => {
   const windowWidth = Dimensions.get("window").width;
 
