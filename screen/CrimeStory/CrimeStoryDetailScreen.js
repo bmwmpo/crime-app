@@ -130,7 +130,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         //update the commentId for the new comment othwewise commentId is underfined
         else if (change.type === "modified") {
           for (let comment of list)
-            comment.commentId = change.doc.data().commentId;
+            if (
+              comment.replyDateTime.toDate().getTime() ===
+              change.doc.data().replyDateTime.toDate().getTime()
+            )
+              comment.commentId = change.doc.data().commentId;
         }
       });
       setCommentList(list);

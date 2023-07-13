@@ -29,6 +29,7 @@ const LogInScreen = ({ navigation }) =>
     setPassword,
   } = useStore((state) => state);
 
+  //state values
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +39,7 @@ const LogInScreen = ({ navigation }) =>
   const [errorMessage, setErrorMessage] = useState("");
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
   const isDarkMode = useTheme().dark;
+
   //stylesheet object
   const textColor = isDarkMode
     ? styleSheet.darkModeColor

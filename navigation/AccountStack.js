@@ -24,6 +24,7 @@ const AccountStack = ({ navigation }) => {
         headerTitleAlign: "center",
       })}
     >
+      {/* MyAccount screen */}
       <Stack.Screen
         name="MyAccount"
         component={MyAccountScreen}
@@ -36,8 +37,11 @@ const AccountStack = ({ navigation }) => {
           headerTitle: "Account",
         })}
       />
-      <Stack.Screen name="EditUsername" component={EditUsernameScreen} />
+      {/* EditUsername screen */}
+      <Stack.Screen name="EditUsername" component={ EditUsernameScreen } />
+      {/* ChangePassword screen */}
       <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
+      {/* EditAvatar screen */}
       <Stack.Screen name='EditAvatar' component={ EditAvatarScreen } />
     </Stack.Navigator>
   );
