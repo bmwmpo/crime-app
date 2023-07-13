@@ -10,6 +10,7 @@ import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 import EnumString from "../../assets/EnumString";
 
+//change password screen
 const ChangePasswordScreen = () => {
   const {
     user: { email },
@@ -29,6 +30,7 @@ const ChangePasswordScreen = () => {
 
   const hideDialog = () => setShowDialog(false);
 
+  //handle change password 
   const updateUserPassword = async () => {
     try {
       await sendPasswordResetEmail(auth, email);

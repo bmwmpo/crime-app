@@ -22,6 +22,7 @@ const NotLogInScreen = () => {
       >
         Log in to report crimes
       </Text>
+      {/* to log in screen button */}
       <Button mode="contained" onPress={toLogInScreen}>
         Log in / Sign up
       </Button>

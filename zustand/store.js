@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useStore = create((set, get) => ({
-  user: { email: "", username: "", password: "", userID: "" },
+  user: { email: "", username: "", password: "", userId: "" },
   preference: { darkMode: false, avatarColor: "#9400D3", autoDarkMode: false },
   signIn: false,
   docID: "",
