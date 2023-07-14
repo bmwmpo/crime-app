@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { db } from "../../config/firebase_config";
 import {
   collection,
@@ -29,7 +29,7 @@ import {
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { useTheme } from "@react-navigation/native";
 import { BottomSheet } from "@rneui/themed";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import useStore from "../../zustand/store";
 import LoadingScreen from "../LoadingScreen";
 import ImageView from "react-native-image-viewing";
@@ -39,7 +39,6 @@ import * as Location from "expo-location";
 import uuid from "react-native-uuid";
 import NotLogInScreen from "../LogInSignUp/NotLogInScreen";
 import EnumString from "../../assets/EnumString";
-import { useEffect } from "react";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
@@ -101,6 +100,22 @@ const AddPostScreen = ({ navigation }) => {
     });
   };
 
+  //reverse thr coordinator to address
+  const getLocationAddress = async (coords) => {
+    try {
+      const reverseGeocode = await Location.reverseGeocodeAsync(coords);
+
+      if (reverseGeocode.length > 0) {
+        const matchedLocation = reverseGeocode[0];
+        const address = `${matchedLocation.streetNumber} ${matchedLocation.street}, ${matchedLocation.city}, ${matchedLocation.postalCode}`;
+        setLocationAddress(address);
+        console.log(address);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //get device's current location
   const getUserCurrentLocation = async () => {
     try {
@@ -110,28 +125,32 @@ const AddPostScreen = ({ navigation }) => {
         const location = await Location.getCurrentPositionAsync();
         console.log(location.coords);
 
-        const reverseGeocode = await Location.reverseGeocodeAsync(
-          location.coords
-        );
-
-        setInitRegion({
+        const curentLocationCoords = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
-        });
+        };
 
-        if (reverseGeocode.length > 0) {
-          const matchedLocation = reverseGeocode[0];
-          const address = `${matchedLocation.streetNumber} ${matchedLocation.street}, ${matchedLocation.city}, ${matchedLocation.postalCode}`;
-          setLocationAddress(address);
-          console.log(address);
-        }
-      } else {
+        setInitRegion(curentLocationCoords);
+
+        return curentLocationCoords;
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  //update the coordinator and location address with device's current location
+  const handleCurrentLocation = async () => {
+    const coords = await getUserCurrentLocation();
+    getLocationAddress(coords);
+  };
+
+  //update the coordinator and location address with draggable maker
+  const handleDraggableMaker = (coords) => {
+    setInitRegion(coords);
+    getLocationAddress(coords);
   };
 
   //select image from gallery
@@ -278,7 +297,7 @@ const AddPostScreen = ({ navigation }) => {
 
   //update the location address
   useEffect(() => {
-    if (useCurrentLocation) getUserCurrentLocation();
+    if (useCurrentLocation) handleCurrentLocation();
     else resetLocation();
   }, [useCurrentLocation]);
 
@@ -319,7 +338,6 @@ const AddPostScreen = ({ navigation }) => {
             { height: windowHeight * 0.7 },
           ]}
         >
-          <Text>{locationAddress}</Text>
           <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
             <RadioButton
               value={true}
@@ -332,7 +350,15 @@ const AddPostScreen = ({ navigation }) => {
             style={[{ width: "100%", height: "100%" }]}
             region={initRegion}
             //onRegionChange={(region) => setInitRegion(region)}
-          />
+          >
+            <Marker
+              draggable={!useCurrentLocation}
+              coordinate={initRegion}
+              onDragEnd={(e) => {
+                handleDraggableMaker(e.nativeEvent.coordinate);
+              }}
+            />
+          </MapView>
         </Card>
       </BottomSheet>
       {/* screen body */}
@@ -358,7 +384,7 @@ const AddPostScreen = ({ navigation }) => {
             />
             {/* map */}
             <Card.Actions>
-              <Button mode="contained" onPress={showHideMapView}>
+              <Button mode="contained" icon="map" onPress={showHideMapView}>
                 Map
               </Button>
             </Card.Actions>
@@ -369,6 +395,8 @@ const AddPostScreen = ({ navigation }) => {
               </Button>
             </Card.Actions>
           </View>
+          {/* location address text */}
+              <Card.Title title={ locationAddress } titleStyle={ textColor} />
           <ScrollView
             contentContainerStyle={[
               {
