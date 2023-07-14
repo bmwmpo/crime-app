@@ -45,6 +45,14 @@ const AddPostScreen = ({ navigation }) => {
   //current user infor from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
 
+  //init toronto coordinate
+  const torontoRegion = {
+    latitude: 43.653225,
+    longitude: -79.383186,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
+
   //state values
   const [story, setStory] = useState("");
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
@@ -59,13 +67,11 @@ const AddPostScreen = ({ navigation }) => {
   });
   const [showMapView, setShowMapView] = useState(false);
   const [useCurrentLocation, setUseCurrentLocation] = useState(false);
-  const [initRegion, setInitRegion] = useState({
-    latitude: 43.653225,
-    longitude: -79.383186,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  const [locationAddress, setLocationAddress] = useState("");
+  const [initRegion, setInitRegion] = useState(torontoRegion);
+  const [locationAddress, setLocationAddress] = useState(
+    EnumString.initLocationAddress
+  );
+  const [pinpointLoction, setPinpointLocation] = useState(false);
 
   //ref to manipulate the flastlist
   const flatListRef = useRef();
@@ -90,17 +96,21 @@ const AddPostScreen = ({ navigation }) => {
   const handleUseCurrentLocation = () =>
     setUseCurrentLocation(!useCurrentLocation);
 
+  //reset location address and coordinate
   const resetLocation = () => {
-    setLocationAddress("");
-    setInitRegion({
-      latitude: 43.653225,
-      longitude: -79.383186,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
+    setLocationAddress(EnumString.initLocationAddress);
+    setInitRegion(torontoRegion);
+    setPinpointLocation(false);
   };
 
-  //reverse thr coordinator to address
+  //reset all input fields
+  const resetFields = () => {
+    setStory("");
+    setPhotoUri([]);
+    resetLocation();
+  };
+
+  //reverse thr coordinate to address
   const getLocationAddress = async (coords) => {
     try {
       const reverseGeocode = await Location.reverseGeocodeAsync(coords);
@@ -109,7 +119,6 @@ const AddPostScreen = ({ navigation }) => {
         const matchedLocation = reverseGeocode[0];
         const address = `${matchedLocation.streetNumber} ${matchedLocation.street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
         setLocationAddress(address);
-        console.log(matchedLocation);
       }
     } catch (err) {
       console.log(err);
@@ -123,7 +132,6 @@ const AddPostScreen = ({ navigation }) => {
 
       if (result.status === "granted") {
         const location = await Location.getCurrentPositionAsync();
-        console.log(location.coords);
 
         const curentLocationCoords = {
           latitude: location.coords.latitude,
@@ -141,16 +149,18 @@ const AddPostScreen = ({ navigation }) => {
     }
   };
 
-  //update the coordinator and location address with device's current location
+  //update the coordinate and location address with device's current location
   const handleCurrentLocation = async () => {
     const coords = await getUserCurrentLocation();
     getLocationAddress(coords);
+    setPinpointLocation(true);
   };
 
-  //update the coordinator and location address with draggable maker
+  //update the coordinate and location address with draggable maker
   const handleDraggableMaker = (coords) => {
     setInitRegion(coords);
     getLocationAddress(coords);
+    setPinpointLocation(true);
   };
 
   //select image from gallery
@@ -236,6 +246,7 @@ const AddPostScreen = ({ navigation }) => {
 
       const postingDateTime = new Date();
 
+      //posting object
       const newPosting = {
         story: story.trim(),
         postingId: "",
@@ -245,7 +256,10 @@ const AddPostScreen = ({ navigation }) => {
         voters: [],
         user: doc(db, EnumString.userInfoCollection, docID),
         locationAddress,
-        coords: { latitude: initRegion.latitude, longitude: initRegion.longitude}
+        coords: {
+          latitude: initRegion.latitude,
+          longitude: initRegion.longitude,
+        },
       };
 
       //save the posting in forestore
@@ -264,8 +278,9 @@ const AddPostScreen = ({ navigation }) => {
         title: "",
         message: EnumString.thankYouMsg,
       });
-      setStory("");
-      setPhotoUri([]);
+
+      //reset all fields
+      resetFields();
 
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
@@ -392,13 +407,21 @@ const AddPostScreen = ({ navigation }) => {
             </Card.Actions>
             {/* report crime story button */}
             <Card.Actions>
-              <Button mode="contained" onPress={addPost}>
+              <Button
+                mode="contained"
+                disabled={!pinpointLoction}
+                onPress={addPost}
+              >
                 Report
               </Button>
             </Card.Actions>
           </View>
           {/* location address text */}
-          <Card.Title title={locationAddress} titleStyle={textColor} />
+          <Card.Title
+            title={locationAddress}
+            titleStyle={textColor}
+            multiline
+          />
           <ScrollView
             contentContainerStyle={[
               {
