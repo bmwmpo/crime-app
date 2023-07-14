@@ -107,9 +107,9 @@ const AddPostScreen = ({ navigation }) => {
 
       if (reverseGeocode.length > 0) {
         const matchedLocation = reverseGeocode[0];
-        const address = `${matchedLocation.streetNumber} ${matchedLocation.street}, ${matchedLocation.city}, ${matchedLocation.postalCode}`;
+        const address = `${matchedLocation.streetNumber} ${matchedLocation.street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
         setLocationAddress(address);
-        console.log(address);
+        console.log(matchedLocation);
       }
     } catch (err) {
       console.log(err);
@@ -244,6 +244,8 @@ const AddPostScreen = ({ navigation }) => {
         upVote: 0,
         voters: [],
         user: doc(db, EnumString.userInfoCollection, docID),
+        locationAddress,
+        coords: { latitude: initRegion.latitude, longitude: initRegion.longitude}
       };
 
       //save the posting in forestore
@@ -396,7 +398,7 @@ const AddPostScreen = ({ navigation }) => {
             </Card.Actions>
           </View>
           {/* location address text */}
-              <Card.Title title={ locationAddress } titleStyle={ textColor} />
+          <Card.Title title={locationAddress} titleStyle={textColor} />
           <ScrollView
             contentContainerStyle={[
               {
