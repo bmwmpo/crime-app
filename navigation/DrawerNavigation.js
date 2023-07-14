@@ -151,7 +151,7 @@ const DrawerNavigation = () => {
           style={[styleSheet.padding_Horizontal, styleSheet.padding_Vertical]}
         >
           <Text variant="labelLarge">Auto Dark Mode</Text>
-          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+          <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
             <RadioButton
               value={false}
               status={!autoDarkMode ? "checked" : "unchecked"}
@@ -159,7 +159,7 @@ const DrawerNavigation = () => {
             />
             <Text variant="labelLarge">Off</Text>
           </View>
-          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+          <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
             <RadioButton
               value={true}
               status={autoDarkMode ? "checked" : "unchecked"}

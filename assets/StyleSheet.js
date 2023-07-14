@@ -11,6 +11,9 @@ const styleSheet = StyleSheet.create({
   zindex_1: {
     zindex: 1,
   },
+  alignCenter: {
+    alignItems:'center'
+  },
   //padding & margin
   margin_Horizontal: {
     marginHorizontal: "10%",
