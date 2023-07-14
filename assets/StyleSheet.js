@@ -186,7 +186,7 @@ const styleSheet = StyleSheet.create({
   //create post
   createPostScrollViewStyle: {
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems:'flex-start',
   },
   FABStyle: {
     zIndex: 2,
