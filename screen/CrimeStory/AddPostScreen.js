@@ -159,8 +159,13 @@ const AddPostScreen = ({ navigation }) => {
 
   //update the coordinate and location address with draggable maker
   const handleDraggableMaker = (coords) => {
-    setInitRegion(coords);
-    getLocationAddress(coords);
+    const draggableMarkerCoords = {
+      ...coords,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    }
+    setInitRegion(draggableMarkerCoords);
+    getLocationAddress(draggableMarkerCoords);
     setPinpointLocation(true);
   };
 
@@ -406,7 +411,7 @@ const AddPostScreen = ({ navigation }) => {
           <Card.Title
             title={locationAddress}
             titleStyle={textColor}
-            multiline
+            titleNumberOfLines={5}
           />
           <ScrollView
             contentContainerStyle={[

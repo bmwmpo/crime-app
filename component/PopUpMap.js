@@ -1,6 +1,7 @@
 import { BottomSheet } from "@rneui/themed";
 import { View, Dimensions } from "react-native";
 import { Card, RadioButton, Text } from "react-native-paper";
+import { useTheme } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import styleSheet from "../assets/StyleSheet";
 
@@ -15,14 +16,24 @@ const PopUpMap = ({
   isDraggable,
   handleDraggableMaker,
 }) => {
+
+  //styling
   const windowHeight = Dimensions.get("window").height;
+  const isDarkMode = useTheme().dark;
+  const textColor = isDarkMode
+  ? styleSheet.darkModeColor
+  : styleSheet.lightModeColor;
+  const backgroundColor = isDarkMode
+  ? styleSheet.darkModeBackGroundColor
+  : styleSheet.lightModeBackGroundColor;
 
   return (
-    <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
+    <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView} >
       <Card
         style={[
           styleSheet.padding_Horizontal,
           styleSheet.padding_Vertical,
+          backgroundColor,
           { height: windowHeight * 0.7 },
         ]}
       >
@@ -35,11 +46,12 @@ const PopUpMap = ({
                 status={useCurrentLocation ? "checked" : "unchecked"}
                 onPress={handleUseCurrentLocation}
               />
-              <Text variant="labelLarge">Use current location</Text>
+              <Text variant="labelLarge" style={textColor}>Use current location</Text>
             </View>
-            <Text variant="labelLarge">
+            <Text variant="labelLarge" style={textColor}>
               or use draggable marker for the crime scene
             </Text>
+            
           </View>
         )}
         {/* map */}
