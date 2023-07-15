@@ -39,6 +39,7 @@ import * as Location from "expo-location";
 import uuid from "react-native-uuid";
 import NotLogInScreen from "../LogInSignUp/NotLogInScreen";
 import EnumString from "../../assets/EnumString";
+import PopUpMap from "../../component/PopUpMap";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
@@ -346,38 +347,17 @@ const AddPostScreen = ({ navigation }) => {
           setShowImageView((pre) => ({ ...pre, visible: false }))
         }
       />
-      {/* Map view */}
-      <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
-        <Card
-          style={[
-            styleSheet.padding_Horizontal,
-            styleSheet.padding_Vertical,
-            { height: windowHeight * 0.7 },
-          ]}
-        >
-          <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
-            <RadioButton
-              value={true}
-              status={useCurrentLocation ? "checked" : "unchecked"}
-              onPress={handleUseCurrentLocation}
-            />
-            <Text variant="labelLarge">Use current location</Text>
-          </View>
-          <MapView
-            style={[{ width: "100%", height: "100%" }]}
-            region={initRegion}
-            //onRegionChange={(region) => setInitRegion(region)}
-          >
-            <Marker
-              draggable={!useCurrentLocation}
-              coordinate={initRegion}
-              onDragEnd={(e) => {
-                handleDraggableMaker(e.nativeEvent.coordinate);
-              }}
-            />
-          </MapView>
-        </Card>
-      </BottomSheet>
+      {/* popup map view */}
+      <PopUpMap
+        showMapView={showMapView}
+        showHideMapView={showHideMapView}
+        initRegion={initRegion}
+        isRadioButton={true}
+        useCurrentLocation={useCurrentLocation}
+        handleUseCurrentLocation={handleUseCurrentLocation}
+        isDraggable={true}
+        handleDraggableMaker={handleDraggableMaker}
+      />
       {/* screen body */}
       <Card style={[styleSheet.flex_1]}>
         <Card.Title
@@ -409,8 +389,14 @@ const AddPostScreen = ({ navigation }) => {
             <Card.Actions>
               <Button
                 mode="contained"
-                disabled={!pinpointLoction}
+                disabled={!pinpointLoction || isStoryEmpty}
                 onPress={addPost}
+                style={
+                  (!pinpointLoction || isStoryEmpty) && {
+                    backgroundColor:
+                      styleSheet.disabledButtonStyle.backgroundColor,
+                  }
+                }
               >
                 Report
               </Button>

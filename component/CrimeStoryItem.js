@@ -66,8 +66,10 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
 
   //posting Data
   const { user: userDocRef } = postingData;
-  const storyBody = `${postingData.story.substring(0, 31)}...`;
+  const storyBody =
+    !(postingData.story === "") && `${postingData.story.substring(0, 31)}...`;
   const postingDateTime = postingData.postingDateTime.toDate();
+  const locationAddress = postingData.locationAddress;
 
   const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
 
@@ -220,6 +222,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
               {getTimePassing(postingDateTime)}
             </Text>
           </View>
+          {/* menu button on available on Your Post screen*/}
           {showMenu && (
             <Menu
               visible={menuVisible}
@@ -243,14 +246,15 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
             </Menu>
           )}
         </Card.Content>
-        {/* story */}
-        {postingData.story !== "" && (
-          <Card.Content style={[styleSheet.margin_Vertical]}>
-            <Text variant="titleMedium" style={textColor}>
-              {storyBody}
-            </Text>
-          </Card.Content>
-        )}
+        {/* story and crime scene location*/}
+        <Card.Content style={[styleSheet.margin_Vertical]}>
+          <Text variant="titleSmall" style={textColor}>
+            {locationAddress}
+          </Text>
+          <Text variant="titleMedium" style={textColor}>
+            {storyBody}
+          </Text>
+        </Card.Content>
         {/* Photo section */}
         {photoUri.length > 0 && (
           <Card.Content

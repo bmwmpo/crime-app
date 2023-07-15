@@ -23,7 +23,7 @@ export default EnumString = {
   deleteStoryTitle: 'Delete',
   deleteStoryMsg: 'Are you sure you want to delete?',
   emptyCrimeStoriesList: ' Report any crime you witness',
-  initLocationAddress:'pinpoint the crime location using the map'
+  initLocationAddress:'pinpoint the crime scene using the map'
 };
 
 const avatarColorSet = [
