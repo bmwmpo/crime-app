@@ -286,16 +286,15 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           onPress={showHideMapView}
         >
           <Icon name="map" color={textColor.color} />
-          <Text
-            variant="titleMedium"
-            style={[
+          <Card.Title
+            title={locationAddress}
+            titleNumberOfLines={5}
+            titleStyle={[
               textColor,
               styleSheet.margin_Vertical,
               styleSheet.underLineTextStyle,
             ]}
-          >
-            {locationAddress}
-          </Text>
+          />
         </TouchableOpacity>
         {/* story */}
         <Text
