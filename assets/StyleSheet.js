@@ -89,7 +89,7 @@ const styleSheet = StyleSheet.create({
     width: "90%",
   },
   touchableRippleWidth: {
-    width: "50%",
+    width: "100%",
   },
   flexRowContainer: {
     flexDirection: "row",

@@ -6,9 +6,10 @@ import {
   Pressable,
   Image,
   Share,
+  TouchableOpacity,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { Text, Avatar, Appbar, Button } from "react-native-paper";
+import { Text, Avatar, Appbar, Button, Card } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { db } from "../../config/firebase_config";
@@ -37,11 +38,14 @@ import {
   retreivePhotoFromFirebaseStorage,
   getUserData,
 } from "../../functions/getCrimeStory";
+import { BottomSheet, Icon } from "@rneui/themed";
+import MapView, { Marker } from "react-native-maps";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 import EnumString from "../../assets/EnumString";
 import LoadingScreen from "../LoadingScreen";
+import PopUpMap from "../../component/PopUpMap";
 
 //Crime story detail
 const CrimeStoryDetailScreen = ({ route, navigation }) => {
@@ -64,6 +68,12 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const [creator, setCreator] = useState("");
   const [story, setStory] = useState("");
   const [postingDateTime, setPostingDateTime] = useState("");
+  const [locationAddress, setLocationAddress] = useState("");
+  const [initRegion, setInitRegion] = useState({
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+  const [showMapView, setShowMapView] = useState(false);
 
   //posting data
   const { postingId } = route.params;
@@ -80,6 +90,8 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   const windowHeight = Dimensions.get("window").height;
 
   const docRef = doc(db, EnumString.postingCollection, postingId);
+
+  const showHideMapView = () => setShowMapView(!showMapView);
 
   //navigate to CommentScreen
   const toCommentScreen = () => {
@@ -172,6 +184,8 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         setPostingDateTime(
           document.data().postingDateTime.toDate().toLocaleString()
         );
+        setLocationAddress(document.data().locationAddress);
+        setInitRegion((pre) => ({ ...pre, ...document.data().coords }));
         retreivePhotoFromFirebaseStorage(setPhotoUri, document.data());
         getUserData(document.data().user, setUserAvatarColor, setCreator);
       }
@@ -222,6 +236,12 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
           setShowImageView((pre) => ({ ...pre, visible: false }))
         }
       />
+      {/* Map view */}
+      <PopUpMap
+        showMapView={showMapView}
+        showHideMapView={showHideMapView}
+        initRegion={initRegion}
+      />
       <ScrollView
         style={[
           { padding: "2%", width: windowWidth, height: windowHeight * 0.75 },
@@ -260,6 +280,23 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
             {postingDateTime}
           </Text>
         </View>
+        {/* crime scene location */}
+        <TouchableOpacity
+          style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}
+          onPress={showHideMapView}
+        >
+          <Icon name="map" color={textColor.color} />
+          <Text
+            variant="titleMedium"
+            style={[
+              textColor,
+              styleSheet.margin_Vertical,
+              styleSheet.underLineTextStyle,
+            ]}
+          >
+            {locationAddress}
+          </Text>
+        </TouchableOpacity>
         {/* story */}
         <Text
           variant="titleLarge"
