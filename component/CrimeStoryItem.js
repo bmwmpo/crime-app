@@ -137,7 +137,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   //and get the real time udapte with firestore
   useEffect(() => {
     retreivePhotoFromFirebaseStorage(setPhotoUri, postingData);
-    getRealTimeUpdate(postingData.postingId, setVoterslist, setUpVoteCount);
+    getRealTimeUpdate(docRef, setVoterslist, setUpVoteCount);
     getUserData(userDocRef, setUserAvatarColor, setCreator);
   }, []);
 

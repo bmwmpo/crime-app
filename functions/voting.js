@@ -2,6 +2,7 @@ import {
   updateDoc,
   onSnapshot,
   collection,
+  doc,
   query,
   where,
 } from "firebase/firestore";
@@ -77,19 +78,13 @@ const updateVoters = async (
 };
 
 //get real time vote count and voter list with firestore
-const getRealTimeUpdate = (postingId, setVoterslist, setUpVoteCount) => {
-  const collectionRef = collection(db, EnumString.postingCollection);
-  const q = query(collectionRef, where("postingId", "==", postingId));
-
-  //add snapshot lister to the doc
-  onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      setVoterslist(change.doc.data().voters);
-      setUpVoteCount(change.doc.data().upVote);
-    });
-  });
+const getRealTimeUpdate = (docRef, setVoterslist, setUpVoteCount) => {
+  onSnapshot(docRef, doc =>
+  {
+    setVoterslist(doc.data().voters);
+    setUpVoteCount(doc.data().upVote)
+  })
 };
-
 
 export {
   getCountSuffix,
