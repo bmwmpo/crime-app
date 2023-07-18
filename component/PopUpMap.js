@@ -16,25 +16,20 @@ const PopUpMap = ({
   isDraggable,
   handleDraggableMaker,
 }) => {
-
   //styling
   const windowHeight = Dimensions.get("window").height;
   const isDarkMode = useTheme().dark;
   const textColor = isDarkMode
-  ? styleSheet.darkModeColor
-  : styleSheet.lightModeColor;
-  const backgroundColor = isDarkMode
-  ? styleSheet.darkModeBackGroundColor
-  : styleSheet.lightModeBackGroundColor;
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
 
   return (
-    <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView} >
+    <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
       <Card
         style={[
           styleSheet.padding_Horizontal,
           styleSheet.padding_Vertical,
-          backgroundColor,
-          { height: windowHeight * 0.7 },
+          { height: windowHeight * 0.7, backgroundColor: "#797979" },
         ]}
       >
         {/* use current location radio button */}
@@ -46,12 +41,13 @@ const PopUpMap = ({
                 status={useCurrentLocation ? "checked" : "unchecked"}
                 onPress={handleUseCurrentLocation}
               />
-              <Text variant="labelLarge" style={textColor}>Use current location</Text>
+              <Text variant="labelLarge" style={textColor}>
+                Use current location
+              </Text>
             </View>
             <Text variant="labelLarge" style={textColor}>
               or use draggable marker for the crime scene
             </Text>
-            
           </View>
         )}
         {/* map */}

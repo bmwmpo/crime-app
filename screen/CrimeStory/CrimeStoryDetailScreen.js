@@ -197,7 +197,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
   //get the real time udapte with firestore with the associated posting
   useEffect(() => {
     setIsLoading(true);
-    getRealTimeUpdate(postingId, setVoterslist, setUpVoteCount);
+    getRealTimeUpdate(docRef, setVoterslist, setUpVoteCount);
     getComments();
     getCrimeStoryData();
 
