@@ -23,11 +23,13 @@ const CrimeStoryStack = ({ navigation }) => {
 
   return (
     <Stack.Navigator initialRouteName="AllCrimeStories">
+      {/* AllCrimeStories screen */}
       <Stack.Screen
         name="AllCrimeStories"
         component={AllCrimeStoriesScreen}
         options={() => ({ headerShown: false })}
       />
+      {/* CrimeDetial screen */}
       <Stack.Screen
         name="CrimeDetail"
         component={CrimeStoryDetailScreen}
@@ -44,6 +46,7 @@ const CrimeStoryStack = ({ navigation }) => {
           headerTitle: "",
         })}
       />
+      {/* Comment screen */}
       <Stack.Screen
         name="Comment"
         component={CommentScreen}

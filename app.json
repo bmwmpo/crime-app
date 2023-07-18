@@ -43,5 +43,11 @@
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-1971382760141735~3468145448"
+    },
+    "plugins":[
+      [
+        "expo-location",{"locationAlwaysAndWhenInUsePermission": "Allow crime-app to use your location."}
+      ]
+    ]
   }
 }

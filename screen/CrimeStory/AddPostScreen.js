@@ -7,27 +7,52 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { db } from "../../config/firebase_config";
-import { collection, addDoc, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { storage } from "../../config/firebase_config";
 import { ref, uploadBytes } from "firebase/storage";
-import { TextInput, FAB, Button, Card, Text } from "react-native-paper";
+import {
+  TextInput,
+  FAB,
+  Button,
+  Card,
+  RadioButton,
+  Text,
+} from "react-native-paper";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { useTheme } from "@react-navigation/native";
+import { BottomSheet } from "@rneui/themed";
+import MapView, { Marker } from "react-native-maps";
 import useStore from "../../zustand/store";
 import LoadingScreen from "../LoadingScreen";
 import ImageView from "react-native-image-viewing";
 import styleSheet from "../../assets/StyleSheet";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import uuid from "react-native-uuid";
 import NotLogInScreen from "../LogInSignUp/NotLogInScreen";
 import EnumString from "../../assets/EnumString";
+import PopUpMap from "../../component/PopUpMap";
 
 //create post screen
 const AddPostScreen = ({ navigation }) => {
   //current user infor from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
+
+  //init toronto coordinate
+  const torontoRegion = {
+    latitude: 43.653225,
+    longitude: -79.383186,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
 
   //state values
   const [story, setStory] = useState("");
@@ -41,6 +66,13 @@ const AddPostScreen = ({ navigation }) => {
     visible: false,
     index: 0,
   });
+  const [showMapView, setShowMapView] = useState(false);
+  const [useCurrentLocation, setUseCurrentLocation] = useState(false);
+  const [initRegion, setInitRegion] = useState(torontoRegion);
+  const [locationAddress, setLocationAddress] = useState(
+    EnumString.initLocationAddress
+  );
+  const [pinpointLoction, setPinpointLocation] = useState(false);
 
   //ref to manipulate the flastlist
   const flatListRef = useRef();
@@ -59,6 +91,83 @@ const AddPostScreen = ({ navigation }) => {
   const hideFailedDialog = () => setShowFailDialog(false);
 
   const hideSucessDialog = () => setShowSuccessDialog(false);
+
+  const showHideMapView = () => setShowMapView(!showMapView);
+
+  const handleUseCurrentLocation = () =>
+    setUseCurrentLocation(!useCurrentLocation);
+
+  //reset location address and coordinate
+  const resetLocation = () => {
+    setLocationAddress(EnumString.initLocationAddress);
+    setInitRegion(torontoRegion);
+    setPinpointLocation(false);
+  };
+
+  //reset all input fields
+  const resetFields = () => {
+    setStory("");
+    setPhotoUri([]);
+    resetLocation();
+  };
+
+  //reverse thr coordinate to address
+  const getLocationAddress = async (coords) => {
+    try {
+      const reverseGeocode = await Location.reverseGeocodeAsync(coords);
+
+      if (reverseGeocode.length > 0) {
+        const matchedLocation = reverseGeocode[0];
+        const address = `${matchedLocation.streetNumber} ${matchedLocation.street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
+        setLocationAddress(address);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //get device's current location
+  const getUserCurrentLocation = async () => {
+    try {
+      const result = await Location.requestForegroundPermissionsAsync();
+
+      if (result.status === "granted") {
+        const location = await Location.getCurrentPositionAsync();
+
+        const curentLocationCoords = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+
+        setInitRegion(curentLocationCoords);
+
+        return curentLocationCoords;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //update the coordinate and location address with device's current location
+  const handleCurrentLocation = async () => {
+    const coords = await getUserCurrentLocation();
+    getLocationAddress(coords);
+    setPinpointLocation(true);
+  };
+
+  //update the coordinate and location address with draggable maker
+  const handleDraggableMaker = (coords) => {
+    const draggableMarkerCoords = {
+      ...coords,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    }
+    setInitRegion(draggableMarkerCoords);
+    getLocationAddress(draggableMarkerCoords);
+    setPinpointLocation(true);
+  };
 
   //select image from gallery
   const selectPhoto = async () => {
@@ -118,18 +227,14 @@ const AddPostScreen = ({ navigation }) => {
   };
 
   //store the reference of the newly posted document in the user's "yourStory" list in firestore
-  const addPostToUserStoryList = async (postingRef) =>
-  {
+  const addPostToUserStoryList = async (postingRef) => {
     const docRef = doc(db, EnumString.userInfoCollection, docID);
-    try
-    {
-      await updateDoc(docRef, {yourStory: arrayUnion(postingRef)})
-    }
-    catch (err)
-    {
+    try {
+      await updateDoc(docRef, { yourStory: arrayUnion(postingRef) });
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   //save the post in firestore
   const addPost = async () => {
@@ -147,6 +252,7 @@ const AddPostScreen = ({ navigation }) => {
 
       const postingDateTime = new Date();
 
+      //posting object
       const newPosting = {
         story: story.trim(),
         postingId: "",
@@ -155,6 +261,11 @@ const AddPostScreen = ({ navigation }) => {
         upVote: 0,
         voters: [],
         user: doc(db, EnumString.userInfoCollection, docID),
+        locationAddress,
+        coords: {
+          latitude: initRegion.latitude,
+          longitude: initRegion.longitude,
+        },
       };
 
       //save the posting in forestore
@@ -173,8 +284,9 @@ const AddPostScreen = ({ navigation }) => {
         title: "",
         message: EnumString.thankYouMsg,
       });
-      setStory("");
-      setPhotoUri([]);
+
+      //reset all fields
+      resetFields();
 
       navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
@@ -206,6 +318,12 @@ const AddPostScreen = ({ navigation }) => {
     });
   };
 
+  //update the location address
+  useEffect(() => {
+    if (useCurrentLocation) handleCurrentLocation();
+    else resetLocation();
+  }, [useCurrentLocation]);
+
   return !signIn ? (
     <NotLogInScreen />
   ) : isLoading ? (
@@ -234,6 +352,18 @@ const AddPostScreen = ({ navigation }) => {
           setShowImageView((pre) => ({ ...pre, visible: false }))
         }
       />
+      {/* popup map view */}
+      <PopUpMap
+        showMapView={showMapView}
+        showHideMapView={showHideMapView}
+        initRegion={initRegion}
+        isRadioButton={true}
+        useCurrentLocation={useCurrentLocation}
+        handleUseCurrentLocation={handleUseCurrentLocation}
+        isDraggable={true}
+        handleDraggableMaker={handleDraggableMaker}
+      />
+      {/* screen body */}
       <Card style={[styleSheet.flex_1]}>
         <Card.Title
           title="Report a crime"
@@ -246,6 +376,7 @@ const AddPostScreen = ({ navigation }) => {
         >
           {/* share, select images, and add post opyions */}
           <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
+            {/* image */}
             <FAB
               icon="image"
               size="small"
@@ -253,12 +384,35 @@ const AddPostScreen = ({ navigation }) => {
               style={styleSheet.margin_Horizontal_3}
               onPress={selectPhoto}
             />
+            {/* map */}
             <Card.Actions>
-              <Button mode="contained" onPress={addPost}>
+              <Button mode="contained" icon="map" onPress={showHideMapView}>
+                Map
+              </Button>
+            </Card.Actions>
+            {/* report crime story button */}
+            <Card.Actions>
+              <Button
+                mode="contained"
+                disabled={!pinpointLoction || isStoryEmpty}
+                onPress={addPost}
+                style={
+                  (!pinpointLoction || isStoryEmpty) && {
+                    backgroundColor:
+                      styleSheet.disabledButtonStyle.backgroundColor,
+                  }
+                }
+              >
                 Report
               </Button>
             </Card.Actions>
           </View>
+          {/* location address text */}
+          <Card.Title
+            title={locationAddress}
+            titleStyle={textColor}
+            titleNumberOfLines={5}
+          />
           <ScrollView
             contentContainerStyle={[
               {
@@ -298,6 +452,7 @@ const AddPostScreen = ({ navigation }) => {
                         paddingRight: windowWidth * 0.1,
                       }}
                     >
+                      {/* delete image button */}
                       <FAB
                         icon="delete-empty"
                         style={{
@@ -314,6 +469,7 @@ const AddPostScreen = ({ navigation }) => {
                           setShowImageView({ visible: true, index });
                         }}
                       >
+                        {/* imaage */}
                         <Card.Cover
                           source={{ uri: item.uri }}
                           style={{

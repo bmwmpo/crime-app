@@ -78,32 +78,47 @@ const DrawerNavigation = () => {
     },
   };
 
-  const handleDeepLink = (event) => {
-    // let data = Linking.parse(event.url);
-    // setData(data);
-    console.log("open", event.url);
-
-    // const initialURL = await Linking.getInitialURL();
-
-    // console.log("initialURL", initialURL);
-
-    // if (initialURL) Linking.openURL(initialURL);
-  };
-
-  const initialURL = async () => {
-    const initialURL = await Linking.getInitialURL();
-
-    console.log("initialURL", initialURL);
-
-    if (initialURL) Linking.openURL(initialURL);
-  };
+  const url =  Linking.useURL();
 
   useEffect(() => {
-    //Linking.addEventListener("url", handleDeepLink);
-    initialURL();
-    // return () => {
-    //   Linking.removeEventListener("url");
+    console.log("url =", url);
+    if (url)
+    {
+      console.log('Call')
+      Linking.openURL(url);
+    }
   }, []);
+
+  // const handleDeepLink = (event) => {
+  //   // let data = Linking.parse(event.url);
+  //   // setData(data);
+  //   console.log("open", event.url);
+
+  //   // const initialURL = await Linking.getInitialURL();
+
+  //   // console.log("initialURL", initialURL);
+
+  //   // if (initialURL) Linking.openURL(initialURL);
+  // };
+
+  // const initialURL = async () => {
+  //   const initialURL = await Linking.getInitialURL();
+
+  //   console.log("initialURL", initialURL);
+  //   console.log("url", url);
+
+  //   if (initialURL && url.current !== initialURL) {
+  //     url.current = initialURL;
+  //     Linking.openURL(initialURL);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   //Linking.addEventListener("url", handleDeepLink);
+  //   initialURL();
+  //   // return () => {
+  //   //   Linking.removeEventListener("url");
+  // }, []);
 
   const showHideBottomSheet = () =>
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -151,7 +166,7 @@ const DrawerNavigation = () => {
           style={[styleSheet.padding_Horizontal, styleSheet.padding_Vertical]}
         >
           <Text variant="labelLarge">Auto Dark Mode</Text>
-          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+          <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
             <RadioButton
               value={false}
               status={!autoDarkMode ? "checked" : "unchecked"}
@@ -159,7 +174,7 @@ const DrawerNavigation = () => {
             />
             <Text variant="labelLarge">Off</Text>
           </View>
-          <View style={[styleSheet.flexRowContainer, { alignItems: "center" }]}>
+          <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
             <RadioButton
               value={true}
               status={autoDarkMode ? "checked" : "unchecked"}

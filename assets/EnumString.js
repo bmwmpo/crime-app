@@ -22,7 +22,8 @@ export default EnumString = {
   logInTilte: "Are you interested?",
   deleteStoryTitle: 'Delete',
   deleteStoryMsg: 'Are you sure you want to delete?',
-  emptyCrimeStoriesList: ' Report any crime you witness'
+  emptyCrimeStoriesList: ' Report any crime you witness',
+  initLocationAddress:'pinpoint the crime scene using the map'
 };
 
 const avatarColorSet = [

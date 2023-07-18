@@ -71,8 +71,10 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
 
   //posting Data
   const { user: userDocRef } = postingData;
-  const storyBody = `${postingData.story.substring(0, 31)}...`;
+  const storyBody =
+    !(postingData.story === "") && `${postingData.story.substring(0, 31)}...`;
   const postingDateTime = postingData.postingDateTime.toDate();
+  const locationAddress = postingData.locationAddress;
 
   const docRef = doc(db, EnumString.postingCollection, postingData.postingId);
 
@@ -149,7 +151,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   //and get the real time udapte with firestore
   useEffect(() => {
     retreivePhotoFromFirebaseStorage(setPhotoUri, postingData);
-    getRealTimeUpdate(postingData.postingId, setVoterslist, setUpVoteCount);
+    getRealTimeUpdate(docRef, setVoterslist, setUpVoteCount);
     getUserData(userDocRef, setUserAvatarColor, setCreator);
   }, []);
 
@@ -191,51 +193,52 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
           msg={EnumString.deleteStoryMsg}
         />
         {/* image full screen */}
-          <ImageView
-            images={photoUri}
-            imageIndex={showImageView.index}
-            visible={showImageView.visible}
-            onRequestClose={() =>
-              setShowImageView((pre) => ({ ...pre, visible: false }))
-            }
-          />
-          {/* posting info: author, date and time */}
-          <Card.Content
-            style={[
-              styleSheet.flexRowContainer,
-              styleSheet.flexSpaceBetweenStyle,
-            ]}
-          >
-            {/* author */}
-            <View>
-              <Avatar.Text
-                label={creator.substring(0, 1).toUpperCase()}
-                size={30}
-                style={{ backgroundColor: userAvatarColor }}
-              />
-            </View>
-            {/* date and time */}
-            <View style={[styleSheet.flexStartContainer]}>
-              <Text
-                variant="labelLarge"
-                style={[
-                  styleSheet.margin_HorizontflexStartContaineral_right,
-                  textColor,
-                ]}
-              >
-                {creator}
-              </Text>
-              <Text variant="labelLarge" style={textColor}>
-                {postingDateTime.toLocaleString()}
-              </Text>
-            </View>
-            {/* passing time */}
-            <View>
-              <Text variant="labelLarge" style={textColor}>
-                {getTimePassing(postingDateTime)}
-              </Text>
-            </View>
-            {showMenu && (
+        <ImageView
+          images={photoUri}
+          imageIndex={showImageView.index}
+          visible={showImageView.visible}
+          onRequestClose={() =>
+            setShowImageView((pre) => ({ ...pre, visible: false }))
+          }
+        />
+        {/* posting info: author, date and time */}
+        <Card.Content
+          style={[
+            styleSheet.flexRowContainer,
+            styleSheet.flexSpaceBetweenStyle,
+          ]}
+        >
+          {/* author */}
+          <View>
+            <Avatar.Text
+              label={creator.substring(0, 1).toUpperCase()}
+              size={30}
+              style={{ backgroundColor: userAvatarColor }}
+            />
+          </View>
+          {/* date and time */}
+          <View style={[styleSheet.flexStartContainer]}>
+            <Text
+              variant="labelLarge"
+              style={[
+                styleSheet.margin_HorizontflexStartContaineral_right,
+                textColor,
+              ]}
+            >
+              {creator}
+            </Text>
+            <Text variant="labelLarge" style={textColor}>
+              {postingDateTime.toLocaleString()}
+            </Text>
+          </View>
+          {/* passing time */}
+          <View>
+            <Text variant="labelLarge" style={textColor}>
+              {getTimePassing(postingDateTime)}
+            </Text>
+          </View>
+          {/* menu button on available on Your Post screen*/}
+          {showMenu && (
             <Menu
               visible={menuVisible}
               onDismiss={hideMenu}
@@ -258,64 +261,65 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
             </Menu>
           )}
         </Card.Content>
-          {/* story */}
-          {postingData.story !== "" && (
-            <Card.Content style={[styleSheet.margin_Vertical]}>
-              <Text variant="titleMedium" style={textColor}>
-                {storyBody}
-              </Text>
-            </Card.Content>
-          )}
-          {/* Photo section */}
-          {photoUri.length > 0 && (
-            <Card.Content
-              style={[styleSheet.container, styleSheet.margin_Vertical]}
-            >
-              <FlatList
-                horizontal
-                style={{ width: windowWidth * 0.9, height: windowHeight * 0.2 }}
-                data={photoUri}
-                keyExtractor={(item) => item.uri}
-                renderItem={({ item, index }) => (
-                  <Pressable
-                    onPress={() => {
-                      setShowImageView({ visible: true, index });
-                    }}
-                  >
-                    <Card.Cover
-                      source={{ uri: item.uri }}
-                      style={{
-                        width: windowWidth * 0.9,
-                        height: windowHeight * 0.2,
-                      }}
-                    />
-                  </Pressable>
-                )}
-              />
-            </Card.Content>
-          )}
-          {/* vote section */}
+        {/* story and crime scene location*/}
+        <Card.Content style={[styleSheet.margin_Vertical]}>
+          <Text variant="titleSmall" style={textColor}>
+            {locationAddress}
+          </Text>
+          <Text variant="titleMedium" style={textColor}>
+            {storyBody}
+          </Text>
+        </Card.Content>
+        {/* Photo section */}
+        {photoUri.length > 0 && (
           <Card.Content
-            style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
+            style={[styleSheet.container, styleSheet.margin_Vertical]}
           >
-            {voteStatus ? (
-              <IconButton
-                icon="thumb-up"
-                iconColor={textColor.color}
-                onPress={onUpVote}
-              />
-            ) : (
-              <IconButton
-                icon="thumb-up-outline"
-                iconColor={textColor.color}
-                onPress={onUpVote}
-              />
-            )}
-            <Text variant="labelLarge" style={textColor}>
-              {getCountSuffix(upVoteCount)}
-            </Text>
+            <FlatList
+              horizontal
+              style={{ width: windowWidth * 0.9, height: windowHeight * 0.2 }}
+              data={photoUri}
+              keyExtractor={(item) => item.uri}
+              renderItem={({ item, index }) => (
+                <Pressable
+                  onPress={() => {
+                    setShowImageView({ visible: true, index });
+                  }}
+                >
+                  <Card.Cover
+                    source={{ uri: item.uri }}
+                    style={{
+                      width: windowWidth * 0.9,
+                      height: windowHeight * 0.2,
+                    }}
+                  />
+                </Pressable>
+              )}
+            />
           </Card.Content>
-        </Card>
+        )}
+        {/* vote section */}
+        <Card.Content
+          style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
+        >
+          {voteStatus ? (
+            <IconButton
+              icon="thumb-up"
+              iconColor={textColor.color}
+              onPress={onUpVote}
+            />
+          ) : (
+            <IconButton
+              icon="thumb-up-outline"
+              iconColor={textColor.color}
+              onPress={onUpVote}
+            />
+          )}
+          <Text variant="labelLarge" style={textColor}>
+            {getCountSuffix(upVoteCount)}
+          </Text>
+        </Card.Content>
+      </Card>
       </TouchableOpacity>
       {isShowAds && (
         <Card

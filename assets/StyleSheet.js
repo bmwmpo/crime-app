@@ -11,6 +11,9 @@ const styleSheet = StyleSheet.create({
   zindex_1: {
     zindex: 1,
   },
+  alignCenter: {
+    alignItems:'center'
+  },
   //padding & margin
   margin_Horizontal: {
     marginHorizontal: "10%",
@@ -86,7 +89,7 @@ const styleSheet = StyleSheet.create({
     width: "90%",
   },
   touchableRippleWidth: {
-    width: "50%",
+    width: "100%",
   },
   flexRowContainer: {
     flexDirection: "row",
@@ -183,7 +186,7 @@ const styleSheet = StyleSheet.create({
   //create post
   createPostScrollViewStyle: {
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems:'flex-start',
   },
   FABStyle: {
     zIndex: 2,
