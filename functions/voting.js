@@ -79,11 +79,12 @@ const updateVoters = async (
 
 //get real time vote count and voter list with firestore
 const getRealTimeUpdate = (docRef, setVoterslist, setUpVoteCount) => {
-  onSnapshot(docRef, doc =>
-  {
-    setVoterslist(doc.data().voters);
-    setUpVoteCount(doc.data().upVote)
-  })
+  onSnapshot(docRef, (doc) => {
+    if (doc.data()) {
+      setVoterslist(doc.data().voters);
+      setUpVoteCount(doc.data().upVote);
+    }
+  });
 };
 
 export {

@@ -109,6 +109,7 @@ const AddPostScreen = ({ navigation }) => {
     setStory("");
     setPhotoUri([]);
     resetLocation();
+    setUseCurrentLocation(false);
   };
 
   //reverse thr coordinate to address
