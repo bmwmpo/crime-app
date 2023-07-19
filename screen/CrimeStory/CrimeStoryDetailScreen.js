@@ -131,10 +131,11 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     );
 
     const q = query(subCollectionRef, orderBy("replyDateTime"));
-    const list = [];
+    let list = [];
 
-    onSnapshot(q, (snapshot) => {
-      //setCommentList([]);
+    onSnapshot(q, (snapshot) =>
+    {
+      //handle docChange
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
           list.unshift(change.doc.data());
@@ -147,6 +148,10 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
               change.doc.data().replyDateTime.toDate().getTime()
             )
               comment.commentId = change.doc.data().commentId;
+        }
+        else if (change.type === 'removed')
+        {
+          list = list.filter(item => item.commentId !== change.doc.data().commentId);
         }
       });
       setCommentList(list);

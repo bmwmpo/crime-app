@@ -19,9 +19,10 @@ import {
   updateVoters,
   getVoteState,
   updateVoteCount,
-  getRealTimeUpdate
+  getRealTimeUpdate,
 } from "../functions/voting";
 import { getUserData } from "../functions/getCrimeStory";
+import ItemHeader from "./ItemHeader";
 import styleSheet from "../assets/StyleSheet";
 import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
@@ -107,52 +108,32 @@ const CommentItem = ({ commentData, postingId }) => {
         backgroundColor,
         {
           borderColor: cardBorderColor.color,
-          borderTopWidth: StyleSheet.hairlineWidth,
+          borderWidth: StyleSheet.hairlineWidth,
           justifyContent: "center",
         },
         styleSheet.padding_Horizontal,
+        styleSheet.padding_Vertical,
       ]}
     >
+      {/* show the dialog if the user is not logged in */}
+      <LogInDialog
+        hideDialog={hideDialog}
+        showDialog={showDialog}
+        navigateToLogIn={toLogInScreen}
+        message={EnumString.logInMsg}
+        title={EnumString.logInTilte}
+      />
       <Card.Content
         style={[styleSheet.flexRowContainer, styleSheet.flexSpaceBetweenStyle]}
       >
-        {/* show the dialog if the user is not logged in */}
-        <LogInDialog
-          hideDialog={hideDialog}
-          showDialog={showDialog}
-          navigateToLogIn={toLogInScreen}
-          message={EnumString.logInMsg}
-          title={EnumString.logInTilte}
+        {/* comment info: author, date and time */}
+        <ItemHeader
+          creator={creator}
+          userAvatarColor={userAvatarColor}
+          postingDateTime={replyDateTime}
+          showMenu={false}
+          textColor={textColor}
         />
-        {/* author */}
-        <View>
-          <Avatar.Text
-            label={creator.substring(0, 1).toUpperCase()}
-            size={30}
-            style={{ backgroundColor: userAvatarColor }}
-          />
-        </View>
-        {/* date and time */}
-        <View style={[styleSheet.flexStartContainer]}>
-          <Text
-            variant="labelLarge"
-            style={[
-              styleSheet.margin_HorizontflexStartContaineral_right,
-              textColor,
-            ]}
-          >
-            {creator}
-          </Text>
-          <Text variant="labelLarge" style={textColor}>
-            {replyDateTime.toLocaleString()}
-          </Text>
-        </View>
-        {/* passing time */}
-        <View>
-          <Text variant="labelLarge" style={textColor}>
-            {getTimePassing(replyDateTime)}
-          </Text>
-        </View>
       </Card.Content>
       {/* comment */}
       {comment !== "" && (

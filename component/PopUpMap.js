@@ -19,9 +19,7 @@ const PopUpMap = ({
   //styling
   const windowHeight = Dimensions.get("window").height;
   const isDarkMode = useTheme().dark;
-  const textColor = isDarkMode
-    ? styleSheet.darkModeColor
-    : styleSheet.lightModeColor;
+  const textColor = styleSheet.darkModeColor;
 
   return (
     <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
@@ -45,14 +43,17 @@ const PopUpMap = ({
                 Use current location
               </Text>
             </View>
-            <Text variant="labelLarge" style={textColor}>
+            <Text
+              variant="labelLarge"
+              style={[textColor, { marginBottom: "1%" }]}
+            >
               or use draggable marker for the crime scene
             </Text>
           </View>
         )}
         {/* map */}
         <MapView
-          style={[{ width: "100%", height: "100%" }]}
+          style={[{ width: "100%", height: "90%" }]}
           region={initRegion}
           //onRegionChange={(region) => setInitRegion(region)}
         >

@@ -3,7 +3,13 @@ import { TextInput, Appbar, Button } from "react-native-paper";
 import { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { db } from "../../config/firebase_config";
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import styleSheet from "../../assets/StyleSheet";
 import EnumString from "../../assets/EnumString";
 import useStore from "../../zustand/store";
@@ -49,6 +55,22 @@ const CommentScreen = ({ navigation, route }) => {
     }
   };
 
+  //save the newly added comment in user's comment list in firestore
+  const UpdateUserCommentList = async (postingRef, commentRef) => {
+    const docRef = doc(db, EnumString.userInfoCollection, docID);
+    
+    try {
+      const newComment = {
+        postingRef,
+        commentRef,
+      };
+
+      await updateDoc(docRef, { yourComments: arrayUnion(newComment) });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //save comment in the subcollection of the assoicated posting crime story
   const saveCommentToFireStore = async () => {
     const subCollectionRef = collection(
@@ -71,8 +93,17 @@ const CommentScreen = ({ navigation, route }) => {
 
       //save the comment in the subcollection 'Comments'
       const commentAdded = await addDoc(subCollectionRef, newComment);
+      const postingRef = doc(db, EnumString.postingCollection, postingId);
+      const commentRef = doc(
+        db,
+        EnumString.postingCollection,
+        postingId,
+        EnumString.commentsSubCollection,
+        commentAdded.id
+      );
 
       await updateCommentDoc(commentAdded.id);
+      await UpdateUserCommentList(postingRef, commentRef);
 
       navigation.goBack();
     } catch (err) {
