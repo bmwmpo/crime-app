@@ -182,7 +182,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     try {
       const document = await getDoc(docRef);
 
-      if (document) {
+      if (document.exists()) {
         //console.log(document.data());
         // setCreatorDocRef(document.data().user);
         setStory(document.data().story);
