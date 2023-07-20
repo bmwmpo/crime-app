@@ -12,16 +12,7 @@ import {
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import { db } from "../config/firebase_config";
-import {
-  doc,
-  updateDoc,
-  onSnapshot,
-  query,
-  where,
-  collection,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { ConfirmDialog, LogInDialog } from "./AlertDialog";
 import {
   getCountSuffix,
@@ -36,6 +27,7 @@ import {
   getUserData,
   deleteCrimeStory,
 } from "../functions/getCrimeStory";
+import ItemHeader from "./ItemHeader";
 import {
   BannerAd,
   BannerAdSize,
@@ -43,7 +35,6 @@ import {
 } from "react-native-google-mobile-ads";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
-import Icon from "react-native-vector-icons/Ionicons";
 import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
 
@@ -144,7 +135,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   const handleDelete = async () => {
     setIsLoading(true);
     await deleteCrimeStory(postingData.postingId, docID);
-    setIsLoading(false);
+    setTimeout(() => setIsLoading(false), 2000);
   };
 
   //retreive the photos when the page is first mounted
@@ -208,58 +199,17 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
             styleSheet.flexSpaceBetweenStyle,
           ]}
         >
-          {/* author */}
-          <View>
-            <Avatar.Text
-              label={creator.substring(0, 1).toUpperCase()}
-              size={30}
-              style={{ backgroundColor: userAvatarColor }}
-            />
-          </View>
-          {/* date and time */}
-          <View style={[styleSheet.flexStartContainer]}>
-            <Text
-              variant="labelLarge"
-              style={[
-                styleSheet.margin_HorizontflexStartContaineral_right,
-                textColor,
-              ]}
-            >
-              {creator}
-            </Text>
-            <Text variant="labelLarge" style={textColor}>
-              {postingDateTime.toLocaleString()}
-            </Text>
-          </View>
-          {/* passing time */}
-          <View>
-            <Text variant="labelLarge" style={textColor}>
-              {getTimePassing(postingDateTime)}
-            </Text>
-          </View>
-          {/* menu button on available on Your Post screen*/}
-          {showMenu && (
-            <Menu
-              visible={menuVisible}
-              onDismiss={hideMenu}
-              anchor={
-                <IconButton
-                  onPress={openMenu}
-                  icon="dots-vertical"
-                  textColor={textColor.color}
-                ></IconButton>
-              }
-              anchorPosition="bottom"
-            >
-              <Menu.Item
-                title="delete"
-                onPress={() => {
-                  setShowConfirmDialog(true);
-                  hideMenu();
-                }}
-              />
-            </Menu>
-          )}
+          <ItemHeader
+            creator={creator}
+            userAvatarColor={userAvatarColor}
+            postingDateTime={postingDateTime}
+            menuVisible={menuVisible}
+            hideMenu={hideMenu}
+            openMenu={openMenu}
+            showMenu={showMenu}
+            textColor={textColor}
+            setShowConfirmDialog={setShowConfirmDialog}
+          />
         </Card.Content>
         {/* story and crime scene location*/}
         <Card.Content style={[styleSheet.margin_Vertical]}>

@@ -109,6 +109,7 @@ const AddPostScreen = ({ navigation }) => {
     setStory("");
     setPhotoUri([]);
     resetLocation();
+    setUseCurrentLocation(false);
   };
 
   //reverse thr coordinate to address
@@ -158,15 +159,23 @@ const AddPostScreen = ({ navigation }) => {
   };
 
   //update the coordinate and location address with draggable maker
-  const handleDraggableMaker = (coords) => {
-    const draggableMarkerCoords = {
-      ...coords,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
+  const handleDraggableMaker = async (coords) => {
+    try {
+      const result = await Location.requestForegroundPermissionsAsync();
+
+      if (result) {
+        const draggableMarkerCoords = {
+          ...coords,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        };
+        setInitRegion(draggableMarkerCoords);
+        getLocationAddress(draggableMarkerCoords);
+        setPinpointLocation(true);
+      }
+    } catch (err) {
+      console.log(err);
     }
-    setInitRegion(draggableMarkerCoords);
-    getLocationAddress(draggableMarkerCoords);
-    setPinpointLocation(true);
   };
 
   //select image from gallery
