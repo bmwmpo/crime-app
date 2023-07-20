@@ -54,6 +54,12 @@ const BottomTabNavigation = ({ navigation }) => {
           },
         })}
       />
+      <Tab.Screen
+        name="LiveCalls"
+        component={LiveCalls}
+        options={{ headerShown: false }}
+      />
+
       {/* Crime Stories */}
       <Tab.Screen
         name="AllCrimeStories"
