@@ -19,17 +19,15 @@ const PopUpMap = ({
   //styling
   const windowHeight = Dimensions.get("window").height;
   const isDarkMode = useTheme().dark;
-  const textColor = isDarkMode
-    ? styleSheet.darkModeColor
-    : styleSheet.lightModeColor;
+  const textColor = styleSheet.darkModeColor;
 
   return (
     <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
       <Card
-        style={[
+        style={ [
           styleSheet.padding_Horizontal,
           styleSheet.padding_Vertical,
-          { height: windowHeight * 0.7, backgroundColor: "#797979" },
+          { height: windowHeight * 0.65, backgroundColor: "#797979" },
         ]}
       >
         {/* use current location radio button */}
@@ -45,14 +43,17 @@ const PopUpMap = ({
                 Use current location
               </Text>
             </View>
-            <Text variant="labelLarge" style={textColor}>
+            <Text
+              variant="labelLarge"
+              style={[textColor, { marginBottom: "1%" }]}
+            >
               or use draggable marker for the crime scene
             </Text>
           </View>
         )}
         {/* map */}
         <MapView
-          style={[{ width: "100%", height: "100%" }]}
+          style={[{ width: "100%", height: "90%" }]}
           region={initRegion}
           //onRegionChange={(region) => setInitRegion(region)}
         >

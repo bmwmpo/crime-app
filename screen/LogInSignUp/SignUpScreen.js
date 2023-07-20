@@ -102,6 +102,7 @@ const SignUpScreen = ({ navigation }) => {
           autoDarkMode: false,
         },
         yourStory: [],
+        yourComments:[]
       };
 
       const docAdded = await addDoc(collectionRef, data);

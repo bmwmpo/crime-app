@@ -46,4 +46,36 @@ const deleteCrimeStory = async (postingId, useDocId) => {
   }
 };
 
-export { retreivePhotoFromFirebaseStorage, getUserData, deleteCrimeStory };
+//delete comment from firestore
+const deleteComment = async (postingRef, commentId, useDocId) => {
+  const commentRef = doc(
+    db,
+    EnumString.postingCollection,
+    postingRef.id,
+    EnumString.commentsSubCollection,
+    commentId
+  );
+
+  //const postingRef = doc(db, EnumString.postingCollection, postingId);
+  const docRef = {
+    commentRef,
+    postingRef,
+  };
+
+  const userDocRef = doc(db, EnumString.userInfoCollection, useDocId);
+  try {
+    //delete comment from Comment sub collection
+    await deleteDoc(commentRef);
+    //remove deleted comment doc ref from 'yourComments' field from userInfo
+    await updateDoc(userDocRef, { yourComments: arrayRemove(docRef) });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export {
+  retreivePhotoFromFirebaseStorage,
+  getUserData,
+  deleteCrimeStory,
+  deleteComment,
+};

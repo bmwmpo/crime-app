@@ -23,6 +23,7 @@ export default EnumString = {
   deleteStoryTitle: 'Delete',
   deleteStoryMsg: 'Are you sure you want to delete?',
   emptyCrimeStoriesList: ' Report any crime you witness',
+  emptyCommentsList:"Feel free to leave a comment on any crime story",
   initLocationAddress:'pinpoint the crime scene using the map'
 };
 
