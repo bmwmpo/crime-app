@@ -1,11 +1,7 @@
 import React, { useState,useEffect } from "react";
 
-// import * as React from 'react';
 import { StatusBar, FlatList, Image, Animated, Text, View, Dimensions, StyleSheet, TouchableOpacity, Easing, SafeAreaViewBase, SafeAreaView } from 'react-native';
 const { width, height } = Dimensions.get('screen');
-import { faker } from '@faker-js/faker';
-
-faker.seed(10);
 
 function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp);
@@ -19,19 +15,6 @@ function timeConverter(UNIX_timestamp){
     var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
     return time;
   }
-
-
-const DATA = [...Array(30).keys()].map((_, i) => {
-    return {
-        key: faker.string.uuid(),
-        image: `https://randomuser.me/api/portraits/${faker.helpers.shuffle(['women', 'men'])}/${faker.number.int(60)}.jpg`,
-        name: faker.person.fullName(),
-        jobTitle: faker.person.jobTitle(),
-        email: faker.internet.email(),
-    };
-});
-
-
 
 const LiveCalls = () => {
   const [data, setData] = useState(null);

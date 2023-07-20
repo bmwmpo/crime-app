@@ -4,6 +4,7 @@ import MapScreen from "../screen/MapScreen";
 import ChartDetail from "../screen/ChartDetail";
 import AddPostScreen from "../screen/CrimeStory/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
+import LiveCalls from "../screen/LiveCalls";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
 
 const Tab = createBottomTabNavigator();
@@ -23,6 +24,8 @@ const BottomTabNavigation = ({ navigation }) => {
             iconName = "bar-chart";
           } else if (route.name === "Report") {
             iconName = "add";
+          } else if (route.name === "LiveCalls") {
+            iconName = "megaphone";
           } else if (route.name === "AllCrimeStories") {
             iconName = "newspaper";
           }
