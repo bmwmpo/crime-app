@@ -163,7 +163,7 @@ const AddPostScreen = ({ navigation }) => {
     try {
       const result = await Location.requestForegroundPermissionsAsync();
 
-      if (result) {
+      if (result.status === "granted") {
         const draggableMarkerCoords = {
           ...coords,
           latitudeDelta: 0.01,
@@ -172,6 +172,7 @@ const AddPostScreen = ({ navigation }) => {
         setInitRegion(draggableMarkerCoords);
         getLocationAddress(draggableMarkerCoords);
         setPinpointLocation(true);
+        setUseCurrentLocation(false);
       }
     } catch (err) {
       console.log(err);
@@ -327,10 +328,9 @@ const AddPostScreen = ({ navigation }) => {
     });
   };
 
-  //update the location address
+  //update the location address if use current location is checked
   useEffect(() => {
     if (useCurrentLocation) handleCurrentLocation();
-    else resetLocation();
   }, [useCurrentLocation]);
 
   return !signIn ? (
@@ -369,7 +369,6 @@ const AddPostScreen = ({ navigation }) => {
         isRadioButton={true}
         useCurrentLocation={useCurrentLocation}
         handleUseCurrentLocation={handleUseCurrentLocation}
-        isDraggable={true}
         handleDraggableMaker={handleDraggableMaker}
       />
       {/* screen body */}
