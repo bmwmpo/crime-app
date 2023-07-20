@@ -13,7 +13,6 @@ const PopUpMap = ({
   isRadioButton,
   useCurrentLocation,
   handleUseCurrentLocation,
-  isDraggable,
   handleDraggableMaker,
 }) => {
   //styling
@@ -24,7 +23,7 @@ const PopUpMap = ({
   return (
     <BottomSheet isVisible={showMapView} onBackdropPress={showHideMapView}>
       <Card
-        style={ [
+        style={[
           styleSheet.padding_Horizontal,
           styleSheet.padding_Vertical,
           { height: windowHeight * 0.65, backgroundColor: "#797979" },
@@ -58,17 +57,13 @@ const PopUpMap = ({
           //onRegionChange={(region) => setInitRegion(region)}
         >
           {/* marker */}
-          {isDraggable ? (
-            <Marker
-              draggable={!useCurrentLocation}
-              coordinate={initRegion}
-              onDragEnd={(e) => {
-                handleDraggableMaker(e.nativeEvent.coordinate);
-              }}
-            />
-          ) : (
-            <Marker coordinate={initRegion} />
-          )}
+          <Marker
+            draggable={true}
+            coordinate={initRegion}
+            onDragEnd={(e) => {
+              handleDraggableMaker(e.nativeEvent.coordinate);
+            }}
+          />
         </MapView>
       </Card>
     </BottomSheet>
