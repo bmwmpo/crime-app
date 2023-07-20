@@ -1,12 +1,9 @@
 import { Card, Avatar, Text, IconButton, Menu } from "react-native-paper";
-import { View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { db } from "../config/firebase_config";
 import { doc, getDoc } from "firebase/firestore";
 import { StyleSheet } from "react-native";
 import { MemoizedCommentItem } from "./CommentItem";
-import { getTimePassing } from "../functions/voting";
 import { getUserData, deleteComment } from "../functions/getCrimeStory";
 import { ConfirmDialog } from "./AlertDialog";
 import MenuComponent from "../component/MenuComponent";
@@ -18,7 +15,6 @@ import useStore from "../zustand/store";
 //user's comment component
 const YourCommentsComponent = ({
   commentData,
-  postingId,
   postingRef,
   setIsLoading,
 }) => {

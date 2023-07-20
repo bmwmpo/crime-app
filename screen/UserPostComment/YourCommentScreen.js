@@ -48,17 +48,9 @@ const YourCommentScreen = () => {
     try {
       for (let ref of userCommentRef) {
         const document = await getDoc(ref.commentRef);
-        const posting = await getDoc(ref.postingRef);
-        let postingId;
 
-        if (posting.exists()) {
-          postingId = posting.data().postingId;
-        } else {
-          postingId = undefined;
-        }
         list.push({
           ...document.data(),
-          postingId,
           postingRef: ref.postingRef,
         });
       }
@@ -101,7 +93,6 @@ const YourCommentScreen = () => {
             <YourCommentsComponent
               key={item.commentId}
               commentData={item}
-              postingId={item.postingId}
               postingRef={item.postingRef}
               setIsLoading={setIsLoading}
             />

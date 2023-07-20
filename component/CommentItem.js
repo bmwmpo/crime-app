@@ -61,8 +61,6 @@ const CommentItem = ({ commentData, postingId }) => {
   const backgroundColor = isDarkMode
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
   const cardBorderColor = isDarkMode
     ? styleSheet.darkModeOutlinedColor
     : styleSheet.lightModeOutlinedColor;
