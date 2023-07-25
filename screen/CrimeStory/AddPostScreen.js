@@ -18,18 +18,9 @@ import {
 } from "firebase/firestore";
 import { storage } from "../../config/firebase_config";
 import { ref, uploadBytes } from "firebase/storage";
-import {
-  TextInput,
-  FAB,
-  Button,
-  Card,
-  RadioButton,
-  Text,
-} from "react-native-paper";
+import { TextInput, FAB, Button, Card, Appbar } from "react-native-paper";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { useTheme } from "@react-navigation/native";
-import { BottomSheet } from "@rneui/themed";
-import MapView, { Marker } from "react-native-maps";
 import useStore from "../../zustand/store";
 import LoadingScreen from "../LoadingScreen";
 import ImageView from "react-native-image-viewing";
@@ -110,6 +101,7 @@ const AddPostScreen = ({ navigation }) => {
     setPhotoUri([]);
     resetLocation();
     setUseCurrentLocation(false);
+    setIsStoryEmpty(true);
   };
 
   //reverse thr coordinate to address
@@ -385,19 +377,17 @@ const AddPostScreen = ({ navigation }) => {
           {/* share, select images, and add post opyions */}
           <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
             {/* image */}
-            <FAB
+            <Appbar.Action
               icon="image"
-              size="small"
-              variant="surface"
-              style={styleSheet.margin_Horizontal_3}
               onPress={selectPhoto}
+              color={textColor.color}
             />
             {/* map */}
-            <Card.Actions>
-              <Button mode="contained" icon="map" onPress={showHideMapView}>
-                Map
-              </Button>
-            </Card.Actions>
+            <Appbar.Action
+              icon="map"
+              color={textColor.color}
+              onPress={showHideMapView}
+            />
             {/* report crime story button */}
             <Card.Actions>
               <Button
