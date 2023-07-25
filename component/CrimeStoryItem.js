@@ -212,7 +212,9 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
           />
         </Card.Content>
         {/* story and crime scene location*/}
-        <Card.Content style={[styleSheet.margin_Vertical]}>
+        <Card.Content
+          style={[styleSheet.margin_Vertical, styleSheet.flexStartContainer]}
+        >
           <Text variant="titleSmall" style={textColor}>
             {locationAddress}
           </Text>
