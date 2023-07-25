@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import { Avatar, Text } from "react-native-paper";
 import { getTimePassing } from "../functions/voting";
 import styleSheet from "../assets/StyleSheet";
@@ -17,7 +17,7 @@ const ItemHeader = ({
   setShowConfirmDialog,
 }) => {
   return (
-    <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
+    <View style={ [styleSheet.flexRowContainer, styleSheet.alignCenter, styleSheet.width_100]}>
       {/* avatar */}
       <Avatar.Text
         label={creator.substring(0, 1).toUpperCase()}

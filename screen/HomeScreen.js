@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
+import { SafeAreaView } from "react-native";
 import { auth } from "../config/firebase_config";
 import { onAuthStateChanged } from "firebase/auth";
 import { db } from "../config/firebase_config";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { BottomSheet } from "@rneui/themed";
 import DrawerNavigation from "../navigation/DrawerNavigation";
 import useStore from "../zustand/store";
 import LoadingScreen from "./LoadingScreen";
+import styleSheet from "../assets/StyleSheet";
+import * as Linking from "expo-linking";
 
 //main screen
 const HomeScreen = () => {
   const { setSignedInUser, setLogOutUser } = useStore((state) => state);
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const url = Linking.useURL();
 
   //get user profile from firestore
   const getUserProfile = async (email) => {
@@ -59,6 +66,18 @@ const HomeScreen = () => {
 
   //get the currently signed-in user
   useEffect(() => {
+    //open app with deep linking
+    const openApp = async () => {
+      const url = await Linking.getInitialURL();
+
+      if (url) {
+        console.log(url);
+        Linking.openURL(url);
+      }
+    };
+
+    openApp();
+
     return onAuthStateChanged(auth, (user) => {
       if (user) {
         getUserProfile(user.email);
@@ -68,7 +87,21 @@ const HomeScreen = () => {
     });
   }, []);
 
-  return isLoading ? <LoadingScreen /> : <DrawerNavigation />;
+  return (
+    <SafeAreaView style={styleSheet.flex_1}>
+      {/* loading component */}
+      <BottomSheet
+        isVisible={isLoading}
+        containerStyle={[
+          { justifyContent: "center" },
+          styleSheet.lightModeBackGroundColor,
+        ]}
+      >
+        <LoadingScreen />
+      </BottomSheet>
+      <DrawerNavigation />
+    </SafeAreaView>
+  );
 };
 
 export default HomeScreen;
