@@ -10,18 +10,19 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { FAB } from "@rneui/themed";
+import { ActivityIndicator } from "react-native-paper";
 import CrimeStoryItem from "../../component/CrimeStoryItem";
 import styleSheet from "../../assets/StyleSheet";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 
 //all crime stories screen
-const AllCrimeStoriesScreen = () =>
-{
+const AllCrimeStoriesScreen = () => {
   //state values
   const [allCrimeStories, setAllCrimeStories] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [limitNum, setLimitNum] = useState(5);
   const [visible, setVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const collectionRef = collection(db, "Postings");
 
@@ -37,10 +38,6 @@ const AllCrimeStoriesScreen = () =>
       const querySnapshot = await getDocs(q);
       const documents = querySnapshot.docs.map((item) => item.data());
 
-      //sort the crime stories by posting data and time
-      // const sortedDocument = documents.sort(
-      //   (a, b) => b.postingDateTime - a.postingDateTime
-      // );
       setAllCrimeStories(documents);
     } catch (err) {
       console.log(err);
@@ -49,8 +46,10 @@ const AllCrimeStoriesScreen = () =>
 
   //load more data from firestore when the users scroll to the end flat list
   const loadMoreData = () => {
+    setIsLoading(true);
     getAllCrimeStories(limitNum + 5);
     setLimitNum(limitNum + 5);
+    setTimeout(() => setIsLoading(false), 2000);
   };
 
   //set FAB's visible to true when a new story is added
@@ -58,7 +57,8 @@ const AllCrimeStoriesScreen = () =>
     onSnapshot(collectionRef, (snapshot) => {
       if (snapshot.docChanges().length === 1) {
         snapshot.docChanges().forEach((change) => {
-          if (change.type === "added" || change.type === 'removed') setVisible(true);
+          if (change.type === "added" || change.type === "removed")
+            setVisible(true);
         });
       }
     });
@@ -74,7 +74,7 @@ const AllCrimeStoriesScreen = () =>
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getAllCrimeStories(limitNum);
-    
+
     setTimeout(() => {
       setRefreshing(false);
       setVisible(false);
@@ -82,9 +82,15 @@ const AllCrimeStoriesScreen = () =>
   }, []);
 
   return (
-    <SafeAreaView style={ [styleSheet.flex_1]}>
+    <SafeAreaView style={[styleSheet.flex_1]}>
       <FAB
-        icon={ <Icon name='arrow-up' size={ 20 } color={ styleSheet.darkModeColor.color} /> }
+        icon={
+          <Icon
+            name="arrow-up"
+            size={20}
+            color={styleSheet.darkModeColor.color}
+          />
+        }
         color="#BA55D3"
         size="small"
         visible={visible}
@@ -96,15 +102,29 @@ const AllCrimeStoriesScreen = () =>
       <FlatList
         style={styleSheet.zindex_1}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={50}/>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={50}
+          />
         }
         onEndReachedThreshold={0.5}
         onEndReached={loadMoreData}
         data={allCrimeStories}
         ItemSeparatorComponent={() => <View style={{ margin: "1%" }}></View>}
         keyExtractor={(item) => item.postingId}
-        renderItem={ ({ item }) => <CrimeStoryItem key={ item.postingId } postingData={item} />}
+        renderItem={({ item }) => (
+          <CrimeStoryItem key={item.postingId} postingData={item} />
+        )}
       />
+      {/* show activity indicator on end reach */}
+      {isLoading && (
+        <ActivityIndicator
+          animating={isLoading}
+          size={"small"}
+          color={styleSheet.highLightTextColor.color}
+        />
+      )}
     </SafeAreaView>
   );
 };
