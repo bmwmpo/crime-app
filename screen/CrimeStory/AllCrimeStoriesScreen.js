@@ -114,7 +114,7 @@ const AllCrimeStoriesScreen = () => {
         ItemSeparatorComponent={() => <View style={{ margin: "0.5%" }}></View>}
         keyExtractor={(item) => item.postingId}
         renderItem={({ item }) => (
-          <CrimeStoryItem key={item.postingId} postingData={item} />
+          <CrimeStoryItem key={item.postingId} postingData={item} showAdsStatus={true}/>
         )}
       />
       {/* show activity indicator on end reach */}

@@ -39,7 +39,7 @@ import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
 
 //crime story component
-const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
+const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) => {
   //current user info from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
 
@@ -94,9 +94,9 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   const hideMenu = () => setMenuVisible(false);
 
   const showAds = () => {
-    const num = Math.ceil(Math.random() * 5);
+    const num = Math.ceil(Math.random() * 3);
 
-    if (num === 5) return true;
+    if (num === 3) return true;
     else return false;
   };
 
@@ -273,7 +273,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
         </Card.Content>
       </Card>
       </TouchableOpacity>
-      {isShowAds && (
+      {isShowAds && showAdsStatus && (
         <Card
           style={[
             styleSheet.flex_1,
