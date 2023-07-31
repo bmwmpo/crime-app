@@ -256,8 +256,9 @@ const SignUpScreen = ({ navigation }) => {
           keyboardType="email-address"
           autoFocus={true}
           right={
-            !(email === "") && (
+            email !== "" && (
               <TextInput.Icon
+                testID="ResetEmail"
                 icon="close-circle"
                 onPress={deletePress}
                 iconColor={textColor.color}
@@ -297,8 +298,9 @@ const SignUpScreen = ({ navigation }) => {
           autoCapitalize="none"
           autoCorrect={false}
           right={
-            !(username === "") && (
+            username !== "" && (
               <TextInput.Icon
+                testID="ResetUsername"
                 icon="close-circle"
                 onPress={deleteUserNamePress}
                 iconColor={textColor.color}
