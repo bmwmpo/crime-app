@@ -15,13 +15,17 @@ import { TextInput, Text, HelperText } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { Button } from "@rneui/themed";
+import {
+  isValidEmailAddress,
+  isEmailAddressEmpty,
+  isPasswordEmpty,
+} from "../../functions/LogInSignUp";
 import styleSheet from "../../assets/StyleSheet";
 import EnumString from "../../assets/EnumString";
 import useStore from "../../zustand/store";
 
 //user log in screen
-const LogInScreen = ({ navigation }) =>
-{
+const LogInScreen = ({ navigation }) => {
   //user Info
   const {
     user: { email, password },
@@ -105,36 +109,25 @@ const LogInScreen = ({ navigation }) =>
     }
   };
 
-  //check whether the email or password is empty or not
-  const isEmailAddressPasswordEmpty = () =>
-    email.trim() === "" || password.trim() === "" ? true : false;
-
-  //verify the email address format
-  const isValidEmailAddress = (newText) => {
-    const regex = EnumString.emailRegex;
-
-    setValidEmailFormat(regex.test(newText.trim()));
-  };
-
   //update and verify the email state value
   const onEmailTextChange = (newText) => {
     setEmail(newText);
-    isValidEmailAddress(newText);
+    setValidEmailFormat(isValidEmailAddress(newText));
   };
 
   //send forgot password email
   const handleForgotPassword = async () => {
+    //the email address is missing
+    if (isEmailAddressEmpty(email)) {
+      setShowDialog(true);
+      setErrorMessage(EnumString.emailIsMissing);
+      return;
+    }
+    
     //Not a valid email address
     if (!validEmailFormat) {
       setShowDialog(true);
       setErrorMessage(EnumString.invalidEmail);
-      return;
-    }
-
-    //the email address is missing
-    if (email.trim() === "") {
-      setShowDialog(true);
-      setErrorMessage(EnumString.emailIsMissing);
       return;
     }
 
@@ -177,6 +170,7 @@ const LogInScreen = ({ navigation }) =>
       {/* email text input */}
       <View style={styleSheet.formatContainer}>
         <TextInput
+          testID="Email"
           style={[
             styleSheet.inputStyle,
             inputTextBackGroundColor,
@@ -219,6 +213,7 @@ const LogInScreen = ({ navigation }) =>
       {/* password text input */}
       <View style={styleSheet.formatContainer}>
         <TextInput
+          testID="Password"
           style={[
             styleSheet.inputStyle,
             inputTextBackGroundColor,
@@ -261,10 +256,15 @@ const LogInScreen = ({ navigation }) =>
       </View>
       {/* Log in button */}
       <Button
+        testID="LogIn"
         title="Log in"
         buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
         titleStyle={styleSheet.buttonTextStyle}
-        disabled={isEmailAddressPasswordEmpty() || !validEmailFormat}
+        disabled={
+          isEmailAddressEmpty(email) ||
+          isPasswordEmpty(password) ||
+          !validEmailFormat
+        }
         disabledStyle={[
           styleSheet.disabledButtonStyle,
           { width: windowWidth * 0.9 },
@@ -278,6 +278,7 @@ const LogInScreen = ({ navigation }) =>
           Don't have an account?{" "}
         </Text>
         <TouchableOpacity
+          testID="ToSignUp"
           onPress={toSignUpScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         >

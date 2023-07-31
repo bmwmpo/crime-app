@@ -90,6 +90,7 @@ const EditUsernameScreen = ({ navigation }) => {
         </Text>
         {/* username textInput */}
         <TextInput
+          testID="usernameTextInput"
           style={[styleSheet.inputStyle, inputTextBackGroundColor]}
           placeholder="username"
           value={newUsername}
