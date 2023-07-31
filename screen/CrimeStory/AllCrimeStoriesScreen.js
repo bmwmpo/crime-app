@@ -100,6 +100,7 @@ const AllCrimeStoriesScreen = () => {
       />
       {/* crime stories list */}
       <FlatList
+        testID="allCrimeStories"
         style={styleSheet.zindex_1}
         refreshControl={
           <RefreshControl

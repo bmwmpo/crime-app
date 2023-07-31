@@ -26,6 +26,13 @@ import {
   setNewUserProfile,
   duplicatedUsername,
 } from "../../functions/editUserProfile";
+import {
+  isValidEmailAddress,
+  isEmailAddressEmpty,
+  isUsernameEmpty,
+  isPasswordEmpty,
+  isValidPasswordLength,
+} from "../../functions/LogInSignUp";
 import EnumString from "../../assets/EnumString";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
@@ -102,7 +109,7 @@ const SignUpScreen = ({ navigation }) => {
           autoDarkMode: false,
         },
         yourStory: [],
-        yourComments:[]
+        yourComments: [],
       };
 
       const docAdded = await addDoc(collectionRef, data);
@@ -165,40 +172,16 @@ const SignUpScreen = ({ navigation }) => {
     }
   };
 
-  //Check if either the email address or password is an empty string
-  const isEmailusernamePasswordEmpty = () => {
-    if (
-      email.trim() === "" ||
-      password.trim() === "" ||
-      username.trim() === ""
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  //verify the email address
-  const isValidEmailAddress = (newText) => {
-    const regex = EnumString.emailRegex;
-
-    setValidEmailFormat(regex.test(newText));
-  };
-
-  //verify the password length
-  const isValidPasswordLength = (newText) =>
-    setValidPasswordLength(newText.length >= 6);
-
   //update and verify the email state value
   const onEmailTextChange = (newText) => {
     setEmail(newText);
-    isValidEmailAddress(newText);
+    setValidEmailFormat(isValidEmailAddress(newText));
   };
 
   //update and verify the password state value
   const onPasswordTextChange = (newText) => {
     setPassword(newText);
-    isValidPasswordLength(newText);
+    setValidPasswordLength(isValidPasswordLength(newText));
   };
 
   //keyboard module
@@ -250,6 +233,7 @@ const SignUpScreen = ({ navigation }) => {
       {/* email text input */}
       <View style={styleSheet.formatContainer}>
         <TextInput
+          testID="Email"
           style={[
             styleSheet.inputStyle,
             inputTextBackGroundColor,
@@ -293,6 +277,7 @@ const SignUpScreen = ({ navigation }) => {
       {/* username text input */}
       <View style={styleSheet.formatContainer}>
         <TextInput
+          testID="Username"
           style={[
             styleSheet.inputStyle,
             inputTextBackGroundColor,
@@ -333,6 +318,7 @@ const SignUpScreen = ({ navigation }) => {
       {/* password text input */}
       <View style={styleSheet.formatContainer}>
         <TextInput
+          testID="Password"
           style={[
             styleSheet.inputStyle,
             styleSheet.inputPaddingStyle,
@@ -371,7 +357,9 @@ const SignUpScreen = ({ navigation }) => {
         buttonStyle={[styleSheet.buttonStyle, { width: windowWidth * 0.9 }]}
         titleStyle={styleSheet.buttonTextStyle}
         disabled={
-          isEmailusernamePasswordEmpty() ||
+          isEmailAddressEmpty(email) ||
+          isUsernameEmpty(username) ||
+          isPasswordEmpty(password) ||
           !validEmailFormat ||
           !validPasswordLength
         }
