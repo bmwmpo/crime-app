@@ -192,8 +192,9 @@ const LogInScreen = ({ navigation }) => {
           keyboardType="email-address"
           autoFocus={true}
           right={
-            !(email === "") && (
+            email !== "" && (
               <TextInput.Icon
+                testID="ResetEmail"
                 icon="close-circle"
                 onPress={deletePress}
                 iconColor={textColor.color}
@@ -231,6 +232,7 @@ const LogInScreen = ({ navigation }) => {
           secureTextEntry={hidePassword}
           right={
             <TextInput.Icon
+              testID="ShowHidePassword"
               icon={hidePassword ? "eye" : "eye-off"}
               onPress={showHidePasswordPress}
               iconColor={textColor.color}

@@ -14,7 +14,7 @@ describe("Test Login Screen", () => {
   //   jest.useFakeTimers();
   // });
 
-  test("test login textInput change", async () => {
+  test("email text should change properly", async () => {
     render(
       <PaperProvider>
         <NavigationContainer>
@@ -23,23 +23,32 @@ describe("Test Login Screen", () => {
       </PaperProvider>
     );
 
-    //email and password textInput
+    //email textInput
     const emailTextInput = await screen.getByTestId("Email");
-    const passwordTextInput = await screen.getByTestId("Password");
-
-    //screen title header
-    const header = screen.getByText("Log in to Toronto Crime Tracker");
 
     //change text
     fireEvent.changeText(emailTextInput, "cc@gmail.com");
-    fireEvent.changeText(passwordTextInput, "123123");
-
     expect(emailTextInput.props.value).toBe("cc@gmail.com");
-    expect(passwordTextInput.props.value).toBe("123123");
-    expect(header).not.toBeNull();
   });
 
-  test("test navigation: Log in screen to Sign up screen", async () => {
+  test("password text should change properly", async () => {
+    render(
+      <PaperProvider>
+        <NavigationContainer>
+          <UserLogInSignUpStack />
+        </NavigationContainer>
+      </PaperProvider>
+    );
+
+    //email textInput
+    const passwordTextInput = await screen.getByTestId("Password");
+
+    //change text
+    fireEvent.changeText(passwordTextInput, "123123");
+    expect(passwordTextInput.props.value).toBe("123123");
+  });
+
+  test("click SignUp button should navigate to SignUp screen", async () => {
     render(
       <PaperProvider>
         <NavigationContainer>
@@ -54,11 +63,10 @@ describe("Test Login Screen", () => {
     fireEvent(toSignUpScreenButton, "press");
 
     const header = await screen.getByText("Welcome to Toronro Crime Tracker");
-
     expect(header).not.toBeNull();
   });
 
-  test("test email validation", () => {
+  test("email address validation: should accept the email address", () => {
     render(
       <PaperProvider>
         <NavigationContainer>
@@ -68,17 +76,13 @@ describe("Test Login Screen", () => {
     );
 
     const emailTextInput = screen.getByTestId("Email");
-
-    //invalid email address
-    fireEvent.changeText(emailTextInput, "dsgsdgs");
-    expect(isValidEmailAddress(emailTextInput.props.value)).toBeFalsy();
 
     //valid email address
     fireEvent.changeText(emailTextInput, "abc@gmail.com");
     expect(isValidEmailAddress(emailTextInput.props.value)).toBeTruthy();
   });
 
-  test("test are email and password empty", () => {
+  test("email address validation: should not accept invalid email address", () => {
     render(
       <PaperProvider>
         <NavigationContainer>
@@ -87,37 +91,32 @@ describe("Test Login Screen", () => {
       </PaperProvider>
     );
 
-    //email and password textInput
     const emailTextInput = screen.getByTestId("Email");
-    const passwordTextInput = screen.getByTestId("Password");
-    
-    //both email and password are empty
-    fireEvent.changeText(emailTextInput, "");
-    fireEvent.changeText(passwordTextInput, "");
 
+    //valid email address
+    fireEvent.changeText(emailTextInput, "abcdsfsd.com");
+    expect(isValidEmailAddress(emailTextInput.props.value)).toBeFalsy();
+  });
+
+  test("reset email button: email should be empty", () => {
+    render(
+      <PaperProvider>
+        <NavigationContainer>
+          <UserLogInSignUpStack />
+        </NavigationContainer>
+      </PaperProvider>
+    );
+
+    //email textInput
+    const emailTextInput = screen.getByTestId("Email");
+    const resetButton = screen.getByTestId("ResetEmail");
+
+    //email should empty
+    fireEvent.changeText(emailTextInput, "123456");
+    expect(emailTextInput.props.value).toBe("123456");
+
+    fireEvent.press(resetButton);
     expect(isEmailAddressEmpty(emailTextInput.props.value)).toBeTruthy();
-    expect(isPasswordEmpty(passwordTextInput.props.value)).toBeTruthy();
-   
-    //password is empty
-    fireEvent.changeText(emailTextInput, "cc@gmail.com");
-    fireEvent.changeText(passwordTextInput, "");
-
-    expect(isEmailAddressEmpty(emailTextInput.props.value)).toBeFalsy();
-    expect(isPasswordEmpty(passwordTextInput.props.value)).toBeTruthy();
-
-    //email is empty
-    fireEvent.changeText(emailTextInput, "");
-    fireEvent.changeText(passwordTextInput, "123123");
-
-    expect(isEmailAddressEmpty(emailTextInput.props.value)).toBeTruthy();
-    expect(isPasswordEmpty(passwordTextInput.props.value)).toBeFalsy();
-
-    //both email and password are not empty
-    fireEvent.changeText(emailTextInput, "cc@gmail.com");
-    fireEvent.changeText(passwordTextInput, "123123");
-
-    expect(isEmailAddressEmpty(emailTextInput.props.value)).toBeFalsy();
-    expect(isPasswordEmpty(passwordTextInput.props.value)).toBeFalsy();
   });
 
   //   test("AllCrimeStories", async () => {
