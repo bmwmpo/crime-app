@@ -50,7 +50,7 @@ const SignUpScreen = ({ navigation }) => {
   //state values
   const [hidePassword, setHidePassword] = useState(true);
   const [validEmailFormat, setValidEmailFormat] = useState(true);
-  const [validPasswordLength, setValidPasswordLength] = useState(false);
+  const [validPasswordLength, setValidPasswordLength] = useState(true);
   const [validUsername, setValidUsername] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
