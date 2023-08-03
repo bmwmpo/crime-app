@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView, Image, ScrollView, Animated } from "react-native";
 import { COLORS, SIZES, FONTS, icons } from "../constants";
@@ -6,17 +6,19 @@ import HeaderBar from "./HeaderBar";
 import AreaLabel from "./AreaLabel";
 import TextButton from "./TextButton";
 import DropDown from "./DropDown";
-import { crime, chartOps } from "../constants/dummy";
+import { chartOps } from "../constants/dummy";
 import {
   VictoryScatter,
   VictoryLine,
   VictoryChart,
   VictoryAxis,
 } from "victory-native";
-import { VictoryCustomTheme } from "../assets/VictoryCustomTheme"
+import { VictoryCustomTheme } from "../assets/VictoryCustomTheme";
+
+import { crimeDummy } from "../constants/dummy";
 
 const axisData = {
-  "Assault": [
+  Assault: [
     "ASSAULT_RATE_2014",
     "ASSAULT_RATE_2015",
     "ASSAULT_RATE_2016",
@@ -38,7 +40,7 @@ const axisData = {
     "BREAKENTER_2021",
     "BREAKENTER_2022",
   ],
-  "Homicide": [
+  Homicide: [
     "HOMICIDE_2014",
     "HOMICIDE_2015",
     "HOMICIDE_2016",
@@ -49,7 +51,7 @@ const axisData = {
     "HOMICIDE_2021",
     "HOMICIDE_2022",
   ],
-  "Robbery": [
+  Robbery: [
     "ROBBERY_2014",
     "ROBBERY_2015",
     "ROBBERY_2016",
@@ -64,27 +66,53 @@ const axisData = {
 
 // const ChartDetail = ({ route, navigation }) => {
 const ChartDetail = ({ route, navigation }) => {
-  console.log(route.params.area)
-  const [selectedArea, setSelectedArea] = React.useState(
-    route.params.area
-  );
-  const [chartOptions, setChartOptions] = React.useState(
-    chartOps
-  );
+  console.log(route.params.area);
+
+  const [crime, setCrime] = useState(crimeDummy);
+
+  const [selectedArea, setSelectedArea] = React.useState(route.params.area);
+  const [chartOptions, setChartOptions] = React.useState(chartOps);
   const [selectedOption, setSelectedOption] = React.useState(chartOptions[0]);
 
   const updateSharedState = (newValue) => {
     setSelectedArea(newValue);
   };
 
-  console.log(selectedOption)
+  console.log(selectedOption);
 
   function optionOnClickHandler(option) {
     setSelectedOption(option);
   }
 
-  function renderChart() {
+  useEffect(() => {
+    getApi = async () => {
+      return fetch(
+        `https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/datastore_search?resource_id=58b33705-45f0-4796-a1a7-5762cc152772&limit=200`
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          // setdata(json.result.records);
+          //     console.log("getting all data in chart screen")
+          //     console.log(json.result.records[1].AREA_NAME)
+          //     console.log(JSON.parse(json.result.records[1].geometry).coordinates[0])
+          // let i = 0
+          // var temp_obj_list=[]
+          // while(i<json.result.total){
+          //     var temp_obj = new Region(json.result.records[i]._id,json.result.records[i].AREA_NAME,0,0,0,0,0,0,0,0,0,JSON.parse(json.result.records[i].geometry).coordinates[0])
+          //     temp_obj_list.push(temp_obj)
+          //     i++
+          // }
+          console.log(json);
+          setCrime(json);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    };
+    getApi();
+  }, []);
 
+  function renderChart() {
     return (
       <View
         style={{
@@ -133,7 +161,7 @@ const ChartDetail = ({ route, navigation }) => {
               }}
               data={axisData[selectedOption.label].map((key) => ({
                 x: key.slice(-4),
-                y: crime.result.records[selectedArea][key]
+                y: crime.result.records[selectedArea][key],
                 // y: crime.result.records[0][key]
               }))}
               categories={{
@@ -154,7 +182,7 @@ const ChartDetail = ({ route, navigation }) => {
               data={axisData[selectedOption.label].map((key) => ({
                 x: key.slice(-4),
                 // y: crime.result.records[0][key]
-                y: crime.result.records[selectedArea][key]
+                y: crime.result.records[selectedArea][key],
               }))}
               categories={{
                 x: [
@@ -215,12 +243,12 @@ const ChartDetail = ({ route, navigation }) => {
                 label={option.label}
                 customContainerstyle={{
                   height: 45,
-                  width:80,
+                  width: 80,
                   borderRadius: 15,
                   backgroundColor:
                     selectedOption.id == option.id
                       ? COLORS.primary
-                      : COLORS.lightGray
+                      : COLORS.lightGray,
                 }}
                 customLabelStyle={{
                   color:
@@ -237,22 +265,25 @@ const ChartDetail = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: COLORS.lightGray1,
-      }}
-    >
-      {/* <HeaderBar>right={true}</HeaderBar> */}
-      <ScrollView>
-        <View style={{ flex: 1, paddingBottom: SIZES.padding }}></View>
-        {renderChart()}
-      </ScrollView>
+    <>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.lightGray1,
+        }}
+      >
+        {/* <HeaderBar>right={true}</HeaderBar> */}
+        <ScrollView>
+          <View style={{ flex: 1, paddingBottom: SIZES.padding }}></View>
+          {renderChart()}
+        </ScrollView>
+      </SafeAreaView>
       <DropDown
+        crime={crime}
         sharedState={selectedArea}
         updateSharedState={updateSharedState}
       ></DropDown>
-    </SafeAreaView>
+    </>
   );
 };
 
