@@ -105,6 +105,7 @@ const AddPostScreen = ({ navigation, route }) => {
           setInitRegion(newRegion);
           setPinpointLocation(true);
           setUseCurrentLocation(false);
+          setIsStoryEmpty(false);
           setStory(
             `${route.params?.item.item.item.CALL_TYPE} at ${route.params?.item.item.item.CROSS_STREETS}`
           );
@@ -153,7 +154,8 @@ const AddPostScreen = ({ navigation, route }) => {
 
       if (reverseGeocode.length > 0) {
         const matchedLocation = reverseGeocode[0];
-        const address = `${matchedLocation.streetNumber} ${matchedLocation.street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
+        const street = matchedLocation.street === null || matchedLocation.streetNumber === null ? `${matchedLocation.name}` : `${matchedLocation.streetNumber} ${matchedLocation.street}`
+        const address = `${street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
         setLocationAddress(address);
       }
     } catch (err) {
