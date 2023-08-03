@@ -6,6 +6,7 @@ import AddPostScreen from "../screen/CrimeStory/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
 import LiveCalls from "../screen/LiveCalls";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
+import LiveCallAddPostStack from "../screen/LiveCallAddPostStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +25,7 @@ const BottomTabNavigation = ({ navigation }) => {
             iconName = "bar-chart";
           } else if (route.name === "Report") {
             iconName = "add";
-          } else if (route.name === "LiveCalls") {
+          } else if (route.name === "LiveAlerts") {
             iconName = "megaphone";
           } else if (route.name === "AllCrimeStories") {
             iconName = "newspaper";
@@ -58,8 +59,8 @@ const BottomTabNavigation = ({ navigation }) => {
         })}
       />
       <Tab.Screen
-        name="LiveCalls"
-        component={LiveCalls}
+        name="LiveAlerts"
+        component={LiveCallAddPostStack}
         options={{ headerShown: false }}
       />
 

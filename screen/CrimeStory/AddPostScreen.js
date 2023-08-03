@@ -33,10 +33,10 @@ import EnumString from "../../assets/EnumString";
 import PopUpMap from "../../component/PopUpMap";
 
 //create post screen
-const AddPostScreen = ({ navigation }) => {
+const AddPostScreen = ({ navigation, route }) => {
   //current user infor from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
-
+  console.log(route.params?.item.item.item.geometry.x);
   //init toronto coordinate
   const torontoRegion = {
     latitude: 43.653225,
@@ -47,6 +47,8 @@ const AddPostScreen = ({ navigation }) => {
 
   //state values
   const [story, setStory] = useState("");
+  const [fromLive, setFromLive] = useState(route.params?.item ? true : false);
+
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
   const [photoUri, setPhotoUri] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +86,46 @@ const AddPostScreen = ({ navigation }) => {
   const hideSucessDialog = () => setShowSuccessDialog(false);
 
   const showHideMapView = () => setShowMapView(!showMapView);
+
+  useEffect(() => {
+    const testFunc = async () => {
+      try {
+        const result = await Location.requestForegroundPermissionsAsync();
+
+        if (result.status === "granted") {
+          console.log(route.params.item.item.item.geometry.x + "!!!!")
+          const newRegion = {
+            latitude: route.params?.item.item.item.geometry.y,
+            latitudeDelta: 0.01,
+            longitude: route.params?.item.item.item.geometry.x,
+            longitudeDelta: 0.01,
+          };
+
+          getLocationAddress(newRegion);
+          setInitRegion(newRegion);
+          setPinpointLocation(true);
+          setUseCurrentLocation(false);
+          setStory(
+            `${route.params?.item.item.item.CALL_TYPE} at ${route.params?.item.item.item.CROSS_STREETS}`
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+
+      // if(route.params?.item.item.item.CALL_TYPE != null){
+
+      //   obj= {"latitude": route.params?.item.item.item.geometry.x,  "longitude": route.params?.item.item.item.geometry.y, "latitudeDelta": 0.01, "longitudeDelta" : 0.01 }
+      //   getLocationAddress(obj)
+
+      //   setInitRegion(newRegion)
+      // }
+    };
+
+    if (fromLive) {
+      testFunc();
+    }
+  }, [fromLive]);
 
   const handleUseCurrentLocation = () =>
     setUseCurrentLocation(!useCurrentLocation);
@@ -161,6 +203,8 @@ const AddPostScreen = ({ navigation }) => {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
+
+        console.log(draggableMarkerCoords);
         setInitRegion(draggableMarkerCoords);
         getLocationAddress(draggableMarkerCoords);
         setPinpointLocation(true);
@@ -263,7 +307,7 @@ const AddPostScreen = ({ navigation }) => {
         upVote: 0,
         voters: [],
         user: doc(db, EnumString.userInfoCollection, docID),
-        locationAddress,
+        locationAddress: locationAddress,
         coords: {
           latitude: initRegion.latitude,
           longitude: initRegion.longitude,
@@ -430,7 +474,7 @@ const AddPostScreen = ({ navigation }) => {
             <TextInput
               style={[styleSheet.titleTextInputStyle, backgroundColor]}
               textColor={textColor.color}
-              placeholder="story"
+              placeholder="Enter Report Here"
               value={story}
               onChangeText={handleStoryTextChange}
               multiline={true}
