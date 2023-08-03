@@ -1,8 +1,7 @@
 import {View, Text} from 'react-native';
 import React, {useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker' ;
-// import { useGetData } from './useGetData';
-import { crime } from '../constants/dummy';
+
 
 const DropDown = (props) => {
 
@@ -12,6 +11,26 @@ const [currentValue, setCurrentValue] = useState([]) ;
 
 // console.log(crime)
 const items = [];
+let crime = props.crime
+
+//function to arrange alphabetically
+function sortByKey(arr, key) {
+  return arr.sort((a, b) => {
+    const valueA = a[key].toUpperCase(); // Convert to uppercase for case-insensitive sorting
+    const valueB = b[key].toUpperCase(); // Convert to uppercase for case-insensitive sorting
+
+    if (valueA < valueB) {
+      return -1;
+    } else if (valueA > valueB) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+}
+
+crime.result.records = sortByKey(crime.result.records, 'AREA_NAME')
+
 
 
 crime.result.records.forEach((element,index) => {
@@ -24,6 +43,7 @@ crime.result.records.forEach((element,index) => {
   });
 
   const handleInputChange = (val) => {
+    setCurrentValue(val)
     props.updateSharedState(val);
   };
 
@@ -42,7 +62,7 @@ setValue={handleInputChange}
 maxHeight={ 200}
 autoScroll
 placeholder="Select Area"
-placeholderStyle={{color: 'red', fontWeight: 'bold', fontSize: 16}}
+placeholderStyle={{color: 'black', fontWeight: 'bold', fontSize: 16}}
 showTickIcon={true}
 showArrowIcon={true}
 disableBorderRadius={true}
