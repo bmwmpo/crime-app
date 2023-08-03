@@ -325,6 +325,12 @@ const AddPostScreen = ({ navigation }) => {
     if (useCurrentLocation) handleCurrentLocation();
   }, [useCurrentLocation]);
 
+  //reset all input fields when the user is logged out
+  useEffect(() =>
+  {
+    resetFields();
+  }, [currentUser]);
+
   return !signIn ? (
     <NotLogInScreen />
   ) : isLoading ? (
