@@ -4,9 +4,8 @@ import MapScreen from "../screen/MapScreen";
 import ChartDetail from "../screen/ChartDetail";
 import AddPostScreen from "../screen/CrimeStory/AddPostScreen";
 import styleSheet from "../assets/StyleSheet";
-import LiveCalls from "../screen/LiveCalls";
+import LiveCalls from "../screen/LiveCall/LiveCalls";
 import AllCrimeStoriesScreen from "../screen/CrimeStory/AllCrimeStoriesScreen";
-import LiveCallAddPostStack from "../screen/LiveCallAddPostStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -60,7 +59,7 @@ const BottomTabNavigation = ({ navigation }) => {
       />
       <Tab.Screen
         name="LiveAlerts"
-        component={LiveCallAddPostStack}
+        component={LiveCalls}
         options={{ headerShown: false }}
       />
 
