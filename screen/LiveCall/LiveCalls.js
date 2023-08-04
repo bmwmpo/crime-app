@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import BottomTabNavigation from "../../navigation/BottomTabNavigation";
 import {
   StatusBar,
   FlatList,
@@ -14,17 +14,18 @@ import {
   SafeAreaViewBase,
   SafeAreaView,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import useStore from "../../zustand/store";
+import Icon from "react-native-vector-icons/Ionicons";
+import PopUpMap from "../../component/PopUpMap";
+import LoadingScreen from "../LoadingScreen";
+import { useTheme, useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("screen");
-import { useIsFocused } from "@react-navigation/native";
-import useStore from "../zustand/store";
-import Icon from "react-native-vector-icons/Ionicons";
-import { useTheme, useNavigation } from "@react-navigation/native";
-import LiveCallAddPostStack from "./LiveCallAddPostStack"
 
 function timeConverter(UNIX_timestamp) {
-  var a = new Date(UNIX_timestamp);
-  var months = [
+  let a = new Date(UNIX_timestamp);
+  const months = [
     "Jan",
     "Feb",
     "Mar",
@@ -38,19 +39,19 @@ function timeConverter(UNIX_timestamp) {
     "Nov",
     "Dec",
   ];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var hour = a.getHours();
-  var min = a.getMinutes();
-  var sec = a.getSeconds();
-  var time =
+  let year = a.getFullYear();
+  let month = months[a.getMonth()];
+  let date = a.getDate();
+  let hour = a.getHours();
+  let min = a.getMinutes();
+  let sec = a.getSeconds();
+  let time =
     date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
   return time;
 }
 
-const LiveCalls = ({navigation}) => {
-  const { user: currentUser, signIn, docID } = useStore((state) => state);
+const LiveCalls = ({ navigation }) => {
+  const { signIn } = useStore((state) => state);
   const isFocused = useIsFocused();
   const [data, setData] = useState(null);
   const scrollY = React.useRef(new Animated.Value(0)).current;
@@ -61,12 +62,25 @@ const LiveCalls = ({navigation}) => {
   const ITEM_SIZE = AVATAR_SIZE + SPACING * 3;
   let newArray = [];
 
-  const handleAddPost = (item) => {
+  const [showMapView, setShowMapView] = useState(false);
+  const [coord, setCoord] = useState({
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+  const [location, setLocation] = useState("");
 
-    console.log('Add Post button pressed!');
-    navigation.navigate('AddPostScreen', { item });
+  const showHideMapView = () => setShowMapView(!showMapView);
+
+  const handleAddPost = (item) => {
+    console.log("Add Post button pressed!");
+    navigation.navigate("BottomTabNavigation", {
+      screen: "Report",
+      params: item.item,
+
+    });
   };
 
+  //fetch live call data
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
@@ -81,7 +95,7 @@ const LiveCalls = ({navigation}) => {
   }, [isFocused]);
 
   if (!data) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   } else {
     newArray = data.features.map((feature) => ({
       OBJECTID: feature.attributes.OBJECTID,
@@ -98,6 +112,13 @@ const LiveCalls = ({navigation}) => {
           style={StyleSheet.absoluteFillObject}
           blurRadius={80}
         />
+        <PopUpMap
+          showMapView={showMapView}
+          showHideMapView={showHideMapView}
+          initRegion={coord}
+          location={location}
+          useDraggableMaker={false}
+        />
         <Animated.FlatList
           data={newArray}
           onScroll={Animated.event(
@@ -110,7 +131,6 @@ const LiveCalls = ({navigation}) => {
             paddingTop: StatusBar.currentHeight || 42,
           }}
           renderItem={({ item, index }) => {
-
             return (
               <Animated.View
                 style={{
@@ -135,22 +155,39 @@ const LiveCalls = ({navigation}) => {
                       }}
                   /> */}
                 <View>
+                  {/* date and time */}
                   <Text style={{ fontSize: 22, fontWeight: "700" }}>
                     {item.OCCURRENCE_TIME}
                   </Text>
+                  {/* call type */}
                   <Text style={{ fontSize: 18, opacity: 0.7 }}>
                     {item.CALL_TYPE}
                   </Text>
-                  <Text
-                    style={{ fontSize: 14, opacity: 0.8, color: "#0099cc" }}
+                  {/* location */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCoord({
+                        ...coord,
+                        latitude: item.geometry.y,
+                        longitude: item.geometry.x,
+                      });
+
+                      setLocation(item.CROSS_STREETS);
+                      showHideMapView();
+                    }}
                   >
-                    {item.CROSS_STREETS}
-                  </Text>
+                    <Text
+                      style={{ fontSize: 14, opacity: 0.8, color: "#0099cc" }}
+                    >
+                      {item.CROSS_STREETS}
+                    </Text>
+                  </TouchableOpacity>
+                  {/* add post button */}
                   {!signIn ? (
                     <></>
                   ) : (
                     <TouchableOpacity
-                      onPress={() => handleAddPost({ item: {item} })}
+                      onPress={() => handleAddPost({ item: { item } })}
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
                       <Icon

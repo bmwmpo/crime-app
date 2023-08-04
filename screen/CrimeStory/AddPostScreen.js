@@ -36,7 +36,6 @@ import PopUpMap from "../../component/PopUpMap";
 const AddPostScreen = ({ navigation, route }) => {
   //current user infor from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
-  console.log(route.params?.item.item.item.geometry.x);
   //init toronto coordinate
   const torontoRegion = {
     latitude: 43.653225,
@@ -44,11 +43,10 @@ const AddPostScreen = ({ navigation, route }) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
+  const fromLive = route.params ? true : false;
 
   //state values
   const [story, setStory] = useState("");
-  const [fromLive, setFromLive] = useState(route.params?.item ? true : false);
-
   const [isStoryEmpty, setIsStoryEmpty] = useState(true);
   const [photoUri, setPhotoUri] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,47 +85,6 @@ const AddPostScreen = ({ navigation, route }) => {
 
   const showHideMapView = () => setShowMapView(!showMapView);
 
-  useEffect(() => {
-    const testFunc = async () => {
-      try {
-        const result = await Location.requestForegroundPermissionsAsync();
-
-        if (result.status === "granted") {
-          console.log(route.params.item.item.item.geometry.x + "!!!!")
-          const newRegion = {
-            latitude: route.params?.item.item.item.geometry.y,
-            latitudeDelta: 0.01,
-            longitude: route.params?.item.item.item.geometry.x,
-            longitudeDelta: 0.01,
-          };
-
-          getLocationAddress(newRegion);
-          setInitRegion(newRegion);
-          setPinpointLocation(true);
-          setUseCurrentLocation(false);
-          setIsStoryEmpty(false);
-          setStory(
-            `${route.params?.item.item.item.CALL_TYPE} at ${route.params?.item.item.item.CROSS_STREETS}`
-          );
-        }
-      } catch (err) {
-        console.log(err);
-      }
-
-      // if(route.params?.item.item.item.CALL_TYPE != null){
-
-      //   obj= {"latitude": route.params?.item.item.item.geometry.x,  "longitude": route.params?.item.item.item.geometry.y, "latitudeDelta": 0.01, "longitudeDelta" : 0.01 }
-      //   getLocationAddress(obj)
-
-      //   setInitRegion(newRegion)
-      // }
-    };
-
-    if (fromLive) {
-      testFunc();
-    }
-  }, [fromLive]);
-
   const handleUseCurrentLocation = () =>
     setUseCurrentLocation(!useCurrentLocation);
 
@@ -154,7 +111,11 @@ const AddPostScreen = ({ navigation, route }) => {
 
       if (reverseGeocode.length > 0) {
         const matchedLocation = reverseGeocode[0];
-        const street = matchedLocation.street === null || matchedLocation.streetNumber === null ? `${matchedLocation.name}` : `${matchedLocation.streetNumber} ${matchedLocation.street}`
+        const street =
+          matchedLocation.street === null ||
+          matchedLocation.streetNumber === null
+            ? `${matchedLocation.name}`
+            : `${matchedLocation.streetNumber} ${matchedLocation.street}`;
         const address = `${street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
         setLocationAddress(address);
       }
@@ -171,6 +132,7 @@ const AddPostScreen = ({ navigation, route }) => {
       if (result.status === "granted") {
         const location = await Location.getCurrentPositionAsync();
 
+        console.log(location.coords);
         const curentLocationCoords = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
@@ -181,6 +143,12 @@ const AddPostScreen = ({ navigation, route }) => {
         setInitRegion(curentLocationCoords);
 
         return curentLocationCoords;
+      }
+      //show failed dialog if permission denied
+      else {
+        setUseCurrentLocation(false);
+        setShowFailDialog(true);
+        setShowMapView(false);
       }
     } catch (err) {
       console.log(err);
@@ -206,11 +174,15 @@ const AddPostScreen = ({ navigation, route }) => {
           longitudeDelta: 0.01,
         };
 
-        console.log(draggableMarkerCoords);
         setInitRegion(draggableMarkerCoords);
         getLocationAddress(draggableMarkerCoords);
         setPinpointLocation(true);
         setUseCurrentLocation(false);
+      }
+      //show failed dialog if permission denied
+      else {
+        setShowFailDialog(true);
+        setShowMapView(false);
       }
     } catch (err) {
       console.log(err);
@@ -366,14 +338,65 @@ const AddPostScreen = ({ navigation, route }) => {
     });
   };
 
+  //call the useEffect when the route.params.item has changed
+  useEffect(() => {
+    const testFunc = async () => {
+      try {
+        console.log("called", route.params.item);
+        setIsLoading(true);
+        const result = await Location.requestForegroundPermissionsAsync();
+
+        if (result.status === "granted") {
+          const newRegion = {
+            latitude: route.params.item.geometry.y,
+            latitudeDelta: 0.01,
+            longitude: route.params.item.geometry.x,
+            longitudeDelta: 0.01,
+          };
+
+          getLocationAddress(newRegion);
+          setInitRegion(newRegion);
+          setPinpointLocation(true);
+          setUseCurrentLocation(false);
+          setIsStoryEmpty(false);
+          setStory(
+            `${route.params.item.CALL_TYPE} at ${route.params.item.CROSS_STREETS}`
+          );
+        }
+        //show failed dialog if permission denied
+        else {
+          setShowFailDialog(true);
+          setShowMapView(false);
+        }
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
+
+      // if(route.params?.item.item.item.CALL_TYPE != null){
+
+      //   obj= {"latitude": route.params?.item.item.item.geometry.x,  "longitude": route.params?.item.item.item.geometry.y, "latitudeDelta": 0.01, "longitudeDelta" : 0.01 }
+      //   getLocationAddress(obj)
+
+      //   setInitRegion(newRegion)
+      // }
+    };
+
+    //if navigate from live call, call the set live call data function
+    if (fromLive) {
+      testFunc();
+    }
+  }, [route.params?.item]);
+
   //update the location address if use current location is checked
   useEffect(() => {
     if (useCurrentLocation) handleCurrentLocation();
   }, [useCurrentLocation]);
 
   //reset all input fields when the user is logged out
-  useEffect(() =>
-  {
+  useEffect(() => {
     resetFields();
   }, [currentUser]);
 
@@ -387,7 +410,7 @@ const AddPostScreen = ({ navigation, route }) => {
       <FailDialog
         showDialog={showFailDialog}
         hideDialog={hideFailedDialog}
-        errorMessage={"Failed"}
+        errorMessage={"Go to Setting -> Location and allow location permission"}
       />
       {/* success dialog */}
       <SuccessDialog
@@ -414,6 +437,7 @@ const AddPostScreen = ({ navigation, route }) => {
         useCurrentLocation={useCurrentLocation}
         handleUseCurrentLocation={handleUseCurrentLocation}
         handleDraggableMaker={handleDraggableMaker}
+        useDraggableMaker={true}
       />
       {/* screen body */}
       <Card style={[styleSheet.flex_1]}>
