@@ -133,8 +133,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
     const q = query(subCollectionRef, orderBy("replyDateTime"));
     let list = [];
 
-    onSnapshot(q, (snapshot) =>
-    {
+    onSnapshot(q, (snapshot) => {
       //handle docChange
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
@@ -148,10 +147,10 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
               change.doc.data().replyDateTime.toDate().getTime()
             )
               comment.commentId = change.doc.data().commentId;
-        }
-        else if (change.type === 'removed')
-        {
-          list = list.filter(item => item.commentId !== change.doc.data().commentId);
+        } else if (change.type === "removed") {
+          list = list.filter(
+            (item) => item.commentId !== change.doc.data().commentId
+          );
         }
       });
       setCommentList(list);
@@ -246,6 +245,8 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         showMapView={showMapView}
         showHideMapView={showHideMapView}
         initRegion={initRegion}
+        location={locationAddress}
+        useDraggableMaker={false}
       />
       <ScrollView
         style={[

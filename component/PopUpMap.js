@@ -13,7 +13,9 @@ const PopUpMap = ({
   isRadioButton,
   useCurrentLocation,
   handleUseCurrentLocation,
+  useDraggableMaker,
   handleDraggableMaker,
+  location,
 }) => {
   //styling
   const windowHeight = Dimensions.get("window").height;
@@ -30,7 +32,7 @@ const PopUpMap = ({
         ]}
       >
         {/* use current location radio button */}
-        {isRadioButton && (
+        {isRadioButton ? (
           <View>
             <View style={[styleSheet.flexRowContainer, styleSheet.alignCenter]}>
               <RadioButton
@@ -46,19 +48,27 @@ const PopUpMap = ({
               variant="labelLarge"
               style={[textColor, { marginBottom: "1%" }]}
             >
-              or use draggable marker for the crime scene
+              or use the marker to spot the crime scene
             </Text>
+          </View>
+        ) : (
+          <View>
+            <Text variant='labelLarge'>{location}</Text>
           </View>
         )}
         {/* map */}
         <MapView
-          style={[{ width: "100%", height: "90%" }]}
+          style={
+            isRadioButton
+              ? { width: "100%", height: "90%" }
+              : { width: "100%", height: "95%" }
+          }
           region={initRegion}
           //onRegionChange={(region) => setInitRegion(region)}
         >
           {/* marker */}
           <Marker
-            draggable={true}
+            draggable={useDraggableMaker}
             coordinate={initRegion}
             onDragEnd={(e) => {
               handleDraggableMaker(e.nativeEvent.coordinate);
