@@ -86,7 +86,7 @@ const AddPostScreen = ({ navigation, route }) => {
   const showHideMapView = () => setShowMapView(!showMapView);
 
   const handleUseCurrentLocation = () =>
-    setUseCurrentLocation(!useCurrentLocation);
+    setUseCurrentLocation(pre=>!pre);
 
   //reset location address and coordinate
   const resetLocation = () => {
@@ -156,7 +156,9 @@ const AddPostScreen = ({ navigation, route }) => {
   };
 
   //update the coordinate and location address with device's current location
-  const handleCurrentLocation = async () => {
+  const handleCurrentLocation = async () =>
+  {
+    console.log('radionButton')
     const coords = await getUserCurrentLocation();
     getLocationAddress(coords);
     setPinpointLocation(true);
