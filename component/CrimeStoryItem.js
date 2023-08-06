@@ -1,5 +1,5 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { Text, Card, Avatar, IconButton, Menu } from "react-native-paper";
+import { Text, Card, Avatar, IconButton, Appbar } from "react-native-paper";
 import { useState, useEffect, useMemo } from "react";
 import { storage } from "../config/firebase_config";
 import {
@@ -27,6 +27,7 @@ import {
   getUserData,
   deleteCrimeStory,
 } from "../functions/getCrimeStory";
+import { onShare } from "../functions/shareLink";
 import ItemHeader from "./ItemHeader";
 import {
   BannerAd,
@@ -61,7 +62,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   //posting Data
-  const { user: userDocRef } = postingData;
+  const { user: userDocRef, postingId } = postingData;
   const storyBody =
     !(postingData.story === "") && `${postingData.story.substring(0, 31)}...`;
   const postingDateTime = postingData.postingDateTime.toDate();
@@ -250,27 +251,29 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) 
             />
           </Card.Content>
         )}
-        {/* vote section */}
-        <Card.Content
-          style={[styleSheet.flexRowContainer, { alignItems: "center" }]}
+        {/* App bar */}
+        <Appbar
+          style={[
+            styleSheet.width_100,
+            { height: windowHeight * 0.06 },
+            backgroundColor,
+          ]}
         >
-          {voteStatus ? (
-            <IconButton
-              icon="thumb-up"
-              iconColor={textColor.color}
-              onPress={onUpVote}
-            />
-          ) : (
-            <IconButton
-              icon="thumb-up-outline"
-              iconColor={textColor.color}
-              onPress={onUpVote}
-            />
-          )}
+           {/* vote section */}
+          <Appbar.Action
+            icon={voteStatus ? "thumb-up" : "thumb-up-outline"}
+            color={textColor.color}
+            onPress={onUpVote}
+          />
           <Text variant="labelLarge" style={textColor}>
             {getCountSuffix(upVoteCount)}
           </Text>
-        </Card.Content>
+          <Appbar.Action
+            icon="share"
+            onPress={() => onShare(postingId)}
+            color={textColor.color}
+          />
+        </Appbar>
       </Card>
       </TouchableOpacity>
       {isShowAds && showAdsStatus && (

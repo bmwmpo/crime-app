@@ -38,6 +38,7 @@ import {
   retreivePhotoFromFirebaseStorage,
   getUserData,
 } from "../../functions/getCrimeStory";
+import { onShare } from "../../functions/shareLink";
 import { BottomSheet, Icon } from "@rneui/themed";
 import MapView, { Marker } from "react-native-maps";
 import ImageView from "react-native-image-viewing";
@@ -156,24 +157,7 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
       setCommentList(list);
     });
   };
-
-  //share the positng
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message: `exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/${postingId}`,
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log("Yes");
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
+  
   //retreive crime story data from firestore
   const getCrimeStoryData = async () => {
     const docRef = doc(db, EnumString.postingCollection, postingId);
@@ -348,22 +332,18 @@ const CrimeStoryDetailScreen = ({ route, navigation }) => {
         ]}
       >
         {/* like */}
-        {voteStatus ? (
-          <Appbar.Action
-            icon="thumb-up"
-            color={textColor.color}
-            onPress={onUpVote}
-          />
-        ) : (
-          <Appbar.Action
-            icon="thumb-up-outline"
-            color={textColor.color}
-            onPress={onUpVote}
-          />
-        )}
+        <Appbar.Action
+          icon={voteStatus ? "thumb-up" : "thumb-up-outline"}
+          color={textColor.color}
+          onPress={onUpVote}
+        />
         <Text style={textColor}>{getCountSuffix(upVoteCount)}</Text>
         {/* share */}
-        <Appbar.Action icon="share" onPress={onShare} color={textColor.color} />
+        <Appbar.Action
+          icon="share"
+          onPress={() => onShare(postingId)}
+          color={textColor.color}
+        />
         {/* comment */}
         <View style={[styleSheet.flexEndStyle, { width: windowWidth * 0.9 }]}>
           <Button mode="contained" onPress={toCommentScreen}>

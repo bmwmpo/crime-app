@@ -2,7 +2,7 @@ import { BottomSheet } from "@rneui/themed";
 import { View, Dimensions } from "react-native";
 import { Card, RadioButton, Text } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Callout } from "react-native-maps";
 import styleSheet from "../assets/StyleSheet";
 
 //PopUp Map component
@@ -19,6 +19,7 @@ const PopUpMap = ({
 }) => {
   //styling
   const windowHeight = Dimensions.get("window").height;
+  const windowWidth = Dimensions.get("window").width;
   const isDarkMode = useTheme().dark;
   const textColor = styleSheet.darkModeColor;
 
@@ -53,7 +54,7 @@ const PopUpMap = ({
           </View>
         ) : (
           <View>
-            <Text variant='labelLarge'>{location}</Text>
+            <Text variant="labelLarge">{location}</Text>
           </View>
         )}
         {/* map */}
@@ -73,7 +74,12 @@ const PopUpMap = ({
             onDragEnd={(e) => {
               handleDraggableMaker(e.nativeEvent.coordinate);
             }}
-          />
+          >
+            {/* popUp text */}
+            <Callout style={ [{width:windowWidth*0.5, height:windowHeight*0.05}, styleSheet.container] }>
+              <Text variant='labelLarge' style={styleSheet.lightModeColor}>{ location }</Text>
+            </Callout>
+          </Marker>
         </MapView>
       </Card>
     </BottomSheet>
