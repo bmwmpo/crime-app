@@ -27,6 +27,8 @@ export default EnumString = {
   initLocationAddress:'pinpoint the crime scene using the map'
 };
 
+const shareURL = 'exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/';
+
 const avatarColorSet = [
   "#1F45FC",
   "#0909FF",
@@ -60,4 +62,4 @@ const avatarColorSet = [
   "#9E7BFF",
 ];
 
-export { avatarColorSet };
+export { avatarColorSet, shareURL };
