@@ -157,7 +157,6 @@ const AddPostScreen = ({ navigation, route }) => {
 
   //update the coordinate and location address with device's current location
   const handleCurrentLocation = async () => {
-    console.log("radionButton");
     const coords = await getUserCurrentLocation();
     getLocationAddress(coords);
     setPinpointLocation(true);
@@ -430,10 +429,6 @@ const AddPostScreen = ({ navigation, route }) => {
     resetFields();
   }, [currentUser]);
 
-  useEffect(() => {
-    console.log(fromLive);
-  });
-
   return !signIn ? (
     <NotLogInScreen />
   ) : isLoading ? (
@@ -492,7 +487,7 @@ const AddPostScreen = ({ navigation, route }) => {
               onPress={selectPhoto}
               color={textColor.color}
             />
-
+            {/*camera  */}
             <Appbar.Action
               icon="camera"
               onPress={openCamera}
