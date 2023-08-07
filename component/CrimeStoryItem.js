@@ -195,10 +195,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) 
         />
         {/* posting info: author, date and time */}
         <Card.Content
-          style={[
-            styleSheet.flexRowContainer,
-            styleSheet.flexSpaceBetweenStyle,
-          ]}
+          style={[styleSheet.container, styleSheet.flexSpaceBetweenStyle]}
         >
           <ItemHeader
             creator={creator}
@@ -259,7 +256,7 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) 
             backgroundColor,
           ]}
         >
-           {/* vote section */}
+          {/* vote section */}
           <Appbar.Action
             icon={voteStatus ? "thumb-up" : "thumb-up-outline"}
             color={textColor.color}

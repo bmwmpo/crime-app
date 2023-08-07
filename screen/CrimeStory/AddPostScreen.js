@@ -43,7 +43,8 @@ const AddPostScreen = ({ navigation, route }) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
-  const fromLive = route.params ? true : false;
+  const fromLive = route.params?.item ? true : false;
+  const liveCallData = route.params?.item.item;
 
   //state values
   const [story, setStory] = useState("");
@@ -85,8 +86,7 @@ const AddPostScreen = ({ navigation, route }) => {
 
   const showHideMapView = () => setShowMapView(!showMapView);
 
-  const handleUseCurrentLocation = () =>
-    setUseCurrentLocation(pre=>!pre);
+  const handleUseCurrentLocation = () => setUseCurrentLocation((pre) => !pre);
 
   //reset location address and coordinate
   const resetLocation = () => {
@@ -156,9 +156,7 @@ const AddPostScreen = ({ navigation, route }) => {
   };
 
   //update the coordinate and location address with device's current location
-  const handleCurrentLocation = async () =>
-  {
-    console.log('radionButton')
+  const handleCurrentLocation = async () => {
     const coords = await getUserCurrentLocation();
     getLocationAddress(coords);
     setPinpointLocation(true);
@@ -191,6 +189,47 @@ const AddPostScreen = ({ navigation, route }) => {
     }
   };
 
+  //get Image from camera or gallery
+  const handleImagePicker = (result) => {
+    //photo taken by the camera or images from gallery
+    const source = result.assets;
+
+    if (source.length > 0) {
+      const uri = source.map((item) => ({
+        uri: item.uri,
+        fileName: item.uri.substring(item.uri.lastIndexOf("/") + 1),
+      }));
+      setPhotoUri(uri);
+    }
+  };
+
+  //handle open camera
+  const openCamera = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestCameraPermissionsAsync();
+
+      if (permissionResult.granted === false) {
+        setShowSuccessDialog(true);
+        setDialogTitleMsg({ title: "", message: EnumString.permissionMsg });
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      //cancel camera
+      if (result.canceled) return;
+      handleImagePicker(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   //select image from gallery
   const selectPhoto = async () => {
     try {
@@ -216,18 +255,7 @@ const AddPostScreen = ({ navigation, route }) => {
 
       //cancel image selection
       if (result.canceled) return;
-
-      //pickup images from gallery
-      const source = result.assets;
-
-      if (source.length > 0) {
-        //setImages(source);
-        const uri = source.map((item) => ({
-          uri: item.uri,
-          fileName: item.uri.substring(item.uri.lastIndexOf("/") + 1),
-        }));
-        setPhotoUri(uri);
-      }
+      handleImagePicker(result);
     } catch (err) {
       console.log(err);
     }
@@ -344,15 +372,14 @@ const AddPostScreen = ({ navigation, route }) => {
   useEffect(() => {
     const testFunc = async () => {
       try {
-        console.log("called", route.params.item);
         setIsLoading(true);
         const result = await Location.requestForegroundPermissionsAsync();
 
         if (result.status === "granted") {
           const newRegion = {
-            latitude: route.params.item.geometry.y,
+            latitude: liveCallData.geometry.y,
             latitudeDelta: 0.01,
-            longitude: route.params.item.geometry.x,
+            longitude: liveCallData.geometry.x,
             longitudeDelta: 0.01,
           };
 
@@ -362,7 +389,7 @@ const AddPostScreen = ({ navigation, route }) => {
           setUseCurrentLocation(false);
           setIsStoryEmpty(false);
           setStory(
-            `${route.params.item.CALL_TYPE} at ${route.params.item.CROSS_STREETS}`
+            `${liveCallData.CALL_TYPE} at ${liveCallData.CROSS_STREETS}`
           );
         }
         //show failed dialog if permission denied
@@ -390,7 +417,7 @@ const AddPostScreen = ({ navigation, route }) => {
     if (fromLive) {
       testFunc();
     }
-  }, [route.params?.item]);
+  }, [liveCallData]);
 
   //update the location address if use current location is checked
   useEffect(() => {
@@ -458,6 +485,12 @@ const AddPostScreen = ({ navigation, route }) => {
             <Appbar.Action
               icon="image"
               onPress={selectPhoto}
+              color={textColor.color}
+            />
+            {/*camera  */}
+            <Appbar.Action
+              icon="camera"
+              onPress={openCamera}
               color={textColor.color}
             />
             {/* map */}
