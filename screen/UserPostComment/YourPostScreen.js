@@ -72,9 +72,7 @@ const YourPostScreen = () => {
 
   //update the crime stories list if the userPostsRef has changed
   useEffect(() => {
-    // setIsLoading(true);
     getAllUserPosts();
-    // setTimeout(() => setIsLoading(false), 1000);
   }, [userPostsRef]);
 
   return (
