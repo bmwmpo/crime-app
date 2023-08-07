@@ -1,5 +1,5 @@
 import { Share } from 'react-native';
-import { shareURL } from '../assets/EnumString';
+import { SHARE_URL } from '../assets/EnumString';
 //share the positng
 const onShare = async (postingId) => {
   try {
@@ -9,7 +9,7 @@ const onShare = async (postingId) => {
 
     if (result.action === Share.sharedAction) {
       if (result.activityType) {
-        console.log("Yes", `${shareURL}${postingId}`);
+        console.log("Yes", `${SHARE_URL}${postingId}`);
       }
     }
   } catch (err) {

@@ -17,7 +17,14 @@ const ItemHeader = ({
   setShowConfirmDialog,
 }) => {
   return (
-    <View style={ [styleSheet.flexRowContainer, styleSheet.alignCenter, styleSheet.width_100]}>
+    <View
+      style={[
+        styleSheet.flexRowContainer,
+        styleSheet.alignCenter,
+        styleSheet.width_100,
+        styleSheet.flexSpaceBetweenStyle,
+      ]}
+    >
       {/* avatar */}
       <Avatar.Text
         label={creator.substring(0, 1).toUpperCase()}
