@@ -11,7 +11,7 @@ export default EnumString = {
   welcomeMsg: (username) => `Weclome ${username}`,
   permissionMsg:
     "Please go to Setting > Privacy to grant the necessary permission",
-  logOutTitle:'Log out',
+  logOutTitle: "Log out",
   logOutMsg: "Are you sure you want to log out?",
   thankYouMsg:
     "Thank you for your interest in sharing the criminal information you have",
@@ -20,14 +20,20 @@ export default EnumString = {
   userInfoCollection: "UserInfo",
   logInMsg: "Please log in or create an account to continue",
   logInTilte: "Are you interested?",
-  deleteStoryTitle: 'Delete',
-  deleteStoryMsg: 'Are you sure you want to delete?',
-  emptyCrimeStoriesList: ' Report any crime you witness',
-  emptyCommentsList:"Feel free to leave a comment on any crime story",
-  initLocationAddress:'pinpoint the crime scene using the map'
+  deleteStoryTitle: "Delete",
+  deleteStoryMsg: "Are you sure you want to delete?",
+  emptyCrimeStoriesList: " Report any crime you witness",
+  emptyCommentsList: "Feel free to leave a comment on any crime story",
+  initLocationAddress: "pinpoint the crime scene using the map",
 };
 
-const shareURL = 'exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/';
+const SHARE_URL = "exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/";
+
+const BG_IMG =
+  "https://lh3.googleusercontent.com/p/AF1QipPCsEaUL6f2zgNEUMx14RwI3V4Rj8tODwPqPPz-=s680-w680-h510";
+
+const LIVE_CALL_API =
+  "https://services.arcgis.com/S9th0jAJ7bqgIRjw/ArcGIS/rest/services/C4S_Public_NoGO/FeatureServer/0/query?where=OBJECTID+%3E+0&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=OCCURRENCE_TIME+DESC&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
 
 const avatarColorSet = [
   "#1F45FC",
@@ -62,4 +68,4 @@ const avatarColorSet = [
   "#9E7BFF",
 ];
 
-export { avatarColorSet, shareURL };
+export { avatarColorSet, SHARE_URL, BG_IMG, LIVE_CALL_API };

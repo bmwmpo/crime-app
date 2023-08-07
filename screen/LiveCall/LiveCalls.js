@@ -15,6 +15,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
+import { BG_IMG, LIVE_CALL_API } from "../../assets/EnumString";
 import useStore from "../../zustand/store";
 import Icon from "react-native-vector-icons/Ionicons";
 import PopUpMap from "../../component/PopUpMap";
@@ -55,8 +56,6 @@ const LiveCalls = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [data, setData] = useState(null);
   const scrollY = React.useRef(new Animated.Value(0)).current;
-  const BG_IMG =
-    "https://lh3.googleusercontent.com/p/AF1QipPCsEaUL6f2zgNEUMx14RwI3V4Rj8tODwPqPPz-=s680-w680-h510";
   const SPACING = 20;
   const AVATAR_SIZE = 70;
   const ITEM_SIZE = AVATAR_SIZE + SPACING * 3;
@@ -73,19 +72,15 @@ const LiveCalls = ({ navigation }) => {
 
   const handleAddPost = (item) => {
     console.log("Add Post button pressed!");
-    navigation.navigate("BottomTabNavigation", {
-      screen: "Report",
-      params: item.item,
-
+    navigation.navigate("Report", {
+      item: item.item,
     });
   };
 
   //fetch live call data
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        "https://services.arcgis.com/S9th0jAJ7bqgIRjw/ArcGIS/rest/services/C4S_Public_NoGO/FeatureServer/0/query?where=OBJECTID+%3E+0&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=OCCURRENCE_TIME+DESC&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token="
-      );
+      const response = await fetch(LIVE_CALL_API);
       const json = await response.json();
       setData(json);
     };

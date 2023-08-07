@@ -30,7 +30,7 @@ const YourPostScreen = () => {
     ? styleSheet.darkModeBackGroundColor
     : styleSheet.lightModeBackGroundColor;
 
-  //get user's crime story refs
+  //get real time user's crime story refs
   const getAllUserPostsRef = async () => {
     const docRef = doc(db, EnumString.userInfoCollection, docID);
 
@@ -48,6 +48,7 @@ const YourPostScreen = () => {
     const list = [];
 
     try {
+      setIsLoading(true);
       for (let ref of userPostsRef) {
         const documents = await getDoc(ref);
         //userPostRef is arranged from oldest to newest
@@ -59,6 +60,9 @@ const YourPostScreen = () => {
       setUserPosts(list);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,9 +72,9 @@ const YourPostScreen = () => {
 
   //update the crime stories list if the userPostsRef has changed
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
     getAllUserPosts();
-    setTimeout(() => setIsLoading(false), 1000);
+    // setTimeout(() => setIsLoading(false), 1000);
   }, [userPostsRef]);
 
   return (

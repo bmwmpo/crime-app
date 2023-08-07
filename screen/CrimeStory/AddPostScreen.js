@@ -43,7 +43,8 @@ const AddPostScreen = ({ navigation, route }) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
-  const fromLive = route.params ? true : false;
+  const fromLive = route.params?.item ? true : false;
+  const liveCallData  = route.params?.item.item;
 
   //state values
   const [story, setStory] = useState("");
@@ -344,15 +345,14 @@ const AddPostScreen = ({ navigation, route }) => {
   useEffect(() => {
     const testFunc = async () => {
       try {
-        console.log("called", route.params.item);
         setIsLoading(true);
         const result = await Location.requestForegroundPermissionsAsync();
 
         if (result.status === "granted") {
           const newRegion = {
-            latitude: route.params.item.geometry.y,
+            latitude: liveCallData.geometry.y,
             latitudeDelta: 0.01,
-            longitude: route.params.item.geometry.x,
+            longitude: liveCallData.geometry.x,
             longitudeDelta: 0.01,
           };
 
@@ -362,7 +362,7 @@ const AddPostScreen = ({ navigation, route }) => {
           setUseCurrentLocation(false);
           setIsStoryEmpty(false);
           setStory(
-            `${route.params.item.CALL_TYPE} at ${route.params.item.CROSS_STREETS}`
+            `${liveCallData.CALL_TYPE} at ${liveCallData.CROSS_STREETS}`
           );
         }
         //show failed dialog if permission denied
@@ -390,7 +390,7 @@ const AddPostScreen = ({ navigation, route }) => {
     if (fromLive) {
       testFunc();
     }
-  }, [route.params?.item]);
+  }, [liveCallData]);
 
   //update the location address if use current location is checked
   useEffect(() => {
@@ -401,6 +401,11 @@ const AddPostScreen = ({ navigation, route }) => {
   useEffect(() => {
     resetFields();
   }, [currentUser]);
+
+  useEffect(() =>
+  {
+    console.log(fromLive);
+  })
 
   return !signIn ? (
     <NotLogInScreen />
