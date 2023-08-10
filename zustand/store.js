@@ -3,12 +3,14 @@ import { create } from "zustand";
 const useStore = create((set, get) => ({
   user: { email: "", username: "", password: "", userId: "" },
   preference: { darkMode: false, avatarColor: "#9400D3", autoDarkMode: false },
+  location:{coords:null, enabled:false},
   signIn: false,
   docID: "",
   setEmail: (email) =>
     set((state) => ({
       user: { ...state.user, email },
       preference: { ...state.preference },
+      location:{...state.location},
       signIn: state.signIn,
       docID: state.docID,
     })),
@@ -16,6 +18,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user, password },
       preference: { ...state.preference },
+      location:{...state.location},
       signIn: state.signIn,
       docID: state.docID,
     })),
@@ -23,6 +26,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user, username },
       preference: { ...state.preference },
+      location:{...state.location},
       signIn: state.signIn,
       docID: state.docID,
     })),
@@ -30,6 +34,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user },
       preference: { ...state.preference },
+      location:{...state.location},
       signIn: state.signIn,
       docID,
     })),
@@ -37,6 +42,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user },
       preference: { ...state.preference, darkMode: isDarkMode },
+      location:{...state.location},
       docID: state.docID,
       signIn: state.signIn,
     })),
@@ -44,6 +50,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user },
       preference: { ...state.preference, autoDarkMode: isAutoDarkMode },
+      location:{...state.location},
       docID: state.docID,
       signIn: state.signIn,
     })),
@@ -51,6 +58,23 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user },
       preference: { ...state.preference, avatarColor: color },
+      location:{...state.location},
+      docID: state.docID,
+      signIn: state.signIn,
+    })),
+  setLocationCoords: (coords) => 
+    set((state) =>({
+      user: { ...state.user },
+      preference: { ...state.preference },
+      location:{...state.location, coords},
+      docID: state.docID,
+      signIn: state.signIn,
+    })),
+  setLocationEnabled: (enabled) => 
+    set((state) =>({
+      user: { ...state.user },
+      preference: { ...state.preference },
+      location:{...state.location, enabled},
       docID: state.docID,
       signIn: state.signIn,
     })),
@@ -58,6 +82,7 @@ const useStore = create((set, get) => ({
     set((state) => ({
       user: { ...state.user },
       preference: { ...state.preference },
+      location:{...state.location},
       signIn: !state.signIn,
       docID: state.docID,
     })),
@@ -68,11 +93,14 @@ const useStore = create((set, get) => ({
     userId,
     darkMode,
     avatarColor,
-    autoDarkMode
+    autoDarkMode,
+    coords,
+    enabled
   ) =>
     set((state) => ({
       user: { ...state.user, email, username, userId },
       preference: { ...state.preference, darkMode, avatarColor, autoDarkMode },
+      location:{...state.location, coords, enabled},
       signIn: true,
       docID,
     })),
@@ -84,6 +112,7 @@ const useStore = create((set, get) => ({
         avatarColor: "#9400D3",
         autoDarkMode: false,
       },
+      location:{coords:null, enabled:false},
       signIn: false,
       docID: "",
     })),

@@ -39,7 +39,7 @@ import PopUpMap from "../../component/PopUpMap";
 //create post screen
 const LocationScreen = ({ navigation, route }) => {
   //current user infor from useStore
-  const { user: currentUser, signIn, docID } = useStore((state) => state);
+  const { user: currentUser, signIn, docID, location:{coords, enabled}, setLocationCoords, setLocationEnabled } = useStore((state) => state);
   //init toronto coordinate
   const torontoRegion = {
     latitude: 43.653225,
@@ -47,21 +47,12 @@ const LocationScreen = ({ navigation, route }) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
-  const fromLive = route.params?.item ? true : false;
-  const liveCallData = route.params?.item.item;
 
   //state values
-  const [story, setStory] = useState("");
-  const [isStoryEmpty, setIsStoryEmpty] = useState(true);
-  const [photoUri, setPhotoUri] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showFailDialog, setShowFailDialog] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [dialogTitleMsg, setDialogTitleMsg] = useState({});
-  const [showImageView, setShowImageView] = useState({
-    visible: false,
-    index: 0,
-  });
   const [showMapView, setShowMapView] = useState(false);
   const [useCurrentLocation, setUseCurrentLocation] = useState(false);
   const [initRegion, setInitRegion] = useState(torontoRegion);
@@ -69,9 +60,6 @@ const LocationScreen = ({ navigation, route }) => {
     EnumString.initLocationAddress
   );
   const [pinpointLocation, setPinpointLocation] = useState(false);
-
-  //ref to manipulate the flastlist
-  const flatListRef = useRef();
 
   //styling
   const isDarkMode = useTheme().dark;
@@ -97,15 +85,7 @@ const LocationScreen = ({ navigation, route }) => {
     setLocationAddress(EnumString.initLocationAddress);
     setInitRegion(torontoRegion);
     setPinpointLocation(false);
-  };
-
-  //reset all input fields
-  const resetFields = () => {
-    setStory("");
-    setPhotoUri([]);
-    resetLocation();
     setUseCurrentLocation(false);
-    setIsStoryEmpty(true);
   };
 
   //reverse thr coordinate to address
@@ -194,7 +174,7 @@ const LocationScreen = ({ navigation, route }) => {
     }
   };
 
-  //save the post in firestore
+  //update push notification area
   const updateLocation = async () => {
     try {
       setIsLoading(true);
@@ -218,15 +198,12 @@ const LocationScreen = ({ navigation, route }) => {
 
         // Update the document
         await updateDoc(docRef, { location: {coords: initRegion, enabled: true} });
+        setLocationCoords(initRegion);
+        setLocationEnabled(true);
         console.log("Document successfully updated:", doc.id);
       } else {
         console.log("No documents found with the specified field value.");
       }
-
-      //reset all fields
-      resetFields();
-
-      navigation.navigate("BottomTabNavigation", { screen: "Map" });
     } catch (err) {
       //show fail dialog
       console.error(err);
@@ -234,6 +211,7 @@ const LocationScreen = ({ navigation, route }) => {
       setIsLoading(false);
     } finally {
       setIsLoading(false);
+      navigation.goBack();
     }
   };
 
@@ -242,9 +220,15 @@ const LocationScreen = ({ navigation, route }) => {
     if (useCurrentLocation) handleCurrentLocation();
   }, [useCurrentLocation]);
 
-  //reset all input fields when the user is logged out
+  //get user's notification area
   useEffect(() => {
-    resetFields();
+    if(coords === null){
+      resetLocation();
+    }
+    else{
+      getLocationAddress(coords);
+      setInitRegion(coords);
+    }
   }, [currentUser]);
 
   return !signIn ? (
@@ -259,13 +243,6 @@ const LocationScreen = ({ navigation, route }) => {
         hideDialog={hideFailedDialog}
         errorMessage={"Go to Setting -> Location and allow location permission"}
       />
-      {/* success dialog */}
-      <SuccessDialog
-        showDialog={showSuccessDialog}
-        hideDialog={hideSucessDialog}
-        title={dialogTitleMsg.title}
-        message={dialogTitleMsg.message}
-      />
       {/* popup map view */}
       <PopUpMap
         showMapView={showMapView}
@@ -279,16 +256,10 @@ const LocationScreen = ({ navigation, route }) => {
       />
       {/* screen body */}
       <Card style={[styleSheet.flex_1]}>
-        <Card.Title
-          title="Add Location"
-          style={[backgroundColor]}
-          titleVariant="titleLarge"
-          titleStyle={textColor}
-        />
         <Card.Content
           style={[backgroundColor, styleSheet.height_100, styleSheet.width_100]}
         >
-          {/* share, select images, and add post opyions */}
+          {/* map */}
           <View style={[styleSheet.flexRowContainer, styleSheet.flexEndStyle]}>
             {/* map */}
             <Appbar.Action
@@ -296,7 +267,7 @@ const LocationScreen = ({ navigation, route }) => {
               color={textColor.color}
               onPress={showHideMapView}
             />
-            {/* report crime story button */}
+            {/* update push notification area */}
             <Card.Actions>
               <Button
                 mode="contained"
@@ -309,7 +280,7 @@ const LocationScreen = ({ navigation, route }) => {
                   }
                 }
               >
-                Add
+                Update
               </Button>
             </Card.Actions>
           </View>
@@ -319,15 +290,6 @@ const LocationScreen = ({ navigation, route }) => {
             titleStyle={textColor}
             titleNumberOfLines={5}
           />
-          <ScrollView
-            contentContainerStyle={[
-              {
-                paddingBottom: windowHeight * 0.05,
-                width: windowWidth,
-              },
-              styleSheet.createPostScrollViewStyle,
-            ]}
-          ></ScrollView>
         </Card.Content>
       </Card>
     </SafeAreaView>

@@ -28,7 +28,7 @@ const MyAccountScreen = ({ navigation }) => {
 
   const toEditAvatarScreen = () => navigation.navigate("EditAvatar");
 
-  const toLocationScreen = () => navigation.navigate("LocationScreen");
+  const toLocationScreen = () => navigation.navigate("UpdateLocation");
 
   return (
     <View style={{ flex: 1 }}>
@@ -83,8 +83,9 @@ const MyAccountScreen = ({ navigation }) => {
           onPress={toEditAvatarScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />
+        {/* update location */}
         <List.Item
-          title="Add Location"
+          title="Update Location"
           titleStyle={textColor}
           titleEllipsizeMode="clip"
           left={() => (

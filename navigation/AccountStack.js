@@ -44,7 +44,7 @@ const AccountStack = ({ navigation }) => {
       <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
       {/* EditAvatar screen */}
       <Stack.Screen name='EditAvatar' component={ EditAvatarScreen } />
-      <Stack.Screen name='LocationScreen' component={ LocationScreen } />
+      <Stack.Screen name='UpdateLocation' component={ LocationScreen } />
     </Stack.Navigator>
   );
 };
