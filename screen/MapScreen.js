@@ -1,7 +1,12 @@
 import { Component, useEffect, useState, useRef } from "react";
 import { View, Text, Button, Dimensions, TextInput } from "react-native";
 import React from "react";
-import MapView, { Marker, Polygon, Callout, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {
+  Marker,
+  Polygon,
+  Callout,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 import styleSheet from "../assets/StyleSheet";
 import Region from "../class/Region.js";
 import { Picker } from "@react-native-picker/picker";
@@ -592,5 +597,4 @@ const MapScreen = () => {
   );
 };
 
-export default MapScreen;
 export default MapScreen;
