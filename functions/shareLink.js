@@ -4,7 +4,7 @@ import { SHARE_URL } from '../assets/EnumString';
 const onShare = async (postingId) => {
   try {
     const result = await Share.share({
-      message: `${shareURL}${postingId}`,
+      message: `${SHARE_URL}${postingId}`,
     });
 
     if (result.action === Share.sharedAction) {
