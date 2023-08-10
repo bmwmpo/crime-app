@@ -39,7 +39,14 @@ import PopUpMap from "../../component/PopUpMap";
 //create post screen
 const LocationScreen = ({ navigation, route }) => {
   //current user infor from useStore
-  const { user: currentUser, signIn, docID, location:{coords, enabled}, setLocationCoords, setLocationEnabled } = useStore((state) => state);
+  const {
+    user: currentUser,
+    signIn,
+    docID,
+    location: { coords, enabled },
+    setLocationCoords,
+    setLocationEnabled,
+  } = useStore((state) => state);
   //init toronto coordinate
   const torontoRegion = {
     latitude: 43.653225,
@@ -183,21 +190,22 @@ const LocationScreen = ({ navigation, route }) => {
       const collectionRef = collection(db, EnumString.userInfoCollection);
 
       // Field and value to search for
-      var fieldName = "userId"; 
+      var fieldName = "userId";
       var searchValue = currentUser.userId;
-      console.log(currentUser.userId)
-
+      console.log(currentUser.userId);
 
       // Query documents based on the field value
-        const q = query(collectionRef, where(fieldName, "==", searchValue));
-        const querySnapshot = await getDocs(q);
-        const documents = querySnapshot.docs;
+      const q = query(collectionRef, where(fieldName, "==", searchValue));
+      const querySnapshot = await getDocs(q);
+      const documents = querySnapshot.docs;
       if (documents.length > 0) {
         // Assuming there's only one matching document
         var docRef = querySnapshot.docs[0].ref;
 
         // Update the document
-        await updateDoc(docRef, { location: {coords: initRegion, enabled: true} });
+        await updateDoc(docRef, {
+          location: { coords: initRegion, enabled: true },
+        });
         setLocationCoords(initRegion);
         setLocationEnabled(true);
         console.log("Document successfully updated:", doc.id);
@@ -222,10 +230,9 @@ const LocationScreen = ({ navigation, route }) => {
 
   //get user's notification area
   useEffect(() => {
-    if(coords === null){
+    if (coords === null) {
       resetLocation();
-    }
-    else{
+    } else {
       getLocationAddress(coords);
       setInitRegion(coords);
     }

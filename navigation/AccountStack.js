@@ -39,12 +39,12 @@ const AccountStack = ({ navigation }) => {
         })}
       />
       {/* EditUsername screen */}
-      <Stack.Screen name="EditUsername" component={ EditUsernameScreen } />
+      <Stack.Screen name="EditUsername" component={EditUsernameScreen} />
       {/* ChangePassword screen */}
-      <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       {/* EditAvatar screen */}
-      <Stack.Screen name='EditAvatar' component={ EditAvatarScreen } />
-      <Stack.Screen name='UpdateLocation' component={ LocationScreen } />
+      <Stack.Screen name="EditAvatar" component={EditAvatarScreen} />
+      <Stack.Screen name="UpdateLocation" component={LocationScreen} />
     </Stack.Navigator>
   );
 };

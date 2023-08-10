@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 import ItemComponent from "../../component/ItemComponent";
-import LocationScreen from "../UserProfile/LocationScreen"
+import LocationScreen from "../UserProfile/LocationScreen";
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {
@@ -88,9 +88,7 @@ const MyAccountScreen = ({ navigation }) => {
           title="Update Location"
           titleStyle={textColor}
           titleEllipsizeMode="clip"
-          left={() => (
-            <List.Icon icon="pin" color={textColor.color} />
-          )}
+          left={() => <List.Icon icon="pin" color={textColor.color} />}
           right={() => <ItemComponent textColor={textColor} />}
           onPress={toLocationScreen}
           rippleColor={styleSheet.highLightTextColor.color}

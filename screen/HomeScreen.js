@@ -41,7 +41,7 @@ const HomeScreen = () => {
           const docID = documents[0].data().docID;
           const userId = documents[0].data().userId;
           const preference = documents[0].data().preference;
-          const location = documents[0].data().location
+          const location = documents[0].data().location;
 
           //set the user state
           setSignedInUser(
