@@ -112,17 +112,15 @@ const MapScreen = () => {
 
   const DrawerInfo = <Text>{selectedName}</Text>;
 
-
-     return(
-        <View>
-
-
-
-
-    <MapView
-          style= {{width: Dimensions.get('window').width, height:  Dimensions.get('window').height}}
-          initialRegion={initRegion}
-          provider={PROVIDER_GOOGLE}
+  return (
+    <View>
+      <MapView
+        style={{
+          width: Dimensions.get("window").width,
+          height: Dimensions.get("window").height,
+        }}
+        initialRegion={initRegion}
+        provider={PROVIDER_GOOGLE}
         //   onRegionChangeComplete={mapMoved}
         //   ref={mapRef}
       >
