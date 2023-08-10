@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "278395661546",
+    "project_id": "wipg5-d88b1",
+    "storage_bucket": "wipg5-d88b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278395661546:android:acf1d0fbb43e20a53e3b93",
+        "android_client_info": {
+          "package_name": "com.g05.crimeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278395661546-262l0ptdc0a0pi6l3jp12q1njmatgipk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.g05.crimeapp",
+            "certificate_hash": "64e74c60ffe8cb3e7febf5cbbf102ffd9a515cde"
+          }
+        },
+        {
+          "client_id": "278395661546-adfb7bni1vp761v1jmon282fvvd5p47n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.g05.crimeapp",
+            "certificate_hash": "6d5ab4a1b46fd7787fc6a89db222d23a0f0d551f"
+          }
+        },
+        {
+          "client_id": "278395661546-nhhg37f5nu720itq8lhdmllfvov2n6q7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuey3VgTLo3V0SjIsQi2KM1U1I2Kk11Us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278395661546-nhhg37f5nu720itq8lhdmllfvov2n6q7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,10 @@ import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 
 import { COLORS, SIZES, FONTS } from "../constants";
+import { useTheme, useNavigation } from "@react-navigation/native";
+import styleSheet from "../assets/StyleSheet";
+
+
 
 const TextButton = ({
   label,
@@ -9,6 +13,17 @@ const TextButton = ({
   customLabelstyle,
   onPress,
 }) => {
+  const isDarkMode = useTheme().dark;
+  const textColor = isDarkMode
+    ? styleSheet.darkModeColor
+    : styleSheet.lightModeColor;
+  const backgroundColor = isDarkMode
+    ? styleSheet.darkModeBackGroundColor
+    : styleSheet.lightModeBackGroundColor;
+  const cardBorderColor = isDarkMode
+    ? styleSheet.darkModeOutlinedColor
+    : styleSheet.lightModeOutlinedColor;
+
   return (
     <TouchableOpacity
       style={{
@@ -22,7 +37,7 @@ const TextButton = ({
       }}
       onPress={onPress}
     >
-      <Text style={{ color: COLORS.white, ...FONTS.h3, ...customLabelstyle }}>
+      <Text style={{ color: textColor.color, ...FONTS.h3, ...customLabelstyle }}>
         {label}
       </Text>
     </TouchableOpacity>

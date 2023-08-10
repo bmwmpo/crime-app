@@ -32,6 +32,8 @@ const SHARE_URL = "exp://10.0.0.219:19000/--/crimeapp://CrimeDetail/";
 const BG_IMG =
   "https://lh3.googleusercontent.com/p/AF1QipPCsEaUL6f2zgNEUMx14RwI3V4Rj8tODwPqPPz-=s680-w680-h510";
 
+const BG_IMG_DARK = "https://images.pexels.com/photos/7003059/pexels-photo-7003059.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+
 const LIVE_CALL_API =
   "https://services.arcgis.com/S9th0jAJ7bqgIRjw/ArcGIS/rest/services/C4S_Public_NoGO/FeatureServer/0/query?where=OBJECTID+%3E+0&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=OCCURRENCE_TIME+DESC&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
 
@@ -68,4 +70,4 @@ const avatarColorSet = [
   "#9E7BFF",
 ];
 
-export { avatarColorSet, SHARE_URL, BG_IMG, LIVE_CALL_API };
+export { avatarColorSet, SHARE_URL, BG_IMG, LIVE_CALL_API, BG_IMG_DARK };

@@ -6,7 +6,9 @@ import HeaderBar from "./HeaderBar";
 import AreaLabel from "./AreaLabel";
 import TextButton from "./TextButton";
 import DropDown from "./DropDown";
+import styleSheet from "../assets/StyleSheet";
 import { chartOps } from "../constants/dummy";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import {
   VictoryScatter,
   VictoryLine,
@@ -19,15 +21,15 @@ import { crimeDummy } from "../constants/dummy";
 
 const axisData = {
   Assault: [
-    "ASSAULT_RATE_2014",
-    "ASSAULT_RATE_2015",
-    "ASSAULT_RATE_2016",
-    "ASSAULT_RATE_2017",
-    "ASSAULT_RATE_2018",
-    "ASSAULT_RATE_2019",
-    "ASSAULT_RATE_2020",
-    "ASSAULT_RATE_2021",
-    "ASSAULT_RATE_2022",
+    "ASSAULT_2014",
+    "ASSAULT_2015",
+    "ASSAULT_2016",
+    "ASSAULT_2017",
+    "ASSAULT_2018",
+    "ASSAULT_2019",
+    "ASSAULT_2020",
+    "ASSAULT_2021",
+    "ASSAULT_2022",
   ],
   "Break-In": [
     "BREAKENTER_2014",
@@ -69,6 +71,21 @@ const ChartDetail = ({ route, navigation }) => {
   console.log(route.params.area);
 
   const [crime, setCrime] = useState(crimeDummy);
+
+
+    //styling
+    const isDarkMode = useTheme().dark;
+    const textColor = isDarkMode
+      ? styleSheet.darkModeColor
+      : styleSheet.lightModeColor;
+    const backgroundColor = isDarkMode
+      ? styleSheet.darkModeBackGroundColor
+      : styleSheet.lightModeBackGroundColor;
+    const cardBorderColor = isDarkMode
+      ? styleSheet.darkModeOutlinedColor
+      : styleSheet.lightModeOutlinedColor;
+
+      
 
   const [selectedArea, setSelectedArea] = React.useState(route.params.area);
   const [chartOptions, setChartOptions] = React.useState(chartOps);
@@ -121,7 +138,7 @@ const ChartDetail = ({ route, navigation }) => {
           marginHorizontal: SIZES.radius,
           alignItems: "center",
           borderRadius: SIZES.radius,
-          backgroundColor: COLORS.white,
+          backgroundColor: {cardBorderColor},
           ...styles.shadow,
         }}
       >
@@ -210,6 +227,9 @@ const ChartDetail = ({ route, navigation }) => {
                 grid: {
                   stroke: "transparent",
                 },
+                tickLabels : {
+                  fill: textColor.color
+                }
               }}
             />
 
@@ -222,6 +242,9 @@ const ChartDetail = ({ route, navigation }) => {
                 grid: {
                   stroke: "grey",
                 },
+                tickLabels : {
+                  fill: textColor.color
+                }
               }}
             />
           </VictoryChart>
@@ -248,7 +271,7 @@ const ChartDetail = ({ route, navigation }) => {
                   backgroundColor:
                     selectedOption.id == option.id
                       ? COLORS.primary
-                      : COLORS.lightGray,
+                      : backgroundColor.color,
                 }}
                 customLabelStyle={{
                   color:
@@ -265,11 +288,10 @@ const ChartDetail = ({ route, navigation }) => {
   }
 
   return (
-    <>
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: COLORS.lightGray1,
+          backgroundColor: backgroundColor,
         }}
       >
         {/* <HeaderBar>right={true}</HeaderBar> */}
@@ -277,13 +299,12 @@ const ChartDetail = ({ route, navigation }) => {
           <View style={{ flex: 1, paddingBottom: SIZES.padding }}></View>
           {renderChart()}
         </ScrollView>
-      </SafeAreaView>
-      <DropDown
+        <DropDown
         crime={crime}
         sharedState={selectedArea}
         updateSharedState={updateSharedState}
       ></DropDown>
-    </>
+      </SafeAreaView>
   );
 };
 

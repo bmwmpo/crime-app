@@ -15,7 +15,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { BG_IMG, LIVE_CALL_API } from "../../assets/EnumString";
+import { BG_IMG, BG_IMG_DARK, LIVE_CALL_API } from "../../assets/EnumString";
 import useStore from "../../zustand/store";
 import Icon from "react-native-vector-icons/Ionicons";
 import PopUpMap from "../../component/PopUpMap";
@@ -52,6 +52,15 @@ function timeConverter(UNIX_timestamp) {
 }
 
 const LiveCalls = ({ navigation }) => {
+
+  const isDarkMode = useTheme().dark;
+  const imageSrc = isDarkMode
+    ? BG_IMG_DARK
+    : BG_IMG;
+  // const backgroundColor = isDarkMode
+  //   ? styleSheet.darkModeBackGroundColor
+  //   : styleSheet.lightModeBackGroundColor;
+
   const { signIn } = useStore((state) => state);
   const isFocused = useIsFocused();
   const [data, setData] = useState(null);
@@ -103,7 +112,7 @@ const LiveCalls = ({ navigation }) => {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <View style={styles.container}></View>
         <Image
-          source={{ uri: BG_IMG }}
+          source={{ uri: imageSrc }}
           style={StyleSheet.absoluteFillObject}
           blurRadius={80}
         />
