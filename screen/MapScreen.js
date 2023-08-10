@@ -1,7 +1,7 @@
 import { Component, useEffect, useState, useRef } from "react";
 import { View, Text, Button, Dimensions, TextInput } from "react-native";
 import React from "react";
-import MapView, { Marker, Polygon, PROVIDER_GOOGLE, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, Polygon, PROVIDER_GOOGLE } from "react-native-maps";
 import styleSheet from "../assets/StyleSheet";
 import API_Request from "../API_Request";
 import Region from "../class/Region.js";
