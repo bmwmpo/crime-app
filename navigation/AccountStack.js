@@ -7,6 +7,7 @@ import styleSheet from "../assets/StyleSheet";
 import ChangePasswordScreen from "../screen/UserProfile/ChangePasswordScreen";
 import EditUsernameScreen from "../screen/UserProfile/EditUsernameScreen";
 import EditAvatarScreen from "../screen/UserProfile/EditAvatarScreen";
+import LocationScreen from "../screen/UserProfile/LocationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ const AccountStack = ({ navigation }) => {
       <Stack.Screen name="ChangePassword" component={ ChangePasswordScreen } />
       {/* EditAvatar screen */}
       <Stack.Screen name='EditAvatar' component={ EditAvatarScreen } />
+      <Stack.Screen name='LocationScreen' component={ LocationScreen } />
     </Stack.Navigator>
   );
 };

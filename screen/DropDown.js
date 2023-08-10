@@ -1,9 +1,23 @@
 import {View, Text} from 'react-native';
 import React, {useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker' ;
-
+import styleSheet from "../assets/StyleSheet";
+import { useTheme, useNavigation } from "@react-navigation/native";
 
 const DropDown = (props) => {
+  const isDarkMode = useTheme().dark;
+  const color = isDarkMode
+  ? "DARK"
+  : "LIGHT";
+  const textColor = isDarkMode
+  ? styleSheet.darkModeColor
+  : styleSheet.lightModeColor;
+  const cardBorderColor = isDarkMode
+  ? styleSheet.darkModeOutlinedColor
+  : styleSheet.lightModeOutlinedColor;
+  const backgroundColor = isDarkMode
+  ? styleSheet.darkModeBackGroundColor
+  : styleSheet.lightModeBackGroundColor;
 
 // const [loading, error, crime] = useGetData()
 const [isOpen, setIsOpen] = useState(false);
@@ -62,11 +76,11 @@ setValue={handleInputChange}
 maxHeight={ 200}
 autoScroll
 placeholder="Select Area"
-placeholderStyle={{color: 'black', fontWeight: 'bold', fontSize: 16}}
+placeholderStyle={{color: {textColor}, fontWeight: 'bold', fontSize: 16}}
 showTickIcon={true}
 showArrowIcon={true}
 disableBorderRadius={true}
-theme="LIGHT"
+theme={color}
 />
 </View>
 );

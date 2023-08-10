@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import styleSheet from "../../assets/StyleSheet";
 import useStore from "../../zustand/store";
 import ItemComponent from "../../component/ItemComponent";
+import LocationScreen from "../UserProfile/LocationScreen"
 
 //user account screen
 const MyAccountScreen = ({ navigation }) => {
@@ -26,6 +27,8 @@ const MyAccountScreen = ({ navigation }) => {
   const toChangePasswordScreen = () => navigation.navigate("ChangePassword");
 
   const toEditAvatarScreen = () => navigation.navigate("EditAvatar");
+
+  const toLocationScreen = () => navigation.navigate("LocationScreen");
 
   return (
     <View style={{ flex: 1 }}>
@@ -78,6 +81,17 @@ const MyAccountScreen = ({ navigation }) => {
           )}
           right={() => <ItemComponent textColor={textColor} />}
           onPress={toEditAvatarScreen}
+          rippleColor={styleSheet.highLightTextColor.color}
+        />
+        <List.Item
+          title="Add Location"
+          titleStyle={textColor}
+          titleEllipsizeMode="clip"
+          left={() => (
+            <List.Icon icon="pin" color={textColor.color} />
+          )}
+          right={() => <ItemComponent textColor={textColor} />}
+          onPress={toLocationScreen}
           rippleColor={styleSheet.highLightTextColor.color}
         />
       </List.Section>

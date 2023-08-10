@@ -2,7 +2,7 @@ import { BottomSheet } from "@rneui/themed";
 import { View, Dimensions } from "react-native";
 import { Card, RadioButton, Text } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Marker, Callout } from "react-native-maps";
+import MapView, { Marker, Callout,PROVIDER_GOOGLE } from "react-native-maps";
 import styleSheet from "../assets/StyleSheet";
 
 //PopUp Map component
@@ -64,6 +64,7 @@ const PopUpMap = ({
               ? { width: "100%", height: "90%" }
               : { width: "100%", height: "95%" }
           }
+          provider={PROVIDER_GOOGLE}
           region={initRegion}
           //onRegionChange={(region) => setInitRegion(region)}
         >
