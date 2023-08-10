@@ -208,19 +208,19 @@ while(i<Region_Obj.length){
             temp_end_regList.push(ele)
         }
         })
-
+                                                                    //<z1  <-3sd
         if(crime_filter!="None"){
-            if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z2){
+            if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z2){// <-2sd
         Region_Obj[i].region_color=region_color[0]
      }
 
-    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z3){
+    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z3){ // <-sd
         Region_Obj[i].region_color=region_color[1]}
 
-    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z4){
+    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z4){// <m
         Region_Obj[i].region_color=region_color[2]}
 
-    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z5){
+    else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z5){// m+1sd
         Region_Obj[i].region_color=region_color[3]}
 
     else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]<z6){
@@ -231,7 +231,7 @@ while(i<Region_Obj.length){
 
     else if(Region_Obj[i][option][year_option.indexOf(yearSelected)]>z7){
         Region_Obj[i].region_color=region_color[6]}
-//white < green < orange < light red < dark red < black
+//white <-2sd < green  <-1sd < orange  <mean < light red  <mean+1  <mean+2 < dark red <mean+3 < black
         }
         else{
             Region_Obj[i].region_color="rgba(0,0,0,0)"
@@ -310,15 +310,7 @@ const searchRegion=(searchName)=>{
     console.log("searching")
     Region_Obj.map((ele)=>{
         if(ele.region_name==searchName){
-            // setSelectedName(ele.region_name)
-    var temp_count = ele[crime_option_value[crime_option.indexOf(crime_filter)]][year_option.indexOf(yearSelected)]?ele[crime_option_value[crime_option.indexOf(crime_filter)]][year_option.indexOf(yearSelected)]:"No record"
-    setBottomSheet([
-        { title: (ele.region_name)  },
-        { title: (crime_filter)  },
-        { title: (`Total count in ${yearSelected} : ` + temp_count) },
-      ])
-   setBottomVisble(true)
-            mapRef.current.animateToRegion(ele.center_geo,1*1000)
+            RegionPressed(ele)
         }
     })
 }
@@ -336,6 +328,9 @@ const mapRef = useRef(null)
  RegionPressed=(region)=>{
     console.log("pressed")
     console.log(region.region_name)
+
+    
+
     setSelectedName(region.region_name)
     var temp_count = region[crime_option_value[crime_option.indexOf(crime_filter)]][year_option.indexOf(yearSelected)]?region[crime_option_value[crime_option.indexOf(crime_filter)]][year_option.indexOf(yearSelected)]:"No record"
     setBottomSheet([
