@@ -21,6 +21,7 @@ import { ref, uploadBytes } from "firebase/storage";
 import { TextInput, FAB, Button, Card, Appbar } from "react-native-paper";
 import { FailDialog, SuccessDialog } from "../../component/AlertDialog";
 import { useTheme } from "@react-navigation/native";
+import { getLocationAddress, getUserCurrentLocation } from "../../functions/location";
 import useStore from "../../zustand/store";
 import LoadingScreen from "../LoadingScreen";
 import ImageView from "react-native-image-viewing";
@@ -105,60 +106,60 @@ const AddPostScreen = ({ navigation, route }) => {
   };
 
   //reverse thr coordinate to address
-  const getLocationAddress = async (coords) => {
-    try {
-      const reverseGeocode = await Location.reverseGeocodeAsync(coords);
+  // const getLocationAddress = async (coords) => {
+  //   try {
+  //     const reverseGeocode = await Location.reverseGeocodeAsync(coords);
 
-      if (reverseGeocode.length > 0) {
-        const matchedLocation = reverseGeocode[0];
-        const street =
-          matchedLocation.street === null ||
-          matchedLocation.streetNumber === null
-            ? `${matchedLocation.name}`
-            : `${matchedLocation.streetNumber} ${matchedLocation.street}`;
-        const address = `${street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
-        setLocationAddress(address);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     if (reverseGeocode.length > 0) {
+  //       const matchedLocation = reverseGeocode[0];
+  //       const street =
+  //         matchedLocation.street === null ||
+  //         matchedLocation.streetNumber === null
+  //           ? `${matchedLocation.name}`
+  //           : `${matchedLocation.streetNumber} ${matchedLocation.street}`;
+  //       const address = `${street},  ${matchedLocation.city} ${matchedLocation.postalCode}`;
+  //       setLocationAddress(address);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //get device's current location
-  const getUserCurrentLocation = async () => {
-    try {
-      const result = await Location.requestForegroundPermissionsAsync();
+  // const getUserCurrentLocation = async () => {
+  //   try {
+  //     const result = await Location.requestForegroundPermissionsAsync();
 
-      if (result.status === "granted") {
-        const location = await Location.getCurrentPositionAsync();
+  //     if (result.status === "granted") {
+  //       const location = await Location.getCurrentPositionAsync();
 
-        console.log(location.coords);
-        const curentLocationCoords = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        };
+  //       console.log(location.coords);
+  //       const curentLocationCoords = {
+  //         latitude: location.coords.latitude,
+  //         longitude: location.coords.longitude,
+  //         latitudeDelta: 0.01,
+  //         longitudeDelta: 0.01,
+  //       };
 
-        setInitRegion(curentLocationCoords);
+  //       setInitRegion(curentLocationCoords);
 
-        return curentLocationCoords;
-      }
-      //show failed dialog if permission denied
-      else {
-        setUseCurrentLocation(false);
-        setShowFailDialog(true);
-        setShowMapView(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //       return curentLocationCoords;
+  //     }
+  //     //show failed dialog if permission denied
+  //     else {
+  //       setUseCurrentLocation(false);
+  //       setShowFailDialog(true);
+  //       setShowMapView(false);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   //update the coordinate and location address with device's current location
   const handleCurrentLocation = async () => {
-    const coords = await getUserCurrentLocation();
-    getLocationAddress(coords);
+    const coords = await getUserCurrentLocation(setInitRegion, setUseCurrentLocation, setShowFailDialog, setShowMapView);
+    getLocationAddress(coords, setLocationAddress);
     setPinpointLocation(true);
   };
 
@@ -175,7 +176,7 @@ const AddPostScreen = ({ navigation, route }) => {
         };
 
         setInitRegion(draggableMarkerCoords);
-        getLocationAddress(draggableMarkerCoords);
+        getLocationAddress(draggableMarkerCoords, setLocationAddress);
         setPinpointLocation(true);
         setUseCurrentLocation(false);
       }
@@ -383,7 +384,7 @@ const AddPostScreen = ({ navigation, route }) => {
             longitudeDelta: 0.01,
           };
 
-          getLocationAddress(newRegion);
+          getLocationAddress(newRegion, setLocationAddress);
           setInitRegion(newRegion);
           setPinpointLocation(true);
           setUseCurrentLocation(false);
