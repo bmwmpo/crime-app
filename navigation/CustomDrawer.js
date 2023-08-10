@@ -41,6 +41,10 @@ const CustomDrawer = ({ navigation, setVisible, useSystemSetting }) => {
   //sign out function
   const handleSignOut = async () => {
     try {
+
+      //reset the fcmToken for notification
+      const docRef = doc(db, EnumString.userInfoCollection, docID);
+      await updateDoc(docRef, {fcmToken:null});
       await signOut(auth);
 
       hideDialog();
