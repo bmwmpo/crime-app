@@ -1,6 +1,6 @@
 import { ref, getDownloadURL } from "firebase/storage";
 import { Text, Card, Avatar, IconButton, Appbar } from "react-native-paper";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { storage } from "../config/firebase_config";
 import {
   FlatList,
@@ -29,13 +29,18 @@ import {
 } from "../functions/getCrimeStory";
 import { onShare } from "../functions/shareLink";
 import ItemHeader from "./ItemHeader";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import styleSheet from "../assets/StyleSheet";
 import ImageView from "react-native-image-viewing";
 import EnumString from "../assets/EnumString";
 import useStore from "../zustand/store";
 
 //crime story component
-const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
+const CrimeStoryItem = ({ postingData, showMenu, setIsLoading, showAdsStatus }) => {
   //current user info from useStore
   const { user: currentUser, signIn, docID } = useStore((state) => state);
 
@@ -89,6 +94,15 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
 
   const hideMenu = () => setMenuVisible(false);
 
+  const showAds = () => {
+    const num = Math.ceil(Math.random() * 3);
+
+    if (num === 3) return true;
+    else return false;
+  };
+
+  const isShowAds = useMemo(() => showAds(), [1]);
+
   //to crime story detail screen
   const toCrimeDetail = () =>
     navigation.navigate("CrimeStoryStack", {
@@ -139,29 +153,30 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
   }, [votersList, upVoteCount]);
 
   return (
-    <TouchableOpacity onPress={toCrimeDetail}>
-      <Card
-        style={[
-          styleSheet.flex_1,
-          backgroundColor,
-          styleSheet.padding_Vertical,
-          styleSheet.padding_Horizontal,
-          {
-            borderColor: cardBorderColor.color,
-            borderWidth: StyleSheet.hairlineWidth,
-            justifyContent: "center",
-          },
-        ]}
-      >
-        {/* show the dialog if the user is not logged in */}
-        <LogInDialog
-          hideDialog={hideDialog}
-          showDialog={showDialog}
-          navigateToLogIn={toLogInScreen}
-          message={EnumString.logInMsg}
-          title={EnumString.logInTilte}
-        />
-        {/* confirm delete dialog */}
+    <View>
+      <TouchableOpacity onPress={toCrimeDetail} style={[{ margin: "2%" }]}>
+        <Card
+          style={[
+            styleSheet.flex_1,
+            backgroundColor,
+            styleSheet.padding_Vertical,
+            styleSheet.padding_Horizontal,
+            {
+              borderColor: cardBorderColor.color,
+              borderWidth: StyleSheet.hairlineWidth,
+              justifyContent: "center",
+            },
+          ]}
+        >
+          {/* show the dialog if the user is not logged in */}
+          <LogInDialog
+            hideDialog={hideDialog}
+            showDialog={showDialog}
+            navigateToLogIn={toLogInScreen}
+            message={EnumString.logInMsg}
+            title={EnumString.logInTilte}
+          />
+          {/* confirm delete dialog */}
         <ConfirmDialog
           hideDialog={hideConfirmDialog}
           showDialog={showConfirmDialog}
@@ -257,7 +272,35 @@ const CrimeStoryItem = ({ postingData, showMenu, setIsLoading }) => {
           />
         </Appbar>
       </Card>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      {isShowAds && showAdsStatus && (
+        <Card
+          style={[
+            styleSheet.flex_1,
+            backgroundColor,
+            styleSheet.padding_Vertical,
+            styleSheet.padding_Horizontal,
+            {
+              borderColor: cardBorderColor.color,
+              borderWidth: StyleSheet.hairlineWidth,
+              justifyContent: "center",
+            },
+            ,
+            { margin: "2%" },
+          ]}
+        >
+          <Card.Content>
+            <BannerAd
+              unitId={TestIds.BANNER}
+              size={BannerAdSize.LARGE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+            />
+          </Card.Content>
+        </Card>
+      )}
+    </View>
   );
 };
 

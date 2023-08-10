@@ -63,8 +63,9 @@ const YourCommentScreen = () => {
   };
 
   useEffect(() => {
-    getAllUserCommentRef();
-  }, []);
+    if(docID !== '')
+      getAllUserCommentRef();
+  }, [docID]);
 
   //update the comment list if the userCommentRef list has changed
   useEffect(() => {

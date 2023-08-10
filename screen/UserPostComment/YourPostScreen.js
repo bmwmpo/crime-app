@@ -67,8 +67,9 @@ const YourPostScreen = () => {
   };
 
   useEffect(() => {
-    getAllUserPostsRef();
-  }, []);
+    if(docID !== '')
+      getAllUserPostsRef();
+  }, [docID]);
 
   //update the crime stories list if the userPostsRef has changed
   useEffect(() => {
