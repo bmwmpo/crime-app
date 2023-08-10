@@ -108,6 +108,7 @@ const SignUpScreen = ({ navigation }) => {
           avatarColor: "#9400D3",
           autoDarkMode: false,
         },
+        location: {enabled: false, coords: null},
         yourStory: [],
         yourComments: [],
       };

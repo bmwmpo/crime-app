@@ -19,25 +19,39 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+           "apiKey": "AIzaSyAuey3VgTLo3V0SjIsQi2KM1U1I2Kk11Us"
+        }
+      },
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.g05.crimeapp",
-      "userInterfaceStyle": "automatic"
+      "userInterfaceStyle": "automatic",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow crime-app to use your location."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
-        "projectId": "3f633037-5a1f-44a1-a6ad-d8e566e1f35e"
+        "projectId": "bdeb9dfb-ba95-4373-bf01-c803add53711"
       }
-    },
-    "plugins":[
-      [
-        "expo-location",{"locationAlwaysAndWhenInUsePermission": "Allow crime-app to use your location."}
-      ]
-    ]
+    }
   }
 }
