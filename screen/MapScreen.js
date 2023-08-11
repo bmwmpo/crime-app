@@ -8,6 +8,7 @@ import {Picker} from '@react-native-picker/picker';
 import { BottomSheet,ListItem  } from '@rneui/themed';
 import polylabel from "polylabel";
 import { Searchbar } from "react-native-paper";
+import DropDownPicker from 'react-native-dropdown-picker' ;
 const MapScreen =()=>{
 
     const region_color = ["rgba(0,0,0,0.5)",//best  white
@@ -51,9 +52,21 @@ const MapScreen =()=>{
 
         const [searchQuery, setSearchQuery] = React.useState('');
 
+        const [isOpen, setIsOpen] = useState(false);
+
     const crime_option = ["None","Assault", "Auto Theft", "Bike Theft", "Break Enter", "Homicide", "Robbery", "Shooting", "Theft from MV", "Theft Over"]
     const crime_option_value = ["none","assault", "autotheft", "biketheft", "breakenter", "homicide", "robbery", "shooting", "theftFromMv", "theftOver"]
-    
+      const crime_list = []
+      crime_option.forEach((ele,index)=>{
+        const obj = {
+          label: ele,
+          value: crime_option_value[index]
+        };
+        
+        crime_list.push(obj);
+      })
+      const year_list = []
+
 
     const[Region_Obj,setObj] = React.useState([new Region(-1,'default_poly',[0],[0],[0],[0],[0],[0],[0],[0],[0],default_poly,[1.0,0.0])])
     
@@ -315,6 +328,17 @@ const searchRegion=(searchName)=>{
     })
 }
 
+const handleInputChange =(val)=>{
+  console.log("DropDown")
+  console.log(val())
+  console.log(crime_option[crime_option_value.indexOf(val())])
+  setCrimeFilter(crime_option[crime_option_value.indexOf(val())])
+}
+
+const handleInputChangeYear=(val)=>{
+  setCrimeFilter(crime_option[crime_option_value.indexOf(val())])
+}
+
 
 useEffect(()=>{getApi()},[])
 
@@ -368,9 +392,9 @@ onPress={()=>RegionPressed(item)}
 </Marker>
 )
 
-const Picker_Option_Categlory = crime_option.map((item)=>
-<Picker.Item label={item} value={crime_option_value[crime_option.indexOf(item)]}/>
-)
+// const Picker_Option_Categlory = crime_option.map((item)=>
+// <Picker.Item label={item} value={crime_option_value[crime_option.indexOf(item)]}/>
+// )
 
 const Picker_Option_Year = year_option.map((item)=>
 <Picker.Item label={String(item)} value={item}/>
@@ -400,14 +424,51 @@ const Picker_Option_Year = year_option.map((item)=>
          onIconPress={()=>searchRegion(searchQuery)}/>
 
         <View style={{flexDirection:"row",height:"7%",opacity:0.8,backgroundColor:"#a6a6a6"}}>
-       <Picker
+       {/* <Picker
        style={{flex:0.5,height:"100%"}}
         selectedValue={crime_option_value[crime_option.indexOf(crime_filter)]}
         onValueChange={(itemValue, itemIndex) =>
             setCrimeFilter(crime_option[crime_option_value.indexOf(itemValue)])
         }>
         {Picker_Option_Categlory}
-        </Picker> 
+        </Picker>  */}
+
+
+        <DropDownPicker
+          items={crime_list} //list
+          open={isOpen}
+          setOpen={() => setIsOpen(!isOpen) }
+          value={crime_filter}
+          setValue={handleInputChange}//sele
+          maxHeight={ 400}
+          autoScroll
+          placeholder="Select Crime"
+          placeholderStyle={{color: 'black', fontWeight: 'bold', fontSize: 16}}
+          showTickIcon={true}
+          showArrowIcon={true}
+          disableBorderRadius={true}
+          theme="LIGHT"
+          style={{flex:0.5,height:"100%"}}
+          />
+
+
+{/* <DropDownPicker
+          items={crime_list} //list
+          open={isOpen}
+          setOpen={() => setIsOpen(!isOpen) }
+          value={crime_filter}
+          setValue={handleInputChangeYear}//sele
+          maxHeight={ 400}
+          autoScroll
+          placeholder="Select Crime"
+          placeholderStyle={{color: 'black', fontWeight: 'bold', fontSize: 16}}
+          showTickIcon={true}
+          showArrowIcon={true}
+          disableBorderRadius={true}
+          theme="LIGHT"
+          style={{flex:0.5,height:"100%"}}
+          /> */}
+
 
         <Picker
         style={{flex:0.5}}
