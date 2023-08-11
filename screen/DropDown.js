@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker' ;
 import styleSheet from "../assets/StyleSheet";
 import { useTheme, useNavigation } from "@react-navigation/native";
+import { useEffect } from 'react';
+
 
 const DropDown = (props) => {
   const isDarkMode = useTheme().dark;
@@ -45,7 +47,7 @@ function sortByKey(arr, key) {
 
 crime.result.records = sortByKey(crime.result.records, 'AREA_NAME')
 
-
+// useEffect(()=>{console.log(currentValue)},)
 
 crime.result.records.forEach((element,index) => {
     const obj = {
@@ -58,6 +60,7 @@ crime.result.records.forEach((element,index) => {
 
   const handleInputChange = (val) => {
     setCurrentValue(val)
+    console.log(val)
     props.updateSharedState(val);
   };
 
