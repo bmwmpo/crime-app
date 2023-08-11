@@ -4,7 +4,6 @@ import React from 'react';
 import MapView, {Marker, Polygon, Callout,PROVIDER_GOOGLE }from 'react-native-maps';
 import styleSheet from '../assets/StyleSheet';
 import Region from '../class/Region.js'
-import {Picker} from '@react-native-picker/picker';
 import { BottomSheet,ListItem  } from '@rneui/themed';
 import polylabel from "polylabel";
 import { Searchbar } from "react-native-paper";
