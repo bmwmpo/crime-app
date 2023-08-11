@@ -150,7 +150,7 @@ getApi=async()=>{
     .catch((err)=>{
         console.error(err)
     })
-
+  }
   const apiGot = () => {
     console.log("apiGot");
   };
