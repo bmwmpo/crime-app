@@ -396,9 +396,9 @@ onPress={()=>RegionPressed(item)}
 // <Picker.Item label={item} value={crime_option_value[crime_option.indexOf(item)]}/>
 // )
 
-const Picker_Option_Year = year_option.map((item)=>
-<Picker.Item label={String(item)} value={item}/>
-)
+// const Picker_Option_Year = year_option.map((item)=>
+// <Picker.Item label={String(item)} value={item}/>
+// )
 
 
      return(
@@ -470,14 +470,14 @@ const Picker_Option_Year = year_option.map((item)=>
           /> */}
 
 
-        <Picker
+        {/* <Picker
         style={{flex:0.5}}
         selectedValue={yearSelected}
         onValueChange={(itemValue, itemIndex) =>
             setYearSelected(itemValue)
         }>
         {Picker_Option_Year}
-        </Picker> 
+        </Picker>  */}
     </View>
 
         <View style={{flexDirection:"column",height:"5%",width:"100%",marginBottom:0,marginTop:"auto"}}>
